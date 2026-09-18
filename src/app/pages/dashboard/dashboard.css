@@ -1,0 +1,107 @@
+:host{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--fundo-cor);
+}
+
+header{
+    background-color: aqua;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 20px;
+}
+
+#logo-techfacil{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#logo-techfacil > img{
+    width: 50px;
+}
+
+#Usuario{
+    background-color: var(--verde-primario);
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main{
+    display: flex;
+    flex-direction: column;
+    margin: 20px 20px 0px 20px;
+    flex: 1;
+}
+
+#destaques{
+    display: flex;
+}
+
+#procurando{
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 50vh;
+}
+
+#botoes{
+    display: flex;
+    flex-flow: row wrap;
+    height: 250px;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.opcoes{
+    width: 40%;
+    font-size: 12px;
+    border-radius: 30px;
+    padding: 5px;
+    background-color: white;
+    border: 1px solid var(--cor-borda-inputs);
+}
+
+#inputes{
+    margin-top: 10px;
+    border: 1px solid var(--cor-borda-inputs);
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    background-color: white;
+}
+
+#inputes > input{
+    border: none;
+    background-color: none;
+    flex: 1;
+    margin-left: 10px;
+    color: var(--cor-texto);
+}
+
+.info{
+    margin-top: 10px;
+    border: 1px solid var(--cor-borda-inputs);
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: var(--fundo-cor);
+}
+
+.info2{
+    display: flex;
+}
+
+.info3{
+    color:aqua;
+    
+}
