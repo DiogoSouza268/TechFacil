@@ -1,0 +1,109 @@
+:host{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--fundo-cor);
+}
+
+header{
+    background-color: white;
+    display: flex;
+    padding: 20px 0px 20px 20px;
+    font-size: 14px;
+}
+
+header > div{
+    padding-left: 15px;
+}
+
+header > button{
+    padding: 12px;
+    background-color: var(--fundo-cor);
+    border-radius: 12px;
+    border: none;
+    color: black;
+}
+
+header > div > p{
+    padding-top: 5px;
+    font-size: 13px;
+}
+
+main{
+    display: flex;
+    flex-direction: column;
+    margin: 0px 20px;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+label{
+    font-size: 14px;
+    padding-bottom: 5px;
+
+}
+
+.inputes{
+    border: 1px solid var(--cor-borda-inputs);
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    background-color: white;
+}
+
+.inputes > input{
+    border: none;
+    background-color: none;
+    flex: 1;
+    margin-left: 10px;
+    color: var(--cor-texto);
+}
+
+button{
+    padding: 13px;
+    border-radius: 10px;
+    border: 1px solid var(--verde-primario);
+    color: white;
+    background-color: var(--verde-primario);
+    font-weight: bolder;
+}
+
+#botao2{
+    background-color: transparent;
+    color: var(--verde-primario);
+}
+
+#Termos{
+    display: flex;
+    gap: 10px;
+    background-color: white;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 10px;
+    border: 1px solid var(--cor-borda-inputs);
+}
+
+#Termos > p > a{
+    color: var(--verde-primario);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+#Termos > input{
+    width: 30px;
+    height: auto;
+}
+
+#texto-final{
+    text-align: center;
+    padding-top: 15px;
+}
+
+#texto-final > a{
+    text-decoration: none;
+    color: var(--verde-primario);
+}
