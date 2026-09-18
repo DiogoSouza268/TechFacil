@@ -72,6 +72,11 @@ button{
     font-weight: bolder;
 }
 
+#botao2{
+    background-color: transparent;
+    color: var(--verde-primario);
+}
+
 #main-txt2{
     margin-top: 20px;
     display: flex;
