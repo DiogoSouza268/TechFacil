@@ -49,7 +49,8 @@ main{
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    height: 50vh;
+    padding: 30px 0px;
+    gap: 30px;
 }
 
 #botoes{
@@ -86,22 +87,65 @@ main{
     color: var(--cor-texto);
 }
 
-.info{
-    margin-top: 10px;
+#input-botão{
+    margin-top: 20px;
+    padding: 13px;
+    border-radius: 10px;
+    border: 1px solid var(--verde-primario);
+    color: white;
+    background-color: var(--verde-primario);
+    font-weight: bolder;
+}
+
+#celulares{
+    display: flex;
+    margin-top: 20px;
+    align-items: center;
+    gap: 10px;
+}
+
+.num-comparacao{
+    padding: 10px;
     border: 1px solid var(--cor-borda-inputs);
+    background-color: black;
+    color: white;
+    border-radius: 50px;
+}
+
+#aparelhoCelular{
+    border: 1px solid var(--verde-primario);
+    border-radius: 10px;
+    margin: 20px 0px;
+    padding: 0px 20px;
+}
+
+#info{
+    margin-top: 10px;
     padding: 10px;
     border-radius: 10px;
     display: flex;
-    justify-content: space-around;
-    align-items: center;
+    flex-direction: column;
+    gap: 20px;
     background-color: var(--fundo-cor);
 }
 
-.info2{
+.todas-infos{
     display: flex;
+    justify-content: space-around;
+    width: 100%;
+    padding: 20px 0px;
+    border-radius: 20px;
+    border: 1px solid var(--cor-borda-inputs);
 }
 
-.info3{
-    color:aqua;
-    
+.todas-infos > p{
+    display: flex;
+    flex-wrap: nowrap;
 }
+.info2{
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+#meLHORoPCAO
