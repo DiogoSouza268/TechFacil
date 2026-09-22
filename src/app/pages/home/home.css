@@ -42,7 +42,15 @@ main{
 
 #destaques{
     display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
+
+#carosel1{
+    display: flex;
+}
+
+
 
 #procurando{
     margin-top: 10px;
@@ -53,21 +61,21 @@ main{
     gap: 30px;
 }
 
-#botoes{
+#botoes {
     display: flex;
-    flex-flow: row wrap;
-    height: 250px;
-    justify-content: space-around;
-    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
 }
 
-.opcoes{
-    width: 40%;
-    font-size: 12px;
+.opcoes {
+    width: 48%; /* Exibe 2 botões por linha perfeitamente */
+    font-size: 13px;
     border-radius: 30px;
-    padding: 5px;
+    padding: 12px 8px;
     background-color: white;
     border: 1px solid var(--cor-borda-inputs);
+    cursor: pointer;
 }
 
 #inputes{
@@ -79,12 +87,13 @@ main{
     background-color: white;
 }
 
-#inputes > input{
+#inputes > input {
     border: none;
-    background-color: none;
+    background: transparent;
     flex: 1;
     margin-left: 10px;
     color: var(--cor-texto);
+    outline: none;
 }
 
 .input-botão{

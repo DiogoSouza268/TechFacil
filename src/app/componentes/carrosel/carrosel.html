@@ -1,0 +1,13 @@
+@if (slides.length > 0) {
+  <main>
+
+    <div id="carousel-container">
+        <img [src]="slides[currentIndex].image" [alt]="slides[currentIndex].title">
+    </div>
+
+    <div id="carousel-title">
+      <p>{{ slides[currentIndex].title }}</p>
+    </div>
+
+  </main>
+}

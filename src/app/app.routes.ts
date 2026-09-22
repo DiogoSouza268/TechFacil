@@ -1,14 +1,14 @@
 import { Routes } from '@angular/router';
 import { Perfil } from './pages/perfil/perfil';
 import { Login } from './pages/login/login';
-import { Dashboard } from './pages/dashboard/dashboard';
 import { Cadastrar } from './pages/cadastrar/cadastrar';
 import { Salvos } from './pages/salvos/salvos';
+import { Home } from './pages/home/home';
 
 export const routes: Routes = [
-    {path: "", redirectTo: "dashboard", pathMatch: "full"},
+    {path: "", redirectTo: "home", pathMatch: "full"},
     {path: "cadastrar", component: Cadastrar},
-    {path: "dashboard", component: Dashboard},
+    {path: "home", component: Home},
     {path: "login", component: Login},
     {path: "perfil", component: Perfil},
     {path: "salvos", component: Salvos}
