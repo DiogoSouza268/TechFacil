@@ -13,15 +13,15 @@ export class Home {
   homeCarosel: CarouselSlide[] = [
     {
       image: "/img/celulares.jpg",
-      title: 'Bateria para até 2 dias fora da tomada! Veja aparelhos com alta duração.'
+      title: 'Aprenda a escolher qual o melhor aparelho'
     },
     {
       image: "/img/familia-unida.jpg",
-      title: 'Chega de memória cheia: celulares com 128GB ou mais para guardar suas fotos.'
+      title: 'O celular perfeito para todos os membros da familia'
     },
     {
       image: "/img/hardware_smartphone.jpg",
-      title: 'Não sabe qual escolher? Use o filtro de prioridades abaixo que nós ajudamos!'
+      title: 'Venha aprender sobre as peças de um celular'
     }
   ];
 

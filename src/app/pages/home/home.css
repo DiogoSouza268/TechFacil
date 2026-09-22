@@ -96,7 +96,7 @@ main{
     outline: none;
 }
 
-.input-botão{
+.input-botao{
     margin-top: 20px;
     padding: 13px;
     border-radius: 10px;
@@ -168,7 +168,7 @@ main{
     
 }
 
-#melhorOpcao > p , h4{
+#melhorOpcao > p, #melhorOpcao > h4{
     padding-left: 20px;
 }
 
