@@ -6,7 +6,7 @@ import { Cadastrar } from './pages/cadastrar/cadastrar';
 import { Salvos } from './pages/salvos/salvos';
 
 export const routes: Routes = [
-    {path: " ", redirectTo: "dashboard", pathMatch: "full"},
+    {path: "", redirectTo: "dashboard", pathMatch: "full"},
     {path: "cadastrar", component: Cadastrar},
     {path: "dashboard", component: Dashboard},
     {path: "login", component: Login},
