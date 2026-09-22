@@ -1,0 +1,65 @@
+:host{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--fundo-cor);
+}
+
+header{
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 0px 20px 20px;
+    font-size: 14px;
+}
+
+main{
+    margin: 20px 20px 0px 20px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+.celularSalvo{
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 1px solid var(--cor-borda-inputs);
+    border-radius: 20px;
+    padding: 20px 20px;
+    margin-bottom: 20px;
+}
+
+.celularesInfos{
+    display: flex;
+    gap: 10px;
+}
+
+.celularBotoes{
+    display: flex;
+    gap: 10px;
+}
+
+.rever{
+    flex: 1;
+    padding: 13px;
+    border-radius: 10px;
+    border: 1px solid var(--verde-primario);
+    color: white;
+    background-color: var(--verde-primario);
+    font-weight: bolder;
+}
+
+button{
+    padding: 13px;
+    border-radius: 10px;
+    border: 1px solid var(--cor-borda-inputs);
+
+
+
+}
+
