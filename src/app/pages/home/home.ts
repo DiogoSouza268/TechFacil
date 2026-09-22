@@ -12,15 +12,15 @@ export class Home {
 
   homeCarosel: CarouselSlide[] = [
     {
-      image: "/img/celulares.jpg",
+      image: "/img/projeto/celulares.jpg",
       title: 'Aprenda a escolher qual o melhor aparelho'
     },
     {
-      image: "/img/familia-unida.jpg",
+      image: "/img/projeto/familia-unida.jpg",
       title: 'O celular perfeito para todos os membros da familia'
     },
     {
-      image: "/img/hardware_smartphone.jpg",
+      image: "/img/projeto/hardware_smartphone.jpg",
       title: 'Venha aprender sobre as peças de um celular'
     }
   ];
