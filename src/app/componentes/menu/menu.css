@@ -1,0 +1,18 @@
+#menu{
+    background-color: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 20px 0px;
+}
+
+button{
+    border: none;
+}
+
+.botoes{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+    color: var(--cor-texto);
+}
