@@ -222,7 +222,7 @@
         "id": 11,
         "nome": "OPPO A6t",
         "precoMedio": 895.00,
-        "imagem": "/img/infinix/OPPO_A6t.png",
+        "imagem": "/img/Oppo/OPPO_A6t.png",
         "specs": {
             "armazenamento": "128GB",
             "ram": "4GB",
@@ -244,7 +244,7 @@
         "id": 12,
         "nome": "OPPO A6x",
         "precoMedio": 895.00,
-        "imagem": "/img/infinix/Oppo_A6x.png",
+        "imagem": "/img/Oppo/Oppo_A6x.png",
         "specs": {
             "armazenamento": "128GB",
             "ram": "4GB",
@@ -266,7 +266,7 @@
         "id": 13,
         "nome": "Realme_C73",
         "precoMedio": 1174.50,
-        "imagem": "/img/infinix/Realme_C73.png",
+        "imagem": "/img/realme/Realme_C73.png",
         "specs": {
             "armazenamento": "128GB",
             "ram": "4GB",
@@ -288,7 +288,7 @@
         "id": 14,
         "nome": "Realme Note 60x",
         "precoMedio": 730.00,
-        "imagem": "/img/infinix/Realme_Note_60x.png",
+        "imagem": "/img/realme/Realme_Note_60x.png",
         "specs": {
             "armazenamento": "64GB",
             "ram": "4GB",
