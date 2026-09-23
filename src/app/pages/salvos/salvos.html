@@ -1,92 +1,42 @@
 <header>
     <h2>Suas Comparações</h2>
-    <p>Olá, usuario! Retome de onde parou.</p>
+    <p>Olá, {{ usuarioLogado?.nome || 'usuário' }}! Retome de onde parou.</p>
 </header>
 
 <main>
 
-    <div class="celularSalvo">
-
-        <div class="celularesInfos">
-
-            <div class="celularSalvoImg">
-                <img src="" alt="">
-                <p>galaxy a55</p>
-            </div>
-
-            <div class="celularSalvoImg">
-                <img src="" alt="">
-                <p>Motorole</p>
-            </div>
-
-            <div class="celularSalvoImg">
-                <img src="" alt="">
-                <p>iphen</p>
-            </div>
-
-        </div>
-
-        <div class="celularBotoes">
-            <button class="rever">Rever</button>
-            <button>&#x1F5D1;</button>
-            <button>&#x1F517;</button>
-        </div>
+    <!-- Caso 1: Usuário NÃO está logado -->
+    <div *ngIf="!usuarioLogado" class="estado-vazio">
+        <p>Você precisa estar logado para ver suas comparações salvas.</p>
+        <button class="rever" routerLink="/login">Ir para o Login</button>
     </div>
 
-    <div class="celularSalvo">
-
-        <div class="celularesInfos">
-
-            <div class="celularSalvoImg">
-                <img src="" alt="">
-                <p>galaxy a55</p>
-            </div>
-
-            <div class="celularSalvoImg">
-                <img src="" alt="">
-                <p>Motorole</p>
-            </div>
-
-            <div class="celularSalvoImg">
-                <img src="" alt="">
-                <p>iphen</p>
-            </div>
-
-        </div>
-
-        <div class="celularBotoes">
-            <button class="rever">Rever</button>
-            <button>&#x1F5D1;</button>
-            <button>&#x1F517;</button>
-        </div>
+    <!-- Caso 2: Usuário está logado mas NÃO tem salva nenhuma comparação -->
+    <div *ngIf="usuarioLogado && listaComparacoes.length === 0" class="estado-vazio">
+        <p>Você ainda não possui comparações salvas.</p>
+        <button class="rever" routerLink="/home">Criar uma Comparação</button>
     </div>
 
-     <div class="celularSalvo">
+    <!-- Caso 3: Lista com as comparações salvas -->
+    <div *ngIf="usuarioLogado && listaComparacoes.length > 0">
+        
+        <div class="celularSalvo" *ngFor="let item of listaComparacoes">
 
-        <div class="celularesInfos">
-
-            <div class="celularSalvoImg">
-                <img src="" alt="">
-                <p>galaxy a55</p>
+            <div class="celularesInfos">
+                <div class="celularSalvoImg" *ngFor="let celular of item.celulares">
+                    <img [src]="celular.imagem || 'assets/placeholder.png'" [alt]="celular.nome">
+                    <p>{{ celular.nome }}</p>
+                </div>
             </div>
 
-            <div class="celularSalvoImg">
-                <img src="" alt="">
-                <p>Motorole</p>
-            </div>
-
-            <div class="celularSalvoImg">
-                <img src="" alt="">
-                <p>iphen</p>
+            <div class="celularBotoes">
+                <button class="rever" (click)="rever(item)">Rever</button>
+                <button (click)="excluir(item.id)" title="Excluir">&#x1F5D1;</button>
+                <button (click)="compartilhar(item)" title="Compartilhar">&#x1F517;</button>
             </div>
 
         </div>
 
-        <div class="celularBotoes">
-            <button class="rever">Rever</button>
-            <button>&#x1F5D1;</button>
-            <button>&#x1F517;</button>
-        </div>
     </div>
 
 </main>

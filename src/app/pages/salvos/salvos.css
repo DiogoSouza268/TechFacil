@@ -1,11 +1,11 @@
-:host{
+:host {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     background-color: var(--fundo-cor);
 }
 
-header{
+header {
     background-color: white;
     display: flex;
     flex-direction: column;
@@ -14,7 +14,7 @@ header{
     font-size: 14px;
 }
 
-main{
+main {
     margin: 20px 20px 0px 20px;
     border-radius: 20px;
     display: flex;
@@ -23,7 +23,7 @@ main{
     flex: 1;
 }
 
-.celularSalvo{
+.celularSalvo {
     background-color: white;
     display: flex;
     flex-direction: column;
@@ -34,17 +34,33 @@ main{
     margin-bottom: 20px;
 }
 
-.celularesInfos{
+.celularesInfos {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+}
+
+.celularSalvoImg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 5px;
+    flex: 1;
+}
+
+.celularSalvoImg img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.celularBotoes {
     display: flex;
     gap: 10px;
 }
 
-.celularBotoes{
-    display: flex;
-    gap: 10px;
-}
-
-.rever{
+.rever {
     flex: 1;
     padding: 13px;
     border-radius: 10px;
@@ -52,14 +68,25 @@ main{
     color: white;
     background-color: var(--verde-primario);
     font-weight: bolder;
+    cursor: pointer;
 }
 
-button{
+button {
     padding: 13px;
     border-radius: 10px;
     border: 1px solid var(--cor-borda-inputs);
-
-
-
+    background-color: white;
+    cursor: pointer;
 }
 
+.estado-vazio {
+    background-color: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid var(--cor-borda-inputs);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
