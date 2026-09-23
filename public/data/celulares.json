@@ -3,7 +3,7 @@
         "id": 1,
         "nome": "Sua tia",
         "precoMedio": 3499.00,
-        "imagem": "/img/samsung/Motorola-G06.png",
+        "imagem": "/img/motorola/Motorola-G06.png",
         "specs": {
             "armazenamento": "64GB",
             "ram": "16GB",
@@ -24,7 +24,7 @@
         "id": 2,
         "nome": "Adalertpo",
         "precoMedio": 1800.00,
-        "imagem": "/img/samsung/Motorola-G17.png",
+        "imagem": "/img/motorola/Motorola-G17.png",
         "specs": {
             "armazenamento": "128GB",
             "ram": "64GB",

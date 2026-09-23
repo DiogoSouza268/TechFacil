@@ -128,6 +128,20 @@ main{
     padding: 0px 20px;
 }
 
+#celularImg{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin: 20px 0px;
+    padding: 20px 0px;
+}
+
+#celularImg > img{
+    width: 150px;
+}
+
 #info{
     margin-top: 10px;
     padding: 10px;
@@ -145,16 +159,6 @@ main{
     padding: 20px 0px;
     border-radius: 20px;
     border: 1px solid var(--cor-borda-inputs);
-}
-
-.todas-infos > p{
-    display: flex;
-    flex-wrap: nowrap;
-}
-.info2{
-    display: flex;
-    gap: 5px;
-    align-items: center;
 }
 
 #melhorOpcao{
