@@ -1,5 +1,5 @@
 @if (slides.length > 0) {
-  <main>
+  <div id="main">
 
     <div id="carousel-container">
         <img [src]="slides[currentIndex].image" [alt]="slides[currentIndex].title">
@@ -9,5 +9,5 @@
       <p>{{ slides[currentIndex].title }}</p>
     </div>
 
-  </main>
+  </div>
 }

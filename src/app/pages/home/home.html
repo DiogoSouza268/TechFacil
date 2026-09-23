@@ -125,7 +125,36 @@
             }
         </section>
 
-        <section id="melhorOpcao">
+    </section>
+
+    <section id="infoFacil">
+
+        @if (termoExibido) {
+            <p>
+                <span style="color: aqua; padding-right: 10px;">ℹ️</span>
+                <strong>{{ termoExibido.titulo }}</strong>
+            </p>
+
+            <p style="text-align: justify;">
+                {{ termoExibido.explicacao }}
+            </p>
+
+            <button 
+                class="input-botao" 
+                style="margin-top: 0px;" 
+                (click)="fecharDicionario()">
+                Entendi
+            </button>
+        } 
+        @else {
+            <p>
+                Aperte no símbolo ℹ️ para conhecer mais sobre aquela informação.
+            </p>
+        }
+
+    </section>
+
+    <section id="melhorOpcao">
             <h4>🏆 Melhor Opção para você</h4>
 
             @if (listaComparacao.length === 0) {
@@ -145,38 +174,6 @@
 
             <button id="salvarCompa" [disabled]="listaComparacao.length === 0">Salvar Comparação</button>
         </section>
-
-    </section>
-
-    <section id="infoFacil">
-
-        @if (termoExibido) {
-            <!-- Exibido quando o usuário clica em algum ícone ℹ️ -->
-            <p>
-                <span style="color: aqua; padding-right: 10px;">ℹ️</span>
-                <strong>{{ termoExibido.titulo }}</strong>
-            </p>
-
-            <p style="text-align: justify;">
-                {{ termoExibido.explicacao }}
-            </p>
-
-            <button 
-                class="input-botao" 
-                style="margin-top: 0px;" 
-                (click)="fecharDicionario()">
-                Entendi
-            </button>
-        } 
-        @else {
-            <!-- Mensagem padrão quando nenhum ícone foi clicado -->
-            <p>
-                <span style="color: aqua; padding-right: 10px;">ℹ️</span>
-                Aperte no símbolo ℹ️ para conhecer mais sobre aquela informação.
-            </p>
-        }
-
-    </section>
 
     
 </main>
