@@ -1,26 +1,41 @@
 <div id="main">
-    
+    <div class="informacao">
 
-    @if (!editando) {
-        <div class="informacao">
-            <div class="infoSpec">
-                <div class="spec">
-                    <span style="font-weight: bolder;">{{label}}</span>
-                     @if (temInfo) {
-                        <button type="button" (click)="infoClick.emit()" class="info" title="Explicação do termo">ℹ️</button>
-                    }
-                </div>
-                <span>{{ valor }}</span>
+        <div class="infoSpec">
+            <div class="spec">
+                <span style="font-weight: bolder;">{{ label }}</span>
+                @if (temInfo) {
+                    <button type="button" (click)="infoClick.emit()" class="info" title="Explicação do termo">ℹ️</button>
+                }
             </div>
-            
-            <button type="button" class="alteraValor" (click)="iniciarEdicao()">✏️ Editar valor da loja</button>
+
+            @if (!editando) {
+                <span class="valor-exibicao">{{ valor }}</span>
+            } 
+            @else {
+                <div class="campo-edicao">
+                    @if (prefixo) { <span>{{ prefixo }}</span> }
+                    
+                    <input 
+                        type="number" 
+                        [(ngModel)]="numeroEditavel" 
+                        class="input-numero" 
+                        min="0" />
+                        
+                    @if (sufixo) { <span>{{ sufixo }}</span> }
+                </div>
+            }
         </div>
-    }
 
-    @else {
-        <input type="text" [(ngModel)]="valorTemporario" class="input-edicao" />
-        <button type="button" class="botaoSucesso" (click)="salvar()" title="Salvar">✅</button>
-        <button type="button" class="botaoCancelar" (click)="cancelar()" title="Cancelar">❌</button>
-    }
+        @if (!editando) {
+            <button type="button" class="alteraValor" (click)="iniciarEdicao()">✏️ Editar valor da loja</button>
+        } 
+        @else {
+            <div class="botoes-edicao">
+                <button type="button" class="botaoSucesso" (click)="salvar()" title="Salvar">✅ Salvar</button>
+                <button type="button" class="botaoCancelar" (click)="cancelar()" title="Cancelar">❌ Cancelar</button>
+            </div>
+        }
 
+    </div>
 </div>

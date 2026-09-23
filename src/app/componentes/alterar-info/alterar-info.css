@@ -1,41 +1,105 @@
-#main{
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-    width: 100%;
-    font-size: 0.9em;
+#main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  width: 100%;
+  font-size: 0.9em;
 }
 
-.informacao{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 10px;
-    padding: 10px;
-    margin: 10px 0px 0px 0px;
+.informacao {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+  padding: 10px;
+  margin: 10px 0px 0px 0px;
 }
 
-.infoSpec{
-    display: flex;
-    justify-content: space-around;
+.infoSpec {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
 }
 
-.spec{
-    display: flex;
-    gap: 5px;
+.spec {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
-.alteraValor{
-    background-color: var(--verde-primario);
-    padding: 5px;
-    color: white;
-    border-radius: 15px;
-    border: 1px solid var(--verde-primario);
-    font-weight: bolder;
+.valor-exibicao {
+  font-weight: bold;
 }
 
-.info{
-    border: none;
-    text-align: center;
+/* Edição do Número */
+.campo-edicao {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: bold;
+}
+
+.input-numero {
+  width: 70px;
+  padding: 4px 6px;
+  border: 1px solid var(--verde-primario, #28a745);
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.9em;
+  outline: none;
+}
+
+/* Esconde setinhas nativas do input de número nos navegadores */
+.input-numero::-webkit-outer-spin-button,
+.input-numero::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.input-numero[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Botões */
+.alteraValor {
+  background-color: var(--verde-primario);
+  padding: 5px;
+  color: white;
+  border-radius: 15px;
+  border: 1px solid var(--verde-primario);
+  font-weight: bolder;
+  cursor: pointer;
+}
+
+.botoes-edicao {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.botaoSucesso, .botaoCancelar {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85em;
+  font-weight: bold;
+  color: white;
+}
+
+.botaoSucesso {
+  background-color: #28a745;
+}
+
+.botaoCancelar {
+  background-color: #dc3545;
+}
+
+.info {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: center;
 }
