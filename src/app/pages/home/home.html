@@ -22,14 +22,15 @@
         <h3>O que voce busca no seu celular?</h3>
 
         <div id="botoes">
-            <button class="opcoes">⚡ Não travar</button>
-            <button class="opcoes">🔋 Boa bateria</button>
-            <button class="opcoes">📸 Melhor câmera</button>
-            <button class="opcoes">📦 Muito espaço para fotos</button>
-            <button class="opcoes">📺 Tela grande</button>
-            <button class="opcoes">💰 Preço baixo</button>
+            @for (filtro of filtros; track filtro.key) {
+                <button 
+                    class="opcoes" 
+                    [class.ativo]="filtroAtivo(filtro.key)" 
+                    (click)="toggleFiltro(filtro.key)">
+                    {{ filtro.label }}
+                </button>
+            }
         </div>
-
     </section>
 
     <section id="comparando">
@@ -128,11 +129,24 @@
         </section>
 
         <section id="melhorOpcao">
-            <h4>&#127942; Melhor Opção para você</h4>
+            <h4>🏆 Melhor Opção para você</h4>
 
-            <p>Galaxy A35 VENCEU: nÃO TRAVA , GUARDA 30 MIL fotos</p>
+            @if (listaComparacao.length === 0) {
+                <p>Adicione celulares à comparação para ver qual é o vencedor!</p>
+            } 
+            @else if (filtrosSelecionados.length === 0) {
+                <p>Selecione acima o que você mais valoriza (ex: bateria, câmera) para calcularmos o campeão.</p>
+            } 
+            @else if (celularVencedor) {
+                <p>
+                    <strong>{{ celularVencedor.celular.nome }} VENCEU!</strong> 
+                    @if (celularVencedor.motivos.length > 0) {
+                        <span>Ele se destaca em: {{ celularVencedor.motivos.join(', ') }}.</span>
+                    }
+                </p>
+            }
 
-            <button id="salvarCompa">Salvar Comparação</button>
+            <button id="salvarCompa" [disabled]="listaComparacao.length === 0">Salvar Comparação</button>
         </section>
 
     </section>

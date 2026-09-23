@@ -69,13 +69,31 @@ main{
 }
 
 .opcoes {
-    width: 48%; /* Exibe 2 botões por linha perfeitamente */
-    font-size: 13px;
-    border-radius: 30px;
-    padding: 12px 8px;
+    width: 48%; 
     background-color: white;
     border: 1px solid var(--cor-borda-inputs);
     cursor: pointer;
+    color: black;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.opcoes.ativo {
+  background-color: #007bff; 
+  color: white;
+  border-color: #0056b3;
+  font-weight: bold;
+  box-shadow: 0 3px 8px rgba(0, 123, 255, 0.3);
+  transform: translateY(-2px); 
+}
+
+#comparando{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 0px;
 }
 
 #inputes{
@@ -131,11 +149,30 @@ main{
   transform: scale(1.1);
 }
 
-#aparelhoCelular{
-    border: 1px solid var(--verde-primario);
-    border-radius: 10px;
-    margin: 20px 0px;
-    padding: 0px 20px;
+#aparelhoCelular {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid var(--verde-primario);
+  border-radius: 20px;
+  background-color: white;
+  overflow-x: auto;             
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;     
+  gap: 16px;
+  padding: 10px;
+  width: 100%;
+  scrollbar-width: none;        
+  -webkit-overflow-scrolling: touch; 
+}
+
+#aparelhoCelular::-webkit-scrollbar {
+  display: none;
+}
+
+.card-comparativo {
+  flex: 0 0 85%;
+  box-sizing: border-box;
+  scroll-snap-align: start;
 }
 
 .celular-img{
@@ -159,7 +196,7 @@ main{
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background-color: var(--fundo-cor);
+    background-color: white;
 }
 
 .todas-infos{
@@ -168,6 +205,7 @@ main{
     width: 100%;
     padding: 20px 0px;
     border-radius: 20px;
+    background-color: white;
     border: 1px solid var(--cor-borda-inputs);
 }
 

@@ -129,8 +129,73 @@ export class Home implements OnInit {
     const elemento = document.getElementById(`card-celular-${index}`);
 
     if (elemento) {
-      elemento.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      elemento.scrollIntoView({ behavior: 'smooth', block: 'nearest' , inline: 'start' });
     }
+  }
+
+  
+  filtros = [
+    { key: 'naoTravar', label: '⚡ Não travar' },
+    { key: 'boaBateria', label: '🔋 Boa bateria' },
+    { key: 'melhorCamera', label: '📸 Melhor câmera' },
+    { key: 'muitoEspaco', label: '📦 Muito espaço para fotos' },
+    { key: 'telaGrande', label: '📺 Tela grande' },
+    { key: 'precoBaixo', label: '💰 Preço baixo' }
+  ];
+
+  filtrosSelecionados: string[] = [];
+
+  toggleFiltro(key: string): void {
+    const index = this.filtrosSelecionados.indexOf(key);
+    if (index > -1) {
+      this.filtrosSelecionados.splice(index, 1); 
+    } else {
+      this.filtrosSelecionados.push(key); 
+    }
+  }
+
+  filtroAtivo(key: string): boolean {
+    return this.filtrosSelecionados.includes(key);
+  }
+
+  calcularPontuacao(celular: Celular): number {
+    if (this.filtrosSelecionados.length === 0) return 0;
+
+    let total = 0;
+    for (const key of this.filtrosSelecionados) {
+      const chavePontos = key as keyof PontosFortes;
+      if (celular.pontosFortes && celular.pontosFortes[chavePontos] !== undefined) {
+        total += celular.pontosFortes[chavePontos];
+      }
+    }
+    return total;
+  }
+
+  get celularVencedor(): { celular: Celular; pontos: number; motivos: string[] } | null {
+    if (this.listaComparacao.length === 0) return null;
+
+    let melhorCelular: Celular | null = null;
+    let maiorPontuacao = -1;
+
+    for (const celular of this.listaComparacao) {
+      const pontuacao = this.calcularPontuacao(celular);
+      if (pontuacao > maiorPontuacao) {
+        maiorPontuacao = pontuacao;
+        melhorCelular = celular;
+      }
+    }
+
+    if (!melhorCelular) return null;
+
+    const motivos = this.filtros
+      .filter(f => this.filtrosSelecionados.includes(f.key))
+      .map(f => f.label.replace(/^[^\s]+\s/, '')); // Remove o emoji para o texto ficar limpo
+
+    return {
+      celular: melhorCelular,
+      pontos: maiorPontuacao,
+      motivos: motivos
+    };
   }
 
 }
