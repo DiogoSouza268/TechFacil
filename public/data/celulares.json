@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "nome": "Sua tia",
+        "precoMedio": 3499.00,
+        "imagem": "/img/samsung/Motorola-G06.png",
+        "specs": {
+            "armazenamento": "64GB",
+            "ram": "16GB",
+            "bateria": "5000 mAh",
+            "processador": "programdaor",
+            "tela": "6.5 pol"
+        },
+        "pontosFortes": {
+            "naoTravar": 7,
+            "boaBateria": 8,
+            "melhorCamera": 7,
+            "muitoEspaco": 7,
+            "telaGrande": 8,
+            "precoBaixo": 8
+        }
+    },
+    {
+        "id": 2,
+        "nome": "Adalertpo",
+        "precoMedio": 1800.00,
+        "imagem": "/img/samsung/Motorola-G17.png",
+        "specs": {
+            "armazenamento": "128GB",
+            "ram": "64GB",
+            "bateria": "50000 mAh",
+            "processador": "aldeia",
+            "tela": "16.5 pol"
+        },
+        "pontosFortes": {
+            "naoTravar": 1,
+            "boaBateria":2,
+            "melhorCamera": 4,
+            "muitoEspaco": 10,
+            "telaGrande": 9,
+            "precoBaixo": 9
+        }
+    }
+]

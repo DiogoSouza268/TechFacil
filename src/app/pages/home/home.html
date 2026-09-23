@@ -49,40 +49,45 @@
         </section>
 
         <section id="aparelhoCelular">
-            <div id="celularImg">
-                <span id="ganhou"></span>
-                <img src="" alt="">
-                <h2 id="celularNome"></h2>
-                <h3 id="precoLoja"></h3>
-            </div>
+            @for (celular of listaCelulares; track celular.id) {
 
-            <div id="info">
-                <div class="todas-infos" >
-                    <div class="info2">
-                        <p>Armazenamento</p>
-                        <span style="color: aqua;">&#x1F6C8;</span>
-                    </div>
-                    <p>128GB</p>
+                <div id="celularImg">
+                    <img [src]="celular.imagem" [alt]="celular.nome">
+                    <h2 id="celularNome">{{ celular.nome }}</h2>
+                    <h3 id="precoLoja">R$ {{ celular.precoMedio | number:'1.2-2' }}</h3>
                 </div>
 
-                <div class="todas-infos" >
-                    <div class="info2">
-                        <p>RAM</p>
-                        <span style="color: aqua;">&#x1F6C8;</span>
+                <div id="info">
+
+                    <div class="todas-infos" >
+                        <app-alterar-info 
+                            label="Armazenamento" 
+                            [valor]="celular.specs.armazenamento"
+                            (valorChange)="celular.specs.armazenamento = $event; recalcularNotas(celular)"
+                            (infoClick)="abrirDicionario('armazenamento')">
+                        </app-alterar-info>
                     </div>
-                    <p>8GB</p>
+
+                    <div class="todas-infos" >
+                        <app-alterar-info 
+                            label="Preço na Loja" 
+                            [valor]="'R$ ' + celular.precoMedio"
+                            [temInfo]="false"
+                            (valorChange)="celular.precoMedio = $event; recalcularNotas(celular)">
+                        </app-alterar-info>
+                    </div>
+
+                    <div class="todas-infos" >
+                        <app-alterar-info 
+                            label="Preço na Loja" 
+                            [valor]="'R$ ' + celular.precoMedio"
+                            [temInfo]="false"
+                            (valorChange)="celular.precoMedio = $event; recalcularNotas(celular)">
+                        </app-alterar-info>
+                    </div>
                 </div>
 
-                 <div class="todas-infos" >
-                    <div class="info2">
-                        <p>Processador</p>
-                        <span style="color: aqua;">&#x1F6C8;</span>
-                    </div>
-                    <p>Exynos 1380</p>
-                </div>
-
-                 
-            </div>
+            }
         </section>
 
         <section id="melhorOpcao">

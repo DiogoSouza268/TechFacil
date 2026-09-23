@@ -1,0 +1,20 @@
+<div id="main">
+    <span style="font-weight: bolder;">{{label}}</span>
+
+    @if (!editando) {
+        <span>{{ valor }}</span>
+        
+        @if (temInfo) {
+            <button type="button" (click)="infoClick.emit()" title="Explicação do termo">&#8505;</button>
+        }
+
+        <button type="button" class="alteraValor" (click)="iniciarEdicao()" title="Editar valor da loja">✏️</button>
+    }
+
+    @else {
+        <input type="text" [(ngModel)]="valorTemporario" class="input-edicao" />
+        <button type="button" class="botaoSucesso" (click)="salvar()" title="Salvar">✅</button>
+        <button type="button" class="botaoCancelar" (click)="cancelar()" title="Cancelar">❌</button>
+    }
+
+</div>
