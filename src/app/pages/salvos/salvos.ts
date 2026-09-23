@@ -1,52 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
-import { Comparacoes, Comparacao } from '../../services/comparacoes';
 import { Menu } from '../../componentes/menu/menu';
+import { AvisoLogin } from '../../componentes/aviso-login/aviso-login';
+import { AuthService } from '../../services/auth';
+import { Comparacoes, ComparacaoSalva } from '../../services/comparacoes';
 
-// SE O MENU FOR UM COMPONENTE SEPARADO:
-// Certifique-se de importar o seu componente Menu e adicioná-lo no 'imports' abaixo.
-// import { Menu } from '../../componentes/menu/menu';
 
 @Component({
   selector: 'app-salvos',
   standalone: true,
-  imports: [CommonModule, RouterLink /*, Menu */, Menu],
+  imports: [CommonModule, Menu, AvisoLogin],
   templateUrl: './salvos.html',
   styleUrl: './salvos.css'
 })
-export class Salvos implements OnInit {
-  usuarioLogado: any = null;
-  listaComparacoes: Comparacao[] = [];
 
-  constructor(
-    private comparacoesService: Comparacoes,
-    private router: Router
-  ) {}
+export class Salvos implements OnInit {
+  authService = inject(AuthService);
+  comparacoesService = inject(Comparacoes);
+
+  listaSalvas: ComparacaoSalva[] = [];
 
   ngOnInit(): void {
-    this.carregarDados();
-  }
-
-  carregarDados(): void {
-    this.usuarioLogado = this.comparacoesService.getUsuarioLogado();
-    if (this.usuarioLogado) {
-      this.listaComparacoes = this.comparacoesService.getComparacoes();
+    if (this.authService.usuarioLogado()) {
+      this.listaSalvas = this.comparacoesService.obterComparacoesSalvas();
     }
-  }
-
-  rever(comparacao: Comparacao): void {
-    this.router.navigate(['/home'], { state: { comparacao } });
-  }
-
-  excluir(id: number): void {
-    this.comparacoesService.removerComparacao(id);
-    this.carregarDados();
-  }
-
-  compartilhar(comparacao: Comparacao): void {
-    const nomes = comparacao.celulares.map(c => c.nome).join(' vs ');
-    navigator.clipboard.writeText(`Confira esta comparação: ${nomes}`);
-    alert('Link copiado para a área de transferência!');
   }
 }

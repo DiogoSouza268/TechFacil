@@ -73,8 +73,15 @@ button{
 }
 
 #botao2{
-    background-color: transparent;
     color: var(--verde-primario);
+    padding: 13px;
+    border-radius: 10px;
+    border: 1px solid var(--verde-primario);
+    background-color: transparent;
+    font-weight: bolder;
+    margin-top: 10px;
+    text-align: center;
+    text-decoration: none;
 }
 
 #main-txt2{
