@@ -92,13 +92,22 @@ export class Home implements OnInit {
       return;
     }
 
-    this.listaComparacao.push({ ...this.celularSelecionado });
+    this.listaComparacao.push(structuredClone(this.celularSelecionado));
     this.termoBusca = '';
     this.celularSelecionado = null;
   }
 
+  removerDaComparacao(index: number): void {
+    this.listaComparacao.splice(index, 1);
+  }
+
   recalcularNotas(celular: Celular): void {
     console.log('Dados atualizados para o celular:', celular.nome);
+  }
+
+  atualizarSpec(celular: Celular, chave: keyof Specs, novoValor: string | number): void {
+    celular.specs[chave] = String(novoValor);
+    this.recalcularNotas(celular);
   }
 
   
@@ -169,7 +178,7 @@ export class Home implements OnInit {
   }
 
   get celularVencedor(): { celular: Celular; pontos: number; motivos: string[] } | null {
-    if (this.listaComparacao.length === 0) return null;
+    if (this.listaComparacao.length < 2) return null;
 
     let melhorCelular: Celular | null = null;
     let maiorPontuacao = -1;
@@ -186,7 +195,7 @@ export class Home implements OnInit {
 
     const motivos = this.filtros
       .filter(f => this.filtrosSelecionados.includes(f.key))
-      .map(f => f.label.replace(/^[^\s]+\s/, '')); // Remove o emoji para o texto ficar limpo
+      .map(f => f.label.replace(/^[^\s]+\s/, '')); 
 
     return {
       celular: melhorCelular,

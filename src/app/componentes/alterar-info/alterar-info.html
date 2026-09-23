@@ -14,23 +14,32 @@
             } 
             @else {
                 <div class="campo-edicao">
-                    @if (prefixo) { <span>{{ prefixo }}</span> }
-                    
-                    <input 
-                        type="number" 
-                        [(ngModel)]="numeroEditavel" 
-                        class="input-numero" 
-                        min="0" />
+                    @if (tipoInput === 'texto') {
+                        <input 
+                            type="text" 
+                            [(ngModel)]="valorTexto" 
+                            class="input-texto" />
+                    } 
+                    @else {
+                        @if (prefixo) { <span>{{ prefixo }}</span> }
                         
-                    @if (sufixo) { <span>{{ sufixo }}</span> }
+                        <input 
+                            type="number" 
+                            [(ngModel)]="numeroEditavel" 
+                            class="input-numero" 
+                            min="0" />
+                            
+                        @if (sufixo) { <span>{{ sufixo }}</span> }
+                    }
                 </div>
             }
         </div>
 
-        @if (!editando) {
+        @if (!editando && editavel) {
             <button type="button" class="alteraValor" (click)="iniciarEdicao()">✏️ Editar valor da loja</button>
-        } 
-        @else {
+        }
+        
+        @else if (editando){
             <div class="botoes-edicao">
                 <button type="button" class="botaoSucesso" (click)="salvar()" title="Salvar">✅ Salvar</button>
                 <button type="button" class="botaoCancelar" (click)="cancelar()" title="Cancelar">❌ Cancelar</button>

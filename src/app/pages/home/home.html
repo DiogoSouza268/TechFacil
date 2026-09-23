@@ -88,6 +88,11 @@
                 <div [id]="'card-celular-' + i" class="card-comparativo">
 
                     <div class="celular-img">
+
+                        <button type="button" class="removerBotao" (click)="removerDaComparacao(i)" title="Remover da comparação">
+                            ✕ Remover
+                        </button>
+
                         <img [src]="celular.imagem" [alt]="celular.nome">
                         <h2 class="celular-nome">{{ celular.nome }}</h2>
                         <h3 class="preco-loja">R$ {{ celular.precoMedio | number:'1.2-2' }}</h3>
@@ -98,7 +103,8 @@
                             <app-alterar-info 
                                 label="Armazenamento" 
                                 [valor]="celular.specs.armazenamento"
-                                (valorChange)="celular.specs.armazenamento = $event; recalcularNotas(celular)"
+                                tipoInput="numero"
+                                (valorChange)="atualizarSpec(celular, 'armazenamento', $event)"
                                 (infoClick)="abrirDicionario('armazenamento')">
                             </app-alterar-info>
                         </div>
@@ -107,17 +113,19 @@
                             <app-alterar-info 
                                 label="Memória RAM" 
                                 [valor]="celular.specs.ram"
-                                (valorChange)="celular.specs.ram = $event; recalcularNotas(celular)"
+                                tipoInput="numero"
+                                (valorChange)="atualizarSpec(celular, 'ram', $event)"
                                 (infoClick)="abrirDicionario('ram')">
                             </app-alterar-info>
                         </div>
 
                         <div class="todas-infos">
                             <app-alterar-info 
-                                label="Preço na Loja" 
-                                [valor]="'R$ ' + celular.precoMedio"
-                                [temInfo]="false"
-                                (valorChange)="celular.precoMedio = $event; recalcularNotas(celular)">
+                                label="Processador" 
+                                [valor]="celular.specs.processador"
+                                tipoInput="texto"
+                                (valorChange)="atualizarSpec(celular, 'processador', $event)"
+                                (infoClick)="abrirDicionario('processador')">
                             </app-alterar-info>
                         </div>
                     </div>
@@ -157,8 +165,8 @@
     <section id="melhorOpcao">
             <h4>🏆 Melhor Opção para você</h4>
 
-            @if (listaComparacao.length === 0) {
-                <p>Adicione celulares à comparação para ver qual é o vencedor!</p>
+            @if (listaComparacao.length < 2) {
+                <p>Adicione pelo menos 2 celulares à comparação para ver qual é o vencedor!</p>
             } 
             @else if (filtrosSelecionados.length === 0) {
                 <p>Selecione acima o que você mais valoriza (ex: bateria, câmera) para calcularmos o campeão.</p>
