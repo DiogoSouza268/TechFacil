@@ -56,6 +56,7 @@ export class Home implements OnInit {
     try {
       const resposta = await fetch('/data/celulares.json');
       this.listaCelulares = await resposta.json();
+      this.listaCelulares.forEach(celular => this.recalcularNotas(celular));
     } catch (erro) {
       console.error('Erro ao carregar a lista de celulares:', erro);
     }
@@ -102,7 +103,67 @@ export class Home implements OnInit {
   }
 
   recalcularNotas(celular: Celular): void {
-    console.log('Dados atualizados para o celular:', celular.nome);
+  // Extrai apenas os valores numéricos das especificações
+  const ramNum = this.extrairNumero(celular.specs.ram);
+  const armNum = this.extrairNumero(celular.specs.armazenamento);
+  const batNum = this.extrairNumero(celular.specs.bateria);
+  const telaNum = this.extrairNumero(celular.specs.tela);
+  const preco = celular.precoMedio;
+
+  celular.pontosFortes = {
+    // ⚙️ CALCULADOS AUTOMATICAMENTE (por serem 100% numéricos)
+    // ⚡ NÃO TRAVAR (baseado na RAM):
+    // >= 12GB -> Nota 10 (Excelente para multitarefa/jogos pesados)
+    // >= 8GB  -> Nota 8  (Muito bom)
+    // >= 6GB  -> Nota 6  (Intermediário)
+    // < 6GB   -> Nota 4  (Básico, pode travar com muitos apps)
+    naoTravar: ramNum >= 12 ? 10 : ramNum >= 8 ? 8 : ramNum >= 6 ? 6 : 4,
+
+    // 🔋 BOA BATERIA (baseado na capacidade em mAh):
+    // >= 7000 mAh -> Nota 10 (Super bateria, dura até 2-3 dias)
+    // >= 6000 mAh -> Nota 9  (Duração excelente)
+    // >= 5000 mAh -> Nota 8  (Padrão atual de mercado, dura 1 dia)
+    // < 5000 mAh  -> Nota 6  (Bateria moderada/pequena)
+    boaBateria: batNum >= 7000 ? 10 : batNum >= 6000 ? 9 : batNum >= 5000 ? 8 : 6,
+
+    // 📦 MUITO ESPAÇO (baseado no Armazenamento em GB):
+    // >= 512GB -> Nota 10 (Espaço de sobra para anos)
+    // >= 256GB -> Nota 9  (Ótimo armazenamento)
+    // >= 128GB -> Nota 7  (Suficiente para uso comum)
+    // < 128GB  -> Nota 4  (Pouco espaço, enche rápido)
+    muitoEspaco: armNum >= 512 ? 10 : armNum >= 256 ? 9 : armNum >= 128 ? 7 : 4,
+
+    // 📺 TELA GRANDE (baseado nas polegadas):
+    // >= 6.8" -> Nota 10 (Tela gigante)
+    // >= 6.6" -> Nota 8  (Tela média-grande)
+    // >= 6.4" -> Nota 7  (Tamanho padrão)
+    // < 6.4"  -> Nota 5  (Tela compacta)
+    telaGrande: telaNum >= 6.8 ? 10 : telaNum >= 6.6 ? 8 : telaNum >= 6.4 ? 7 : 5,
+
+    // 💰 PREÇO BAIXO (quanto menor o preço em R$, maior a nota):
+    // Até R$ 800,00   -> Nota 10 (Super em conta)
+    // Até R$ 1200,00  -> Nota 8  (Bom custo-benefício)
+    // Até R$ 2000,00  -> Nota 6  (Preço intermediário)
+    // Até R$ 4000,00  -> Nota 4  (Preço alto)
+    // Acima de R$ 4000 -> Nota 2  (Preço premium/caro)
+    precoBaixo: preco <= 800 ? 10 : preco <= 1200 ? 8 : preco <= 2000 ? 6 : preco <= 4000 ? 4 : 2,
+
+    
+    // 🎯 MANTIDOS DO JSON (para termos textuais/qualitativos)
+    // Pega a nota que você definiu manualmente no JSON (ou usa 7 como padrão se não existir)
+    // 📸 MELHOR CÂMERA:
+    // Mantém o valor que veio do JSON (se houver) ou define 5 como padrão
+    melhorCamera: celular.pontosFortes?.melhorCamera ?? 5
+
+    // Exemplo se quiser adicionar um filtro de jogos/GPU no futuro:
+    // rodarJogos: celular.pontosFortes?.rodarJogos ?? 5
+  };
+}
+
+  private extrairNumero(valor: string | number): number {
+    if (typeof valor === 'number') return valor;
+    const match = String(valor).replace(',', '.').match(/[\d\.]+/);
+    return match ? parseFloat(match[0]) : 0;
   }
 
   atualizarSpec(celular: Celular, chave: keyof Specs, novoValor: string | number): void {
@@ -178,16 +239,26 @@ export class Home implements OnInit {
   }
 
   get celularVencedor(): { celular: Celular; pontos: number; motivos: string[] } | null {
-    if (this.listaComparacao.length < 2) return null;
+
+    if (this.listaComparacao.length < 2 || this.filtrosSelecionados.length === 0) {
+      return null;
+    }
 
     let melhorCelular: Celular | null = null;
     let maiorPontuacao = -1;
 
     for (const celular of this.listaComparacao) {
       const pontuacao = this.calcularPontuacao(celular);
+
       if (pontuacao > maiorPontuacao) {
         maiorPontuacao = pontuacao;
         melhorCelular = celular;
+      }
+
+      else if (pontuacao === maiorPontuacao && melhorCelular) {
+        if (celular.precoMedio < melhorCelular.precoMedio) {
+          melhorCelular = celular;
+        }
       }
     }
 

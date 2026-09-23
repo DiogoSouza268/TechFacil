@@ -12,12 +12,8 @@
             "tela": "6.88 pol"
         },
         "pontosFortes": {
-            "naoTravar": 7,
-            "boaBateria": 8,
-            "melhorCamera": 7,
-            "muitoEspaco": 7,
-            "telaGrande": 8,
-            "precoBaixo": 8
+            "melhorCamera": 7
+  
         }
     },
     {
@@ -33,12 +29,8 @@
             "tela": "6.72 pol"
         },
         "pontosFortes": {
-            "naoTravar": 1,
-            "boaBateria":2,
-            "melhorCamera": 4,
-            "muitoEspaco": 10,
-            "telaGrande": 9,
-            "precoBaixo": 9
+            "melhorCamera": 7
+  
         }
     },
 
@@ -55,12 +47,8 @@
             "tela": "6.9 pol"
         },
         "pontosFortes": {
-            "naoTravar": 1,
-            "boaBateria":2,
-            "melhorCamera": 4,
-            "muitoEspaco": 10,
-            "telaGrande": 9,
-            "precoBaixo": 9
+            "melhorCamera": 7
+  
         }
     },
 
@@ -77,12 +65,8 @@
             "tela": "6.59 pol"
         },
         "pontosFortes": {
-            "naoTravar": 1,
-            "boaBateria":2,
-            "melhorCamera": 4,
-            "muitoEspaco": 10,
-            "telaGrande": 9,
-            "precoBaixo": 9
+            "melhorCamera": 7
+  
         }
     },
 
@@ -99,12 +83,8 @@
             "tela": "6.7 pol"
         },
         "pontosFortes": {
-            "naoTravar": 1,
-            "boaBateria":2,
-            "melhorCamera": 4,
-            "muitoEspaco": 10,
-            "telaGrande": 9,
-            "precoBaixo": 9
+            "melhorCamera": 7
+  
         }
     },
 
@@ -121,12 +101,8 @@
             "tela": "6.7 pol"
         },
         "pontosFortes": {
-            "naoTravar": 1,
-            "boaBateria":2,
-            "melhorCamera": 4,
-            "muitoEspaco": 10,
-            "telaGrande": 9,
-            "precoBaixo": 9
+            "melhorCamera": 7
+  
         }
     },
 
@@ -143,12 +119,8 @@
             "tela": "6.1 pol"
         },
         "pontosFortes": {
-            "naoTravar": 1,
-            "boaBateria":2,
-            "melhorCamera": 4,
-            "muitoEspaco": 10,
-            "telaGrande": 9,
-            "precoBaixo": 9
+            "melhorCamera": 7
+  
         }
     },
 
@@ -165,12 +137,8 @@
             "tela": "6.3 pol"
         },
         "pontosFortes": {
-            "naoTravar": 1,
-            "boaBateria":2,
-            "melhorCamera": 4,
-            "muitoEspaco": 10,
-            "telaGrande": 9,
-            "precoBaixo": 9
+            "melhorCamera": 7
+  
         }
     },
 
@@ -187,12 +155,8 @@
             "tela": "6.6 pol"
         },
         "pontosFortes": {
-            "naoTravar": 1,
-            "boaBateria":2,
-            "melhorCamera": 4,
-            "muitoEspaco": 10,
-            "telaGrande": 9,
-            "precoBaixo": 9
+            "melhorCamera": 7
+  
         }
     },
 
@@ -209,12 +173,8 @@
             "tela": "6.78 pol"
         },
         "pontosFortes": {
-            "naoTravar": 1,
-            "boaBateria":2,
-            "melhorCamera": 4,
-            "muitoEspaco": 10,
-            "telaGrande": 9,
-            "precoBaixo": 9
+            "melhorCamera": 7
+  
         }
     },
 
@@ -231,12 +191,8 @@
             "tela": "6.75 pol LCD (HD+ / 120 Hz)"
         },
         "pontosFortes": {
-            "naoTravar": 1,
-            "boaBateria":2,
-            "melhorCamera": 4,
-            "muitoEspaco": 10,
-            "telaGrande": 9,
-            "precoBaixo": 9
+            "melhorCamera": 7
+  
         }
     },
 
@@ -253,12 +209,8 @@
             "tela": "6.75 pol  LCD (HD+ / 120 Hz)"
         },
         "pontosFortes": {
-            "naoTravar": 1,
-            "boaBateria":2,
-            "melhorCamera": 4,
-            "muitoEspaco": 10,
-            "telaGrande": 9,
-            "precoBaixo": 9
+            "melhorCamera": 7
+  
         }
     },
 
@@ -275,12 +227,8 @@
             "tela": "6,67 polegadas LCD (Frequência de 120 Hz)"
         },
         "pontosFortes": {
-            "naoTravar": 1,
-            "boaBateria":2,
-            "melhorCamera": 4,
-            "muitoEspaco": 10,
-            "telaGrande": 9,
-            "precoBaixo": 9
+            "melhorCamera": 7
+  
         }
     },
 
@@ -297,12 +245,8 @@
             "tela": "6,74 polegadas LCD (Frequência de 90 Hz)"
         },
         "pontosFortes": {
-            "naoTravar": 1,
-            "boaBateria":2,
-            "melhorCamera": 4,
-            "muitoEspaco": 10,
-            "telaGrande": 9,
-            "precoBaixo": 9
+            "melhorCamera": 7
+  
         }
     }
 
