@@ -2,18 +2,21 @@
     background-color: white;
     display: flex;
     justify-content: space-around;
-    padding: 20px 0px;
+    align-items: center;
+    height: 80px;
     margin-top: 20px;
 }
 
-button{
-    border: none;
-}
-
-.botoes{
+a{
+    text-decoration: none;
     display: flex;
     flex-direction: column;
-    padding: 10px;
-    gap: 10px;
-    color: var(--cor-texto);
+    align-items: center;
+    color: black;
 }
+
+a.active {
+    color: var(--verde-primario); 
+    font-weight: bold;
+}
+
