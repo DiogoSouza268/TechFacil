@@ -101,10 +101,7 @@ export class Home implements OnInit {
     console.log('Dados atualizados para o celular:', celular.nome);
   }
 
-  abrirDicionario(termo: string): void {
-    console.log('Abrir explicação para:', termo);
-  }
-
+  
   homeCarosel: CarouselSlide[] = [
     {
       image: "/img/projeto/celulares.jpg",
@@ -196,6 +193,43 @@ export class Home implements OnInit {
       pontos: maiorPontuacao,
       motivos: motivos
     };
+  }
+
+
+  dicionarioTermos: Record<string, { titulo: string; explicacao: string }> = {
+    armazenamento: {
+      titulo: 'Armazenamento',
+      explicacao: 'Pense como uma grande gaveta: quanto maior (128GB, 256GB), MAIS FOTOS, VÍDEOS E APPS CABEM, sem precisar apagar nada.'
+    },
+    ram: {
+      titulo: 'Memória RAM',
+      explicacao: 'É a memória de trabalho. Quanto maior a RAM (4GB, 8GB, 12GB), mais aplicativos você consegue abrir ao mesmo tempo sem o celular travar ou fechar sozinho.'
+    },
+    bateria: {
+      titulo: 'Bateria',
+      explicacao: 'Medida em mAh. Quanto maior o número (ex: 5000 mAh), mais tempo o celular dura longe da tomada durante o dia.'
+    },
+    processador: {
+      titulo: 'Processador',
+      explicacao: 'É o "cérebro" do celular. Um processador bom faz os jogos rodarem lisinhos e os aplicativos abrirem instantaneamente.'
+    }
+  };
+
+  termoExibido: { titulo: string; explicacao: string } | null = null;
+
+  abrirDicionario(termoKey: string): void {
+    if (this.dicionarioTermos[termoKey]) {
+      this.termoExibido = this.dicionarioTermos[termoKey];
+      
+      const elemento = document.getElementById('infoFacil');
+      if (elemento) {
+        elemento.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+  }
+
+  fecharDicionario(): void {
+    this.termoExibido = null;
   }
 
 }

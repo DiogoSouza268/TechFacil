@@ -153,16 +153,35 @@
 
     <section id="infoFacil">
 
-        <p><span style="color: aqua; padding-right: 10px;">&#x1F6C8;</span>Armazenamento</p>
+        @if (termoExibido) {
+            <!-- Exibido quando o usuário clica em algum ícone ℹ️ -->
+            <p>
+                <span style="color: aqua; padding-right: 10px;">ℹ️</span>
+                <strong>{{ termoExibido.titulo }}</strong>
+            </p>
 
-        <p style="text-align: justify;">Pense como uma grande gaveta: quanto maior (128GB , 256GB) MAIS FOTOS VIDEOS E APP CABEM, SEM PRECISAR APAGAR NADA</p>
+            <p style="text-align: justify;">
+                {{ termoExibido.explicacao }}
+            </p>
 
-        <button class="input-botao" style="margin-top: 0px;">Entendi</button>
+            <button 
+                class="input-botao" 
+                style="margin-top: 0px;" 
+                (click)="fecharDicionario()">
+                Entendi
+            </button>
+        } 
+        @else {
+            <!-- Mensagem padrão quando nenhum ícone foi clicado -->
+            <p>
+                <span style="color: aqua; padding-right: 10px;">ℹ️</span>
+                Aperte no símbolo ℹ️ para conhecer mais sobre aquela informação.
+            </p>
+        }
 
     </section>
 
     
-
 </main>
 
 <footer>
