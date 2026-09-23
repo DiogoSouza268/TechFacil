@@ -35,58 +35,95 @@
     <section id="comparando">
 
         <section>
-            <div id="inputes">
+            <div id="inputes" style="position: relative;">
                 <span style="font-size: 30px;">&#x2315;</span>
-                <input type="text" id="busca" name="busca-celular" placeholder="Digite o celular que você viu na loja...">
+                
+                <input 
+                    type="text" 
+                    id="busca" 
+                    name="busca-celular" 
+                    placeholder="Digite o celular que você viu na loja..."
+                    [(ngModel)]="termoBusca"
+                    autocomplete="off">
+
+                @if (sugestoesBusca.length > 0 && termoBusca !== celularSelecionado?.nome) {
+                    <ul class="lista-sugestoes">
+                        @for (sugestao of sugestoesBusca; track sugestao.id) {
+                            <li (click)="selecionarSugestao(sugestao)">
+                                <img [src]="sugestao.imagem" [alt]="sugestao.nome" width="30">
+                                <span>{{ sugestao.nome }}</span>
+                            </li>
+                        }
+                    </ul>
+                }
             </div>
-            <button class="input-botao">Adicionar a Comparação</button>
+
+            <button class="input-botao" (click)="adicionarAComparacao()">Adicionar a Comparação</button>
+
             <div id="celulares">
-                <p>Comparando:</p>
-                <button class="num-comparacao">1</button>
-                <button class="num-comparacao">2</button>
-                <button class="num-comparacao">3</button>
+                <p>Comparando ({{ listaComparacao.length }}/3):</p>
+                
+                <button class="num-comparacao" [class.ativo]="listaComparacao[0]" (click)="irParaCelular(0)">
+                    1
+                </button>
+
+                <button class="num-comparacao" [class.ativo]="listaComparacao[1]" (click)="irParaCelular(1)">
+                    2
+                </button>
+
+                <button class="num-comparacao" [class.ativo]="listaComparacao[2]" (click)="irParaCelular(2)">
+                    3
+                </button>
+
             </div>
         </section>
 
         <section id="aparelhoCelular">
-            @for (celular of listaCelulares; track celular.id) {
+            @if (listaComparacao.length === 0) {
+                <p class="mensagem-vazia">Nenhum celular adicionado para comparar ainda. Busque e adicione acima!</p>
+            } 
 
-                <div id="celularImg">
-                    <img [src]="celular.imagem" [alt]="celular.nome">
-                    <h2 id="celularNome">{{ celular.nome }}</h2>
-                    <h3 id="precoLoja">R$ {{ celular.precoMedio | number:'1.2-2' }}</h3>
+            @for (celular of listaComparacao; track celular.id; let i = $index) {
+                <div class="card-comparativo">
+
+                    <div [id]="'card-celular-' + i" class="card-comparativo">
+
+                    </div>
+                    <div class="celular-img">
+                        <img [src]="celular.imagem" [alt]="celular.nome">
+                        <h2 class="celular-nome">{{ celular.nome }}</h2>
+                        <h3 class="preco-loja">R$ {{ celular.precoMedio | number:'1.2-2' }}</h3>
+                    </div>
+
+                    <div class="info">
+                        <div class="todas-infos">
+                            <app-alterar-info 
+                                label="Armazenamento" 
+                                [valor]="celular.specs.armazenamento"
+                                (valorChange)="celular.specs.armazenamento = $event; recalcularNotas(celular)"
+                                (infoClick)="abrirDicionario('armazenamento')">
+                            </app-alterar-info>
+                        </div>
+
+                        <div class="todas-infos">
+                            <app-alterar-info 
+                                label="Memória RAM" 
+                                [valor]="celular.specs.ram"
+                                (valorChange)="celular.specs.ram = $event; recalcularNotas(celular)"
+                                (infoClick)="abrirDicionario('ram')">
+                            </app-alterar-info>
+                        </div>
+
+                        <div class="todas-infos">
+                            <app-alterar-info 
+                                label="Preço na Loja" 
+                                [valor]="'R$ ' + celular.precoMedio"
+                                [temInfo]="false"
+                                (valorChange)="celular.precoMedio = $event; recalcularNotas(celular)">
+                            </app-alterar-info>
+                        </div>
+                    </div>
                 </div>
-
-                <div id="info">
-
-                    <div class="todas-infos" >
-                        <app-alterar-info 
-                            label="Armazenamento" 
-                            [valor]="celular.specs.armazenamento"
-                            (valorChange)="celular.specs.armazenamento = $event; recalcularNotas(celular)"
-                            (infoClick)="abrirDicionario('armazenamento')">
-                        </app-alterar-info>
-                    </div>
-
-                    <div class="todas-infos" >
-                        <app-alterar-info 
-                            label="Preço na Loja" 
-                            [valor]="'R$ ' + celular.precoMedio"
-                            [temInfo]="false"
-                            (valorChange)="celular.precoMedio = $event; recalcularNotas(celular)">
-                        </app-alterar-info>
-                    </div>
-
-                    <div class="todas-infos" >
-                        <app-alterar-info 
-                            label="Preço na Loja" 
-                            [valor]="'R$ ' + celular.precoMedio"
-                            [temInfo]="false"
-                            (valorChange)="celular.precoMedio = $event; recalcularNotas(celular)">
-                        </app-alterar-info>
-                    </div>
-                </div>
-
             }
         </section>
 
