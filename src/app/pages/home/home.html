@@ -85,11 +85,8 @@
             } 
 
             @for (celular of listaComparacao; track celular.id; let i = $index) {
-                <div class="card-comparativo">
+                <div [id]="'card-celular-' + i" class="card-comparativo">
 
-                    <div [id]="'card-celular-' + i" class="card-comparativo">
-
-                    </div>
                     <div class="celular-img">
                         <img [src]="celular.imagem" [alt]="celular.nome">
                         <h2 class="celular-nome">{{ celular.nome }}</h2>
