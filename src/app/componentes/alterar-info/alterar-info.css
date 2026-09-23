@@ -3,4 +3,39 @@
     align-items: center;
     gap: 8px;
     margin-bottom: 8px;
+    width: 100%;
+    font-size: 0.9em;
+}
+
+.informacao{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    padding: 10px;
+    margin: 10px 0px 0px 0px;
+}
+
+.infoSpec{
+    display: flex;
+    justify-content: space-around;
+}
+
+.spec{
+    display: flex;
+    gap: 5px;
+}
+
+.alteraValor{
+    background-color: var(--verde-primario);
+    padding: 5px;
+    color: white;
+    border-radius: 15px;
+    border: 1px solid var(--verde-primario);
+    font-weight: bolder;
+}
+
+.info{
+    border: none;
+    text-align: center;
 }

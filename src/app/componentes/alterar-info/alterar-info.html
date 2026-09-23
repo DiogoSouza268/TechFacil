@@ -1,14 +1,20 @@
 <div id="main">
-    <span style="font-weight: bolder;">{{label}}</span>
+    
 
     @if (!editando) {
-        <span>{{ valor }}</span>
-        
-        @if (temInfo) {
-            <button type="button" (click)="infoClick.emit()" title="Explicação do termo">&#8505;</button>
-        }
-
-        <button type="button" class="alteraValor" (click)="iniciarEdicao()" title="Editar valor da loja">✏️</button>
+        <div class="informacao">
+            <div class="infoSpec">
+                <div class="spec">
+                    <span style="font-weight: bolder;">{{label}}</span>
+                     @if (temInfo) {
+                        <button type="button" (click)="infoClick.emit()" class="info" title="Explicação do termo">ℹ️</button>
+                    }
+                </div>
+                <span>{{ valor }}</span>
+            </div>
+            
+            <button type="button" class="alteraValor" (click)="iniciarEdicao()">✏️ Editar valor da loja</button>
+        </div>
     }
 
     @else {
