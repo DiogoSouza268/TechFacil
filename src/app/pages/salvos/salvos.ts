@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Menu } from '../../componentes/menu/menu';
 import { AvisoLogin } from '../../componentes/aviso-login/aviso-login';
 import { Auth, Usuario } from '../../services/auth';
@@ -9,7 +9,7 @@ import { Comparacoes, Comparacao } from '../../services/comparacoes';
 @Component({
   selector: 'app-salvos',
   standalone: true,
-  imports: [CommonModule, Menu, AvisoLogin, RouterLink],
+  imports: [CommonModule, Menu, AvisoLogin],
   templateUrl: './salvos.html',
   styleUrl: './salvos.css'
 })

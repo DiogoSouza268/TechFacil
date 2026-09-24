@@ -1,5 +1,4 @@
 <header>
-    <button>&#x1F868;</button>
     <div>
         <h2>Seu Perfil</h2>
         <p>Seus dados estão logo abaixo</p>
@@ -7,30 +6,41 @@
 </header>
 
 <main>
-    <form autocomplete="off">
+    <!-- CASO 1: Usuário NÃO está logado -->
+    @if (!estaLogado) {
+        <app-aviso-login></app-aviso-login>
+    }
 
-        <label for="nome-completo" style="padding-top: 15px;">Nome Completo</label>
-        <div class="inputes">
-            <span>&#128100;</span>
-            <input type="text" id="nome-completo" name="nome-completo" required placeholder="Digite seu nome completo">
+    <!-- CASO 2: Usuário está logado -->
+    @else {
+        <form (ngSubmit)="atualizarDados()" autocomplete="off">
+
+            <label for="nome-completo" style="padding-top: 15px;">Nome Completo</label>
+            <div class="inputes">
+                <span>&#128100;</span>
+                <input type="text" id="nome-completo" name="nomeCompleto" [(ngModel)]="nome" required placeholder="Digite seu nome completo">
+            </div>
+
+            <label for="email" style="padding-top: 15px;">E-mail</label>
+            <div class="inputes">
+                <span>&#x1F4E7;</span>
+                <input type="email" id="email" name="email" [(ngModel)]="email" required placeholder="Digite seu email">
+            </div>
+            
+            <label for="password" style="padding-top: 15px;">Senha</label>
+            <div class="inputes">
+                <span>&#x1F512;</span>
+                <input type="password" id="password" maxlength="8" name="password" [(ngModel)]="senha" required placeholder="Digite sua senha">
+            </div>
+
+            <button type="submit" class="btn-atualizar">Atualizar dados &#x2192;</button>
+        </form>
+
+        <div class="acoes-conta">
+            <button type="button" class="btn-logout" (click)="logout()">Sair da Conta 🚪</button>
+            <button type="button" class="btn-excluir" (click)="excluirConta()">Excluir Conta &#x26A0;</button>
         </div>
-
-        <label for="email" style="padding-top: 15px;">E-mail</label>
-        <div class="inputes">
-            <span>&#x1F4E7;</span>
-            <input type="email" id="email" name="email" required placeholder="Digite seu email">
-        </div>
-        
-        <label for="password" style="padding-top: 15px;" >Senha</label>
-        <div class="inputes">
-            <span>&#x1F512;</span>
-            <input type="password" id="password" maxlength="8" name="password" required placeholder="Digite sua senha">
-        </div>
-
-    </form>
-
-    <button>Atualizar dados &#x2192;</button>
-    <button style="background-color: red; color: bla;">Excluir Conta &#x26A0;</button>
+    }
 </main>
 
 <footer>

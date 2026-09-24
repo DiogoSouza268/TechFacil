@@ -31,4 +31,21 @@ export class Auth {
   logout(): void {
     localStorage.removeItem('usuario_logado');
   }
+
+  // 🔴 NOVO MÉTODOS PARA DELETAR A CONTA E OS DADOS VINCULADOS
+  excluirConta(id: number): void {
+    // 1. Apaga apenas a gaveta de salvos deste usuário específico
+    localStorage.removeItem(`salvos_${id}`);
+
+    // 2. Remove o usuário da lista geral de cadastrados (se houver)
+    const usuariosSalvos = localStorage.getItem('usuarios_cadastrados');
+    if (usuariosSalvos) {
+      const lista: Usuario[] = JSON.parse(usuariosSalvos);
+      const listaAtualizada = lista.filter(u => u.id !== id);
+      localStorage.setItem('usuarios_cadastrados', JSON.stringify(listaAtualizada));
+    }
+
+    // 3. Apaga a sessão atual (logout)
+    this.logout();
+  }
 }
