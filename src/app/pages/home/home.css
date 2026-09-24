@@ -22,17 +22,6 @@ header{
     width: 50px;
 }
 
-#Usuario{
-    background-color: var(--verde-primario);
-    height: 50px;
-    width: 50px;
-    border-radius: 50%;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 main{
     display: flex;
     flex-direction: column;

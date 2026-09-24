@@ -3,13 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Menu } from '../../componentes/menu/menu';
-import { AvisoLogin } from '../../componentes/aviso-login/aviso-login';
 import { Auth, Usuario } from '../../services/auth';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, Menu, AvisoLogin],
+  imports: [CommonModule, FormsModule, Menu],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css'
 })
@@ -71,4 +70,5 @@ export class Perfil implements OnInit {
       }
     }
   }
+
 }
