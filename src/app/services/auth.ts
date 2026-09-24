@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 
-// 1. Exporta a interface para o 'salvos.ts' conseguir importar
 export interface Usuario {
   id: number;
   nome: string;
   email: string;
+  senha?: string;
 }
 
 @Injectable({
@@ -12,40 +12,77 @@ export interface Usuario {
 })
 export class Auth {
 
-  // 2. Método que verifica se existe uma sessão ativa no localStorage
   usuarioLogado(): boolean {
     return !!localStorage.getItem('usuario_logado');
   }
 
-  // 3. Método que devolve os dados do utilizador logado
   getUsuario(): Usuario | null {
     const userStr = localStorage.getItem('usuario_logado');
     return userStr ? JSON.parse(userStr) : null;
   }
 
-  // Métodos auxiliares para quando implementar a ecrã de login/logout:
+  // Devolve a lista de todos os usuários cadastrados
+  getUsuariosCadastrados(): Usuario[] {
+    const usuarios = localStorage.getItem('usuarios_cadastrados');
+    return usuarios ? JSON.parse(usuarios) : [];
+  }
+
+  // Cadastra um novo usuário no localStorage
+  cadastrar(novoUsuario: Omit<Usuario, 'id'>): boolean {
+    const usuarios = this.getUsuariosCadastrados();
+    
+    // Verifica se já existe uma conta com esse e-mail
+    const jaExiste = usuarios.some(u => u.email.toLowerCase() === novoUsuario.email.toLowerCase());
+    if (jaExiste) return false;
+
+    const usuarioComId: Usuario = {
+      ...novoUsuario,
+      id: Date.now() // Gera um ID único baseado no timestamp
+    };
+
+    usuarios.push(usuarioComId);
+    localStorage.setItem('usuarios_cadastrados', JSON.stringify(usuarios));
+    
+    // Já loga automaticamente o usuário após o cadastro
+    this.iniciarSessao(usuarioComId);
+    return true;
+  }
+
+  // Autentica o e-mail e senha
+  autenticar(email: string, senha: string): Usuario | null {
+    const usuarios = this.getUsuariosCadastrados();
+    const usuario = usuarios.find(
+      u => u.email.toLowerCase() === email.toLowerCase() && u.senha === senha
+    );
+
+    if (usuario) {
+      this.iniciarSessao(usuario);
+      return usuario;
+    }
+    return null;
+  }
+
+  iniciarSessao(usuario: Usuario): void {
+    // Salva na sessão ignorando o campo da senha por segurança
+    const { senha, ...usuarioSemSenha } = usuario;
+    localStorage.setItem('usuario_logado', JSON.stringify(usuarioSemSenha));
+  }
+
   login(usuario: Usuario): void {
-    localStorage.setItem('usuario_logado', JSON.stringify(usuario));
+    this.iniciarSessao(usuario);
   }
 
   logout(): void {
     localStorage.removeItem('usuario_logado');
   }
 
-  // 🔴 NOVO MÉTODOS PARA DELETAR A CONTA E OS DADOS VINCULADOS
   excluirConta(id: number): void {
-    // 1. Apaga apenas a gaveta de salvos deste usuário específico
     localStorage.removeItem(`salvos_${id}`);
 
-    // 2. Remove o usuário da lista geral de cadastrados (se houver)
-    const usuariosSalvos = localStorage.getItem('usuarios_cadastrados');
-    if (usuariosSalvos) {
-      const lista: Usuario[] = JSON.parse(usuariosSalvos);
-      const listaAtualizada = lista.filter(u => u.id !== id);
-      localStorage.setItem('usuarios_cadastrados', JSON.stringify(listaAtualizada));
-    }
+    const usuarios = this.getUsuariosCadastrados();
+    const listaAtualizada = usuarios.filter(u => u.id !== id);
+    localStorage.setItem('usuarios_cadastrados', JSON.stringify(listaAtualizada));
 
-    // 3. Apaga a sessão atual (logout)
     this.logout();
   }
 }
