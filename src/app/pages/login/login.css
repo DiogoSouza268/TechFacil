@@ -25,6 +25,18 @@ main{
     flex: 1;
 }
 
+.banner-aviso {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    font-size: 13px;
+    text-align: center;
+    font-weight: 500;
+}
+
 #main-txt{
     padding-top: 25px;
     font-size: 14px;

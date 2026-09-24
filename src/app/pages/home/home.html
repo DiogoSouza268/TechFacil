@@ -180,7 +180,17 @@
                 </p>
             }
 
-            <button id="salvarCompa" [disabled]="listaComparacao.length === 0">Salvar Comparação</button>
+            <button id="salvarCompa" [disabled]="listaComparacao.length === 0" (click)="salvarComparacao()">Salvar Comparação</button>
+
+            @if (exibirAvisoModal) {
+                <div class="modal-overlay" (click)="fecharModal()">
+                    <div class="modal-card" (click)="$event.stopPropagation()">
+                        <button type="button" class="btn-fechar" (click)="fecharModal()">✕</button>
+                        
+                        <app-aviso-login></app-aviso-login>
+                    </div>
+                </div>
+            }
         </section>
 
     

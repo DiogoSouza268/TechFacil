@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Menu } from '../../componentes/menu/menu';
 import { FormsModule } from '@angular/forms';
 import { CarouselSlide , Carrosel} from '../../componentes/carrosel/carrosel';
 import { CommonModule } from '@angular/common';
 import { AlterarInfoComponent } from '../../componentes/alterar-info/alterar-info';
-
+import { AvisoLogin } from '../../componentes/aviso-login/aviso-login'; 
+import { Auth } from '../../services/auth';
 
 export interface Specs {
   armazenamento: string;
@@ -35,12 +36,31 @@ export interface Celular {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [Menu, Carrosel, CommonModule, AlterarInfoComponent, FormsModule],
+  imports: [Menu, Carrosel, CommonModule, AlterarInfoComponent, FormsModule, AvisoLogin],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
 
 export class Home implements OnInit {
+
+  authService = inject(Auth);
+
+  exibirAvisoModal: boolean = false;
+
+  salvarComparacao(): void {
+    if (this.authService.usuarioLogado()) {
+      const usuario = this.authService.getUsuario();
+      
+      alert('Comparação salva com sucesso!');
+    } 
+    else {
+      this.exibirAvisoModal = true;
+    }
+  }
+
+  fecharModal(): void {
+    this.exibirAvisoModal = false;
+  }
 
   listaCelulares: Celular[] = [];
   listaComparacao: Celular[] = [];

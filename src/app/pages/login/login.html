@@ -5,6 +5,13 @@
 </header>
 
 <main>
+
+    @if (mensagemAviso) {
+        <div class="banner-aviso">
+            {{ mensagemAviso }}
+        </div>
+    }
+    
     <section id="main-txt">
         <h2>Entrar na sua conta</h2>
         <p>Acesse para salvar suas preferências</p>
@@ -28,7 +35,6 @@
     </form>
 
     <section id="main-txt2">
-        <a href="javascript:void(0)" (click)="esqueciSenha()">Esqueci minha senha</a>
         <p>Novo por aqui? <a routerLink="/cadastrar">Crie sua conta agora</a></p>
     </section>
 </main>

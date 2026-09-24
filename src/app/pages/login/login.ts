@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { Auth } from '../../services/auth';
 
 @Component({
@@ -11,12 +11,22 @@ import { Auth } from '../../services/auth';
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
-export class Login {
+export class Login implements OnInit {
   authService = inject(Auth);
   router = inject(Router);
+  route = inject(ActivatedRoute);
 
   email: string = '';
   senha: string = '';
+  mensagemAviso: string = '';
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['aviso'] === 'necessario-login') {
+        this.mensagemAviso = '🔒 Você precisa logar ou criar uma conta para acessar essa página!';
+      }
+    });
+  }
 
   fazerLogin(): void {
     if (!this.email.trim() || !this.senha.trim()) {
@@ -34,7 +44,5 @@ export class Login {
     }
   }
 
-  esqueciSenha(): void {
-    alert('Em breve! A recuperação de senha estará disponível em atualizações futuras.');
-  }
+  
 }
