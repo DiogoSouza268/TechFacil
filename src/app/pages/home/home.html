@@ -157,17 +157,6 @@
                             </app-alterar-info>
                         </div>
 
-                        <!-- 7. NÃO EDITÁVEL: Conectividade 5G -->
-                        <div class="todas-infos">
-                            <app-alterar-info 
-                                label="Conectividade 5G" 
-                                [valor]="celular.specs.cincoG"
-                                [editavel]="false"
-                                tipoInput="texto"
-                                (infoClick)="abrirDicionario('cincoG')">
-                            </app-alterar-info>
-                        </div>
-
                         <!-- 8. NÃO EDITÁVEL: Câmeras (se existir nas specs) -->
                         @if (celular.specs.camera) {
                             <div class="todas-infos">

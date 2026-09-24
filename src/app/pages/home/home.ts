@@ -14,21 +14,19 @@ export interface Specs {
   processador: string;
   gpu: string;
   qualidadeImagem: string;
-  cincoG: string;
   camera?: string;
   imagem?: string;
 }
 
 export interface PontosFortes {
-  naoTravar: number;         // Memória RAM
-  muitoEspaco: number;       // Armazenamento
-  placaVideo: number;        // GPU
-  qualidadeImagem: number;   // Tela / Imagem
-  boaBateria: number;        // Bateria
-  processadorCPU: number;    // Processador
-  cincoG: number;            // Conectividade 5G
-  melhorCamera: number;      // Câmeras
-  precoBaixo?: number;       // Custo-benefício
+  naoTravar: number;         
+  muitoEspaco: number;       
+  placaVideo: number;        
+  qualidadeImagem: number;   
+  boaBateria: number;        
+  processadorCPU: number;    
+  melhorCamera: number;     
+  precoBaixo?: number;       
 }
 
 export interface Celular {
@@ -65,7 +63,6 @@ export class Home implements OnInit {
     { key: 'qualidadeImagem', label: '📺 Qualidade de imagem' },
     { key: 'boaBateria', label: '🔋 Bateria' },
     { key: 'processadorCPU', label: '🧠 Processador' },
-    { key: 'cincoG', label: '🚀 Conexão 5G' },
     { key: 'melhorCamera', label: '📸 Qualidade das Câmeras' },
     { key: 'precoBaixo', label: '💰 Preço baixo' }
   ];
@@ -97,10 +94,6 @@ export class Home implements OnInit {
     processador: {
       titulo: 'Processador',
       explicacao: 'É o cérebro do celular. Um processador bom faz os jogos rodarem lisinhos e os aplicativos abrirem instantaneamente.'
-    },
-    cincoG: {
-      titulo: 'Conexão 5G',
-      explicacao: 'É a internet móvel super-rápida. Com 5G, você baixa arquivos gigantes em segundos e joga online sem lag. Sem ele, você navega na rede 4G tradicional.'
     },
     camera: {
       titulo: 'Qualidade das Câmeras',
@@ -144,7 +137,6 @@ export class Home implements OnInit {
     const armNum = this.extrairNumero(celular.specs.armazenamento);
     const batNum = this.extrairNumero(celular.specs.bateria);
     const preco = celular.precoMedio;
-    const tem5G = String(celular.specs.cincoG).toLowerCase().includes('sim');
 
     celular.pontosFortes = {
       // Calculados automaticamente
@@ -152,7 +144,6 @@ export class Home implements OnInit {
       muitoEspaco: armNum >= 512 ? 10 : armNum >= 256 ? 9 : armNum >= 128 ? 7 : 4,
       boaBateria: batNum >= 7000 ? 10 : batNum >= 6000 ? 9 : batNum >= 5000 ? 8 : 6,
       precoBaixo: preco <= 800 ? 10 : preco <= 1200 ? 8 : preco <= 2000 ? 6 : preco <= 4000 ? 4 : 2,
-      cincoG: tem5G ? 10 : 3,
 
       // Lidos diretamente do JSON
       placaVideo: celular.pontosFortes?.placaVideo ?? 5,

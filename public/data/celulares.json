@@ -11,7 +11,6 @@
       "processador": "Helio G81 Extreme MediaTek",
       "gpu": "Mali-G52 MP2",
       "qualidadeImagem": "6.88 pol IPS LCD (HD+ / 90Hz)",
-      "cincoG": "Não",
       "camera": "50 MP + 2 MP"
     },
     "pontosFortes": {
@@ -33,7 +32,6 @@
       "processador": "Helio G81 Extreme MediaTek",
       "gpu": "Mali-G52 MP2",
       "qualidadeImagem": "6.72 pol IPS LCD (FHD+ / 90Hz)",
-      "cincoG": "Não",
       "camera": "50 MP + 2 MP"
     },
     "pontosFortes": {
@@ -55,7 +53,6 @@
       "processador": "Snapdragon 685 Qualcomm SM6225-AD",
       "gpu": "Adreno 610",
       "qualidadeImagem": "6.9 pol IPS LCD (FHD+ / 120Hz)",
-      "cincoG": "Não",
       "camera": "50 MP + 2 MP"
     },
     "pontosFortes": {
@@ -77,7 +74,6 @@
       "processador": "MediaTek Dimensity 8500 Ultra (4 nm)",
       "gpu": "Mali-G615 MC6",
       "qualidadeImagem": "6.59 pol AMOLED (1.5K / 120Hz)",
-      "cincoG": "Sim",
       "camera": "64 MP (OIS) + 8 MP + 2 MP"
     },
     "pontosFortes": {
@@ -99,7 +95,6 @@
       "processador": "MediaTek Helio G85",
       "gpu": "Mali-G52 MC2",
       "qualidadeImagem": "6.7 pol PLS LCD (HD+ / 60Hz)",
-      "cincoG": "Não",
       "camera": "50 MP + 2 MP"
     },
     "pontosFortes": {
@@ -121,7 +116,6 @@
       "processador": "MediaTek Helio G99",
       "gpu": "Mali-G57 MC2",
       "qualidadeImagem": "6.7 pol PLS LCD (HD+ / 90Hz)",
-      "cincoG": "Não",
       "camera": "50 MP + 2 MP"
     },
     "pontosFortes": {
@@ -143,7 +137,6 @@
       "processador": "Apple A18",
       "gpu": "Apple GPU 5-Core",
       "qualidadeImagem": "6.1 pol Super Retina XDR OLED",
-      "cincoG": "Sim",
       "camera": "48 MP (OIS) + 12 MP Ultrawide"
     },
     "pontosFortes": {
@@ -165,7 +158,6 @@
       "processador": "Apple A19",
       "gpu": "Apple GPU 6-Core",
       "qualidadeImagem": "6.3 pol Super Retina XDR OLED (120Hz)",
-      "cincoG": "Sim",
       "camera": "48 MP (OIS) + 48 MP Ultrawide"
     },
     "pontosFortes": {
@@ -187,7 +179,6 @@
       "processador": "Unisoc T606",
       "gpu": "Mali-G57 MP1",
       "qualidadeImagem": "6.6 pol IPS LCD (HD+ / 90Hz)",
-      "cincoG": "Não",
       "camera": "50 MP"
     },
     "pontosFortes": {
@@ -209,7 +200,6 @@
       "processador": "MediaTek Helio G100",
       "gpu": "Mali-G57 MC2",
       "qualidadeImagem": "6.78 pol AMOLED (FHD+ / 120Hz)",
-      "cincoG": "Não",
       "camera": "50 MP + 2 MP"
     },
     "pontosFortes": {
@@ -231,7 +221,6 @@
       "processador": "Qualcomm Snapdragon 685",
       "gpu": "Adreno 610",
       "qualidadeImagem": "6.75 pol LCD (HD+ / 120 Hz)",
-      "cincoG": "Não",
       "camera": "50 MP + 2 MP"
     },
     "pontosFortes": {
@@ -253,7 +242,6 @@
       "processador": "Qualcomm Snapdragon 685",
       "gpu": "Adreno 610",
       "qualidadeImagem": "6.75 pol LCD (HD+ / 120 Hz)",
-      "cincoG": "Não",
       "camera": "50 MP + 2 MP"
     },
     "pontosFortes": {
@@ -275,7 +263,6 @@
       "processador": "Unisoc T7250",
       "gpu": "Mali-G57",
       "qualidadeImagem": "6.67 pol LCD (FHD+ / 120 Hz)",
-      "cincoG": "Sim",
       "camera": "50 MP"
     },
     "pontosFortes": {
@@ -297,7 +284,6 @@
       "processador": "Unisoc T612",
       "gpu": "Mali-G57",
       "qualidadeImagem": "6.74 pol LCD (HD+ / 90 Hz)",
-      "cincoG": "Não",
       "camera": "32 MP"
     },
     "pontosFortes": {
