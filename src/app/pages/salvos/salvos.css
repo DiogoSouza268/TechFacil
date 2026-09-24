@@ -7,86 +7,167 @@
 
 header {
     background-color: white;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px 0px 20px 20px;
+    padding: 20px;
     font-size: 14px;
 }
 
 main {
-    margin: 20px 20px 0px 20px;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
     flex: 1;
+    padding: 20px;
 }
 
-.celularSalvo {
-    background-color: white;
+.sem-salvos {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.btn-home {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 12px 24px;
+    background-color: var(--verde-primario, #27ae60);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.lista-salvos {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    border: 1px solid var(--cor-borda-inputs);
-    border-radius: 20px;
-    padding: 20px 20px;
-    margin-bottom: 20px;
 }
 
-.celularesInfos {
+.card-salvo {
+    background-color: white;
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid var(--cor-borda-inputs, #e0e0e0);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.topo-card {
     display: flex;
-    gap: 10px;
-    overflow-x: auto;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 8px;
 }
 
-.celularSalvoImg {
+.data {
+    font-size: 12px;
+    color: #666;
+}
+
+.btn-excluir {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.filtros-usados {
+    margin-bottom: 12px;
+}
+
+.filtros-usados small {
+    color: #777;
+    font-size: 11px;
+}
+
+.tags-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.tag {
+    background-color: #f0f4f8;
+    color: #334e68;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.bloco-vencedor {
+    background: linear-gradient(135deg, #fff9e6 0%, #fffaed 100%);
+    border: 1px solid #ffe58f;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 15px;
+}
+
+.vencedor-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.trofeu {
+    font-size: 24px;
+}
+
+.vencedor-header h4 {
+    margin: 0;
+    font-size: 14px;
+    color: #b78103;
+}
+
+.pontos {
+    margin: 2px 0 0 0;
+    font-size: 11px;
+    color: #8c6300;
+}
+
+.motivos {
+    margin: 8px 0 0 0;
+    font-size: 11px;
+    color: #555;
+}
+
+.celulares-grid {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-top: 5px;
+}
+
+.item-celular {
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
-    gap: 5px;
-    flex: 1;
+    min-width: 90px;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid transparent;
 }
 
-.celularSalvoImg img {
-    width: 50px;
-    height: 50px;
+.item-celular.is-vencedor {
+    border-color: #ffe58f;
+    background-color: #fffdf5;
+}
+
+.item-celular img {
+    height: 70px;
+    width: auto;
     object-fit: contain;
 }
 
-.celularBotoes {
-    display: flex;
-    gap: 10px;
-}
-
-.rever {
-    flex: 1;
-    padding: 13px;
-    border-radius: 10px;
-    border: 1px solid var(--verde-primario);
-    color: white;
-    background-color: var(--verde-primario);
-    font-weight: bolder;
-    cursor: pointer;
-}
-
-button {
-    padding: 13px;
-    border-radius: 10px;
-    border: 1px solid var(--cor-borda-inputs);
-    background-color: white;
-    cursor: pointer;
-}
-
-.estado-vazio {
-    background-color: white;
-    padding: 30px;
-    border-radius: 20px;
+.nome-celular {
+    font-size: 12px;
+    font-weight: bold;
     text-align: center;
-    border: 1px solid var(--cor-borda-inputs);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
+    margin-top: 5px;
+}
+
+.preco {
+    font-size: 11px;
+    color: var(--verde-primario, #27ae60);
 }

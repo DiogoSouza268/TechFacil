@@ -48,10 +48,44 @@ export class Home implements OnInit {
   exibirAvisoModal: boolean = false;
 
   salvarComparacao(): void {
+    if (this.listaComparacao.length < 2) {
+      alert('Adicione pelo menos 2 celulares para salvar uma comparação!');
+      return;
+    }
+
+    if (this.filtrosSelecionados.length === 0) {
+      alert('Selecione pelo menos um filtro de preferência para definir o vencedor antes de salvar!');
+      return;
+    }
+
     if (this.authService.usuarioLogado()) {
       const usuario = this.authService.getUsuario();
-      
-      alert('Comparação salva com sucesso!');
+
+      if (usuario) {
+        const chave = `salvos_${usuario.id}`;
+        const salvosAnteriores = JSON.parse(localStorage.getItem(chave) || '[]');
+        const vencedorObj = this.celularVencedor;
+
+        const novaComparacao = {
+          id: Date.now(),
+          data: new Date().toLocaleDateString('pt-BR'),
+          celulares: [...this.listaComparacao],
+          filtros: this.filtros
+            .filter(f => this.filtrosSelecionados.includes(f.key))
+            .map(f => f.label),
+          vencedor: vencedorObj ? {
+            nome: vencedorObj.celular.nome,
+            imagem: vencedorObj.celular.imagem,
+            pontos: vencedorObj.pontos,
+            motivos: vencedorObj.motivos
+          } : null
+        };
+
+        salvosAnteriores.push(novaComparacao);
+        localStorage.setItem(chave, JSON.stringify(salvosAnteriores));
+
+        alert('Comparação com vencedor salva com sucesso!');
+      }
     } 
     else {
       this.exibirAvisoModal = true;

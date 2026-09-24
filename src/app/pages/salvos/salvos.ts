@@ -1,53 +1,59 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { Auth } from '../../services/auth';
 import { Menu } from '../../componentes/menu/menu';
-import { AvisoLogin } from '../../componentes/aviso-login/aviso-login';
-import { Auth, Usuario } from '../../services/auth';
-import { Comparacoes, Comparacao } from '../../services/comparacoes';
+import { Celular } from '../home/home';
+
+export interface VencedorSalvo {
+  nome: string;
+  imagem: string;
+  pontos: number;
+  motivos: string[];
+}
+
+export interface ComparacaoSalva {
+  id: number;
+  data: string;
+  celulares: Celular[];
+  filtros: string[];
+  vencedor: VencedorSalvo | null;
+}
 
 @Component({
   selector: 'app-salvos',
   standalone: true,
-  imports: [CommonModule, Menu, AvisoLogin],
+  imports: [CommonModule, RouterLink, Menu],
   templateUrl: './salvos.html',
   styleUrl: './salvos.css'
 })
 export class Salvos implements OnInit {
   authService = inject(Auth);
-  comparacoesService = inject(Comparacoes);
   router = inject(Router);
-
-  listaComparacoes: Comparacao[] = [];
-  usuarioLogado: Usuario | null = null;
-
-  get estaLogado(): boolean {
-    return this.authService.usuarioLogado();
-  }
+  comparacoesSalvas: ComparacaoSalva[] = [];
 
   ngOnInit(): void {
-    if (this.estaLogado) {
-      this.usuarioLogado = this.authService.getUsuario();
-      this.carregarComparacoes();
-    }
+    this.carregarComparacoes();
   }
 
   carregarComparacoes(): void {
-    this.listaComparacoes = this.comparacoesService.getComparacoes();
-  }
-
-  rever(item: Comparacao): void {
-    this.router.navigate(['/home']);
-  }
-
-  excluir(id: number): void {
-    if (confirm('Tem certeza de que deseja remover esta comparação salva?')) {
-      this.comparacoesService.removerComparacao(id);
-      this.carregarComparacoes(); 
+    const usuario = this.authService.getUsuario();
+    if (usuario) {
+      const chave = `salvos_${usuario.id}`;
+      this.comparacoesSalvas = JSON.parse(localStorage.getItem(chave) || '[]');
     }
   }
 
-  compartilhar(item: Comparacao): void {
-    alert('Link da comparação copiado para a área de transferência!');
+  removerComparacao(id: number): void {
+    const usuario = this.authService.getUsuario();
+    if (usuario) {
+      const chave = `salvos_${usuario.id}`;
+      this.comparacoesSalvas = this.comparacoesSalvas.filter(c => c.id !== id);
+      localStorage.setItem(chave, JSON.stringify(this.comparacoesSalvas));
+    }
+  }
+
+  irParaHome(): void {
+    this.router.navigate(['/home']);
   }
 }

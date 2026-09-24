@@ -1,20 +1,68 @@
 <header>
-  <h2>Suas Comparações</h2>
+    <div>
+        <h2>Comparações Salvas</h2>
+        <p>Seus aparelhos favoritados e vencedores</p>
+    </div>
 </header>
 
 <main>
-  @if (!estaLogado) {
-    <app-aviso-login></app-aviso-login>
-  } 
-  
-  @else {
-    @if (listaComparacoes.length === 0) {
-      <p>Você ainda não possui comparações salvas.</p>
+    @if (comparacoesSalvas.length === 0) {
+        <section class="sem-salvos">
+            <p>📂 Você ainda não possui comparações salvas.</p>
+            <button type="button" class="btn-home" (click)="irParaHome()">Criar uma comparação</button>
+        </section>
     } @else {
+        <div class="lista-salvos">
+            @for (item of comparacoesSalvas; track item.id) {
+                <article class="card-salvo">
+                    <div class="topo-card">
+                        <span class="data">Salvo em: {{ item.data }}</span>
+                        <button type="button" class="btn-excluir" (click)="removerComparacao(item.id)">🗑️ Excluir</button>
+                    </div>
+
+                    @if (item.filtros && item.filtros.length > 0) {
+                        <div class="filtros-usados">
+                            <small>Filtros aplicados:</small>
+                            <div class="tags-filtros">
+                                @for (filtro of item.filtros; track filtro) {
+                                    <span class="tag">{{ filtro }}</span>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    @if (item.vencedor) {
+                        <div class="bloco-vencedor">
+                            <div class="vencedor-header">
+                                <span class="trofeu">🏆</span>
+                                <div>
+                                    <h4>Vencedor: {{ item.vencedor.nome }}</h4>
+                                    
+                                </div>
+                            </div>
+                            @if (item.vencedor.motivos && item.vencedor.motivos.length > 0) {
+                                <p class="motivos">
+                                    <strong>Motivos:</strong> {{ item.vencedor.motivos.join(', ') }}
+                                </p>
+                            }
+                        </div>
+                    }
+
+                    <div class="celulares-grid">
+                        @for (celular of item.celulares; track celular.id) {
+                            <div class="item-celular" [class.is-vencedor]="item.vencedor?.nome === celular.nome">
+                                <img [src]="celular.imagem" [alt]="celular.nome">
+                                <p class="nome-celular">{{ celular.nome }}</p>
+                                <p class="preco">R$ {{ celular.precoMedio }}</p>
+                            </div>
+                        }
+                    </div>
+                </article>
+            }
+        </div>
     }
-  }
 </main>
 
 <footer>
-  <app-menu></app-menu>
+    <app-menu></app-menu>
 </footer>
