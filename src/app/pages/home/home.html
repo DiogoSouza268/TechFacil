@@ -1,22 +1,20 @@
 <header>
     <div id="logo-techfacil">
-        <img src="/img/projeto/facilito.svg" alt="">
+        <img src="/img/projeto/facilito.svg" alt="TechFácil Logo">
         <h2>TechFácil</h2>
     </div>
-
 </header>
 
 <main>
     <section id="destaques">
         <h3>Sobre a TechFácil</h3>
-        
         <div id="carosel1">
             <app-carrosel [slides]="homeCarosel"></app-carrosel>
         </div>
     </section>
 
     <section id="procurando">
-        <h3>O que voce busca no seu celular?</h3>
+        <h3>O que você busca no seu celular?</h3>
 
         <div id="botoes">
             @for (filtro of filtros; track filtro.key) {
@@ -31,7 +29,6 @@
     </section>
 
     <section id="comparando">
-
         <section>
             <div id="inputes" style="position: relative;">
                 <span style="font-size: 30px;">&#x2315;</span>
@@ -64,15 +61,12 @@
                 <button class="num-comparacao" [class.ativo]="listaComparacao[0]" (click)="irParaCelular(0)">
                     1
                 </button>
-
                 <button class="num-comparacao" [class.ativo]="listaComparacao[1]" (click)="irParaCelular(1)">
                     2
                 </button>
-
                 <button class="num-comparacao" [class.ativo]="listaComparacao[2]" (click)="irParaCelular(2)">
                     3
                 </button>
-
             </div>
         </section>
 
@@ -85,7 +79,6 @@
                 <div [id]="'card-celular-' + i" class="card-comparativo">
 
                     <div class="celular-img">
-
                         <button type="button" class="removerBotao" (click)="removerDaComparacao(i)" title="Remover da comparação">
                             ✕ Remover
                         </button>
@@ -96,44 +89,104 @@
                     </div>
 
                     <div class="info">
+                        <!-- 1. EDITÁVEL: Armazenamento -->
                         <div class="todas-infos">
                             <app-alterar-info 
                                 label="Armazenamento" 
                                 [valor]="celular.specs.armazenamento"
+                                [editavel]="true"
                                 tipoInput="numero"
                                 (valorChange)="atualizarSpec(celular, 'armazenamento', $event)"
                                 (infoClick)="abrirDicionario('armazenamento')">
                             </app-alterar-info>
                         </div>
 
+                        <!-- 2. EDITÁVEL: Memória RAM -->
                         <div class="todas-infos">
                             <app-alterar-info 
                                 label="Memória RAM" 
                                 [valor]="celular.specs.ram"
+                                [editavel]="true"
                                 tipoInput="numero"
                                 (valorChange)="atualizarSpec(celular, 'ram', $event)"
                                 (infoClick)="abrirDicionario('ram')">
                             </app-alterar-info>
                         </div>
 
+                        <!-- 3. NÃO EDITÁVEL: GPU -->
+                        <div class="todas-infos">
+                            <app-alterar-info 
+                                label="Placa de Vídeo (GPU)" 
+                                [valor]="celular.specs.gpu"
+                                [editavel]="false"
+                                tipoInput="texto"
+                                (infoClick)="abrirDicionario('gpu')">
+                            </app-alterar-info>
+                        </div>
+
+                        <!-- 4. NÃO EDITÁVEL: Qualidade de Imagem -->
+                        <div class="todas-infos">
+                            <app-alterar-info 
+                                label="Qualidade de Imagem" 
+                                [valor]="celular.specs.qualidadeImagem"
+                                [editavel]="false"
+                                tipoInput="texto"
+                                (infoClick)="abrirDicionario('qualidadeImagem')">
+                            </app-alterar-info>
+                        </div>
+
+                        <!-- 5. NÃO EDITÁVEL: Bateria -->
+                        <div class="todas-infos">
+                            <app-alterar-info 
+                                label="Bateria" 
+                                [valor]="celular.specs.bateria"
+                                [editavel]="false"
+                                tipoInput="texto"
+                                (infoClick)="abrirDicionario('bateria')">
+                            </app-alterar-info>
+                        </div>
+
+                        <!-- 6. NÃO EDITÁVEL: Processador -->
                         <div class="todas-infos">
                             <app-alterar-info 
                                 label="Processador" 
                                 [valor]="celular.specs.processador"
+                                [editavel]="false"
                                 tipoInput="texto"
-                                (valorChange)="atualizarSpec(celular, 'processador', $event)"
                                 (infoClick)="abrirDicionario('processador')">
                             </app-alterar-info>
                         </div>
+
+                        <!-- 7. NÃO EDITÁVEL: Conectividade 5G -->
+                        <div class="todas-infos">
+                            <app-alterar-info 
+                                label="Conectividade 5G" 
+                                [valor]="celular.specs.cincoG"
+                                [editavel]="false"
+                                tipoInput="texto"
+                                (infoClick)="abrirDicionario('cincoG')">
+                            </app-alterar-info>
+                        </div>
+
+                        <!-- 8. NÃO EDITÁVEL: Câmeras (se existir nas specs) -->
+                        @if (celular.specs.camera) {
+                            <div class="todas-infos">
+                                <app-alterar-info 
+                                    label="Câmeras" 
+                                    [valor]="celular.specs.camera"
+                                    [editavel]="false"
+                                    tipoInput="texto"
+                                    (infoClick)="abrirDicionario('camera')">
+                                </app-alterar-info>
+                            </div>
+                        }
                     </div>
                 </div>
             }
         </section>
-
     </section>
 
     <section id="infoFacil">
-
         @if (termoExibido) {
             <p>
                 <span style="padding-right: 10px;">ℹ️</span>
@@ -156,41 +209,37 @@
                 Aperte no símbolo ℹ️ para conhecer mais sobre aquela informação.
             </p>
         }
-
     </section>
 
     <section id="melhorOpcao">
-            <h4>🏆 Melhor Opção para você</h4>
+        <h4>🏆 Melhor Opção para você</h4>
 
-            @if (listaComparacao.length < 2) {
-                <p>Adicione pelo menos 2 celulares à comparação para ver qual é o vencedor!</p>
-            } 
-            @else if (filtrosSelecionados.length === 0) {
-                <p>Selecione acima o que você mais valoriza (ex: bateria, câmera) para calcularmos o campeão.</p>
-            } 
-            @else if (celularVencedor) {
-                <p>
-                    <strong>{{ celularVencedor.celular.nome }} VENCEU!</strong> 
-                    @if (celularVencedor.motivos.length > 0) {
-                        <span>Ele se destaca em: {{ celularVencedor.motivos.join(', ') }}.</span>
-                    }
-                </p>
-            }
+        @if (listaComparacao.length < 2) {
+            <p>Adicione pelo menos 2 celulares à comparação para ver qual é o vencedor!</p>
+        } 
+        @else if (filtrosSelecionados.length === 0) {
+            <p>Selecione acima o que você mais valoriza para calcularmos o campeão.</p>
+        } 
+        @else if (celularVencedor) {
+            <p>
+                <strong>{{ celularVencedor.celular.nome }} VENCEU!</strong> 
+                @if (celularVencedor.motivos.length > 0) {
+                    <span>Ele se destaca em: {{ celularVencedor.motivos.join(', ') }}.</span>
+                }
+            </p>
+        }
 
-            <button id="salvarCompa" [disabled]="listaComparacao.length === 0" (click)="salvarComparacao()">Salvar Comparação</button>
+        <button id="salvarCompa" [disabled]="listaComparacao.length === 0" (click)="salvarComparacao()">Salvar Comparação</button>
 
-            @if (exibirAvisoModal) {
-                <div class="modal-overlay" (click)="fecharModal()">
-                    <div class="modal-card" (click)="$event.stopPropagation()">
-                        <button type="button" class="btn-fechar" (click)="fecharModal()">✕</button>
-                        
-                        <app-aviso-login></app-aviso-login>
-                    </div>
+        @if (exibirAvisoModal) {
+            <div class="modal-overlay" (click)="fecharModal()">
+                <div class="modal-card" (click)="$event.stopPropagation()">
+                    <button type="button" class="btn-fechar" (click)="fecharModal()">✕</button>
+                    <app-aviso-login></app-aviso-login>
                 </div>
-            }
-        </section>
-
-    
+            </div>
+        }
+    </section>
 </main>
 
 <footer>

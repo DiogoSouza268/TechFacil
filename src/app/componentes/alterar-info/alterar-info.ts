@@ -28,6 +28,8 @@ export class AlterarInfoComponent {
   valorTexto: string = '';
 
   iniciarEdicao(): void {
+    if (!this.editavel) return;
+
     const valStr = String(this.valor);
 
     if (this.tipoInput === 'texto') {
@@ -46,7 +48,6 @@ export class AlterarInfoComponent {
     }
 
     this.editando = true;
-
   }
 
   salvar(): void {

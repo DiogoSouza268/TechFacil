@@ -1,262 +1,310 @@
 [
-    {
-        "id": 1,
-        "nome": "Motorola G06",
-        "precoMedio": 800.00,
-        "imagem": "/img/motorola/Motorola-G06.png",
-        "specs": {
-            "armazenamento": "128GB",
-            "ram": "4GB",
-            "bateria": "5200 mAh",
-            "processador": "Helio G81 Extreme MediaTek",
-            "tela": "6.88 pol"
-        },
-        "pontosFortes": {
-            "melhorCamera": 7
-  
-        }
+  {
+    "id": 1,
+    "nome": "Motorola G06",
+    "precoMedio": 800.00,
+    "imagem": "/img/motorola/Motorola-G06.png",
+    "specs": {
+      "armazenamento": "128GB",
+      "ram": "4GB",
+      "bateria": "5200 mAh",
+      "processador": "Helio G81 Extreme MediaTek",
+      "gpu": "Mali-G52 MP2",
+      "qualidadeImagem": "6.88 pol IPS LCD (HD+ / 90Hz)",
+      "cincoG": "Não",
+      "camera": "50 MP + 2 MP"
     },
-    {
-        "id": 2,
-        "nome": "Motorola G17",
-        "precoMedio": 1200.00,
-        "imagem": "/img/motorola/Motorola-G17.png",
-        "specs": {
-            "armazenamento": "128GB",
-            "ram": "4GB",
-            "bateria": "5200 mAh",
-            "processador": "Helio G81 Extreme MediaTek",
-            "tela": "6.72 pol"
-        },
-        "pontosFortes": {
-            "melhorCamera": 7
-  
-        }
-    },
-
-    {
-        "id": 3,
-        "nome": "Xiaomi Redmi 15",
-        "precoMedio": 1230.00,
-        "imagem": "/img/xiaomi/Xiaomi_Redmi_15.png",
-        "specs": {
-            "armazenamento": "128GB",
-            "ram": "8GB",
-            "bateria": "7000 mAh",
-            "processador": "Snapdragon 685 Qualcomm SM6225-AD",
-            "tela": "6.9 pol"
-        },
-        "pontosFortes": {
-            "melhorCamera": 7
-  
-        }
-    },
-
-    {
-        "id": 4,
-        "nome": "Xiaomi Poco X8 Pro",
-        "precoMedio": 2400.00,
-        "imagem": "/img/xiaomi/Xiaomi_Poco_X8_Pro.png",
-        "specs": {
-            "armazenamento": "256GB",
-            "ram": "8GB",
-            "bateria": "6500 mAh",
-            "processador": "MediaTek Dimensity 8500 Ultra (4 nm)",
-            "tela": "6.59 pol"
-        },
-        "pontosFortes": {
-            "melhorCamera": 7
-  
-        }
-    },
-
-    {
-        "id": 5,
-        "nome": "Samsung Galaxy A06",
-        "precoMedio": 700.00,
-        "imagem": "/img/samsung/Samsung-Galaxy-A06.png",
-        "specs": {
-            "armazenamento": "128GB",
-            "ram": "4GB",
-            "bateria": "5000 mAh",
-            "processador": "MediaTek Helio G85",
-            "tela": "6.7 pol"
-        },
-        "pontosFortes": {
-            "melhorCamera": 7
-  
-        }
-    },
-
-    {
-        "id": 6,
-        "nome": "Samsung Galaxy A07",
-        "precoMedio": 700.00,
-        "imagem": "/img/samsung/Samsung-Galaxy-A07.png",
-        "specs": {
-            "armazenamento": "128GB",
-            "ram": "4GB",
-            "bateria": "5000 mAh",
-            "processador": "MediaTek Helio G99",
-            "tela": "6.7 pol"
-        },
-        "pontosFortes": {
-            "melhorCamera": 7
-  
-        }
-    },
-
-    {
-        "id": 7,
-        "nome": "Apple Iphone 16",
-        "precoMedio": 4750.00,
-        "imagem": "/img/apple/iphone-16.png",
-        "specs": {
-            "armazenamento": "128GB",
-            "ram": "8GB",
-            "bateria": "3560 mAh",
-            "processador": "Apple A18",
-            "tela": "6.1 pol"
-        },
-        "pontosFortes": {
-            "melhorCamera": 7
-  
-        }
-    },
-
-    {
-        "id": 8,
-        "nome": "Apple Iphone 17",
-        "precoMedio": 5850.00,
-        "imagem": "/img/apple/Iphone-17.png",
-        "specs": {
-            "armazenamento": "256GB",
-            "ram": "8GB",
-            "bateria": "3692 mAh",
-            "processador": "Apple A19",
-            "tela": "6.3 pol"
-        },
-        "pontosFortes": {
-            "melhorCamera": 7
-  
-        }
-    },
-
-    {
-        "id": 9,
-        "nome": "Infinix HOT 40i",
-        "precoMedio": 950.00,
-        "imagem": "/img/infinix/infinix_HOT_40i.png",
-        "specs": {
-            "armazenamento": "256GB",
-            "ram": "8GB",
-            "bateria": "5000 mAh",
-            "processador": "Unisoc T606",
-            "tela": "6.6 pol"
-        },
-        "pontosFortes": {
-            "melhorCamera": 7
-  
-        }
-    },
-
-    {
-        "id": 10,
-        "nome": "Infinix HOT 50 Pro",
-        "precoMedio": 1270.00,
-        "imagem": "/img/infinix/infinix_HOT_50_Pro.png",
-        "specs": {
-            "armazenamento": "256GB",
-            "ram": "8GB",
-            "bateria": "5000 mAh",
-            "processador": "MediaTek Helio G100",
-            "tela": "6.78 pol"
-        },
-        "pontosFortes": {
-            "melhorCamera": 7
-  
-        }
-    },
-
-    {
-        "id": 11,
-        "nome": "OPPO A6t",
-        "precoMedio": 895.00,
-        "imagem": "/img/Oppo/OPPO_A6t.png",
-        "specs": {
-            "armazenamento": "128GB",
-            "ram": "4GB",
-            "bateria": "6500 mAh",
-            "processador": "Qualcomm Snapdragon 685",
-            "tela": "6.75 pol LCD (HD+ / 120 Hz)"
-        },
-        "pontosFortes": {
-            "melhorCamera": 7
-  
-        }
-    },
-
-    {
-        "id": 12,
-        "nome": "OPPO A6x",
-        "precoMedio": 895.00,
-        "imagem": "/img/Oppo/Oppo_A6x.png",
-        "specs": {
-            "armazenamento": "128GB",
-            "ram": "4GB",
-            "bateria": "6500 mAh",
-            "processador": "Qualcomm Snapdragon 685",
-            "tela": "6.75 pol  LCD (HD+ / 120 Hz)"
-        },
-        "pontosFortes": {
-            "melhorCamera": 7
-  
-        }
-    },
-
-    {
-        "id": 13,
-        "nome": "Realme_C73",
-        "precoMedio": 1174.50,
-        "imagem": "/img/realme/Realme_C73.png",
-        "specs": {
-            "armazenamento": "128GB",
-            "ram": "4GB",
-            "bateria": "6000 mAh",
-            "processador": "Unisoc T7250",
-            "tela": "6,67 polegadas LCD (Frequência de 120 Hz)"
-        },
-        "pontosFortes": {
-            "melhorCamera": 7
-  
-        }
-    },
-
-    {
-        "id": 14,
-        "nome": "Realme Note 60x",
-        "precoMedio": 730.00,
-        "imagem": "/img/realme/Realme_Note_60x.png",
-        "specs": {
-            "armazenamento": "64GB",
-            "ram": "4GB",
-            "bateria": "5000 mAh",
-            "processador": "Unisoc T612",
-            "tela": "6,74 polegadas LCD (Frequência de 90 Hz)"
-        },
-        "pontosFortes": {
-            "melhorCamera": 7
-  
-        }
+    "pontosFortes": {
+      "melhorCamera": 5,
+      "placaVideo": 4,
+      "qualidadeImagem": 5,
+      "processadorCPU": 4
     }
-
-
-
-
-
-
-
-    
-
-
+  },
+  {
+    "id": 2,
+    "nome": "Motorola G17",
+    "precoMedio": 1200.00,
+    "imagem": "/img/motorola/Motorola-G17.png",
+    "specs": {
+      "armazenamento": "128GB",
+      "ram": "4GB",
+      "bateria": "5200 mAh",
+      "processador": "Helio G81 Extreme MediaTek",
+      "gpu": "Mali-G52 MP2",
+      "qualidadeImagem": "6.72 pol IPS LCD (FHD+ / 90Hz)",
+      "cincoG": "Não",
+      "camera": "50 MP + 2 MP"
+    },
+    "pontosFortes": {
+      "melhorCamera": 5,
+      "placaVideo": 4,
+      "qualidadeImagem": 6,
+      "processadorCPU": 4
+    }
+  },
+  {
+    "id": 3,
+    "nome": "Xiaomi Redmi 15",
+    "precoMedio": 1230.00,
+    "imagem": "/img/xiaomi/Xiaomi_Redmi_15.png",
+    "specs": {
+      "armazenamento": "128GB",
+      "ram": "8GB",
+      "bateria": "7000 mAh",
+      "processador": "Snapdragon 685 Qualcomm SM6225-AD",
+      "gpu": "Adreno 610",
+      "qualidadeImagem": "6.9 pol IPS LCD (FHD+ / 120Hz)",
+      "cincoG": "Não",
+      "camera": "50 MP + 2 MP"
+    },
+    "pontosFortes": {
+      "melhorCamera": 6,
+      "placaVideo": 5,
+      "qualidadeImagem": 6,
+      "processadorCPU": 5
+    }
+  },
+  {
+    "id": 4,
+    "nome": "Xiaomi Poco X8 Pro",
+    "precoMedio": 2400.00,
+    "imagem": "/img/xiaomi/Xiaomi_Poco_X8_Pro.png",
+    "specs": {
+      "armazenamento": "256GB",
+      "ram": "8GB",
+      "bateria": "6500 mAh",
+      "processador": "MediaTek Dimensity 8500 Ultra (4 nm)",
+      "gpu": "Mali-G615 MC6",
+      "qualidadeImagem": "6.59 pol AMOLED (1.5K / 120Hz)",
+      "cincoG": "Sim",
+      "camera": "64 MP (OIS) + 8 MP + 2 MP"
+    },
+    "pontosFortes": {
+      "melhorCamera": 7,
+      "placaVideo": 9,
+      "qualidadeImagem": 9,
+      "processadorCPU": 9
+    }
+  },
+  {
+    "id": 5,
+    "nome": "Samsung Galaxy A06",
+    "precoMedio": 700.00,
+    "imagem": "/img/samsung/Samsung-Galaxy-A06.png",
+    "specs": {
+      "armazenamento": "128GB",
+      "ram": "4GB",
+      "bateria": "5000 mAh",
+      "processador": "MediaTek Helio G85",
+      "gpu": "Mali-G52 MC2",
+      "qualidadeImagem": "6.7 pol PLS LCD (HD+ / 60Hz)",
+      "cincoG": "Não",
+      "camera": "50 MP + 2 MP"
+    },
+    "pontosFortes": {
+      "melhorCamera": 5,
+      "placaVideo": 3,
+      "qualidadeImagem": 4,
+      "processadorCPU": 4
+    }
+  },
+  {
+    "id": 6,
+    "nome": "Samsung Galaxy A07",
+    "precoMedio": 700.00,
+    "imagem": "/img/samsung/Samsung-Galaxy-A07.png",
+    "specs": {
+      "armazenamento": "128GB",
+      "ram": "4GB",
+      "bateria": "5000 mAh",
+      "processador": "MediaTek Helio G99",
+      "gpu": "Mali-G57 MC2",
+      "qualidadeImagem": "6.7 pol PLS LCD (HD+ / 90Hz)",
+      "cincoG": "Não",
+      "camera": "50 MP + 2 MP"
+    },
+    "pontosFortes": {
+      "melhorCamera": 5,
+      "placaVideo": 5,
+      "qualidadeImagem": 5,
+      "processadorCPU": 5
+    }
+  },
+  {
+    "id": 7,
+    "nome": "Apple Iphone 16",
+    "precoMedio": 4750.00,
+    "imagem": "/img/apple/iphone-16.png",
+    "specs": {
+      "armazenamento": "128GB",
+      "ram": "8GB",
+      "bateria": "3560 mAh",
+      "processador": "Apple A18",
+      "gpu": "Apple GPU 5-Core",
+      "qualidadeImagem": "6.1 pol Super Retina XDR OLED",
+      "cincoG": "Sim",
+      "camera": "48 MP (OIS) + 12 MP Ultrawide"
+    },
+    "pontosFortes": {
+      "melhorCamera": 9,
+      "placaVideo": 9,
+      "qualidadeImagem": 9,
+      "processadorCPU": 10
+    }
+  },
+  {
+    "id": 8,
+    "nome": "Apple Iphone 17",
+    "precoMedio": 5850.00,
+    "imagem": "/img/apple/Iphone-17.png",
+    "specs": {
+      "armazenamento": "256GB",
+      "ram": "8GB",
+      "bateria": "3692 mAh",
+      "processador": "Apple A19",
+      "gpu": "Apple GPU 6-Core",
+      "qualidadeImagem": "6.3 pol Super Retina XDR OLED (120Hz)",
+      "cincoG": "Sim",
+      "camera": "48 MP (OIS) + 48 MP Ultrawide"
+    },
+    "pontosFortes": {
+      "melhorCamera": 10,
+      "placaVideo": 10,
+      "qualidadeImagem": 10,
+      "processadorCPU": 10
+    }
+  },
+  {
+    "id": 9,
+    "nome": "Infinix HOT 40i",
+    "precoMedio": 950.00,
+    "imagem": "/img/infinix/infinix_HOT_40i.png",
+    "specs": {
+      "armazenamento": "256GB",
+      "ram": "8GB",
+      "bateria": "5000 mAh",
+      "processador": "Unisoc T606",
+      "gpu": "Mali-G57 MP1",
+      "qualidadeImagem": "6.6 pol IPS LCD (HD+ / 90Hz)",
+      "cincoG": "Não",
+      "camera": "50 MP"
+    },
+    "pontosFortes": {
+      "melhorCamera": 5,
+      "placaVideo": 3,
+      "qualidadeImagem": 4,
+      "processadorCPU": 4
+    }
+  },
+  {
+    "id": 10,
+    "nome": "Infinix HOT 50 Pro",
+    "precoMedio": 1270.00,
+    "imagem": "/img/infinix/infinix_HOT_50_Pro.png",
+    "specs": {
+      "armazenamento": "256GB",
+      "ram": "8GB",
+      "bateria": "5000 mAh",
+      "processador": "MediaTek Helio G100",
+      "gpu": "Mali-G57 MC2",
+      "qualidadeImagem": "6.78 pol AMOLED (FHD+ / 120Hz)",
+      "cincoG": "Não",
+      "camera": "50 MP + 2 MP"
+    },
+    "pontosFortes": {
+      "melhorCamera": 6,
+      "placaVideo": 5,
+      "qualidadeImagem": 8,
+      "processadorCPU": 6
+    }
+  },
+  {
+    "id": 11,
+    "nome": "OPPO A6t",
+    "precoMedio": 895.00,
+    "imagem": "/img/Oppo/OPPO_A6t.png",
+    "specs": {
+      "armazenamento": "128GB",
+      "ram": "4GB",
+      "bateria": "6500 mAh",
+      "processador": "Qualcomm Snapdragon 685",
+      "gpu": "Adreno 610",
+      "qualidadeImagem": "6.75 pol LCD (HD+ / 120 Hz)",
+      "cincoG": "Não",
+      "camera": "50 MP + 2 MP"
+    },
+    "pontosFortes": {
+      "melhorCamera": 5,
+      "placaVideo": 4,
+      "qualidadeImagem": 5,
+      "processadorCPU": 5
+    }
+  },
+  {
+    "id": 12,
+    "nome": "OPPO A6x",
+    "precoMedio": 895.00,
+    "imagem": "/img/Oppo/Oppo_A6x.png",
+    "specs": {
+      "armazenamento": "128GB",
+      "ram": "4GB",
+      "bateria": "6500 mAh",
+      "processador": "Qualcomm Snapdragon 685",
+      "gpu": "Adreno 610",
+      "qualidadeImagem": "6.75 pol LCD (HD+ / 120 Hz)",
+      "cincoG": "Não",
+      "camera": "50 MP + 2 MP"
+    },
+    "pontosFortes": {
+      "melhorCamera": 5,
+      "placaVideo": 4,
+      "qualidadeImagem": 5,
+      "processadorCPU": 5
+    }
+  },
+  {
+    "id": 13,
+    "nome": "Realme C73",
+    "precoMedio": 1174.50,
+    "imagem": "/img/realme/Realme_C73.png",
+    "specs": {
+      "armazenamento": "128GB",
+      "ram": "4GB",
+      "bateria": "6000 mAh",
+      "processador": "Unisoc T7250",
+      "gpu": "Mali-G57",
+      "qualidadeImagem": "6.67 pol LCD (FHD+ / 120 Hz)",
+      "cincoG": "Sim",
+      "camera": "50 MP"
+    },
+    "pontosFortes": {
+      "melhorCamera": 5,
+      "placaVideo": 4,
+      "qualidadeImagem": 6,
+      "processadorCPU": 5
+    }
+  },
+  {
+    "id": 14,
+    "nome": "Realme Note 60x",
+    "precoMedio": 730.00,
+    "imagem": "/img/realme/Realme_Note_60x.png",
+    "specs": {
+      "armazenamento": "64GB",
+      "ram": "4GB",
+      "bateria": "5000 mAh",
+      "processador": "Unisoc T612",
+      "gpu": "Mali-G57",
+      "qualidadeImagem": "6.74 pol LCD (HD+ / 90 Hz)",
+      "cincoG": "Não",
+      "camera": "32 MP"
+    },
+    "pontosFortes": {
+      "melhorCamera": 4,
+      "placaVideo": 3,
+      "qualidadeImagem": 4,
+      "processadorCPU": 3
+    }
+  }
 ]
