@@ -14,6 +14,9 @@ header {
 main {
     flex: 1;
     padding: 20px;
+    width: min(100%, 1100px);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .sem-salvos {
@@ -46,6 +49,7 @@ main {
     padding: 15px;
     border: 1px solid var(--cor-borda-inputs, #e0e0e0);
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    width: min(100%, 700px);
 }
 
 .topo-card {

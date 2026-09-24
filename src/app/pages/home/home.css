@@ -27,6 +27,9 @@ main{
     flex-direction: column;
     margin: 20px 20px 0px 20px;
     flex: 1;
+    width: min(100%, 1200px);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #destaques{
@@ -37,6 +40,8 @@ main{
 
 #carosel1{
     display: flex;
+    justify-content: center;
+    text-align: center;
 }
 
 
@@ -92,6 +97,9 @@ main{
     border-radius: 10px;
     display: flex;
     background-color: white;
+    width: min(100%, 600px);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #inputes > input {
@@ -149,9 +157,12 @@ main{
   scroll-behavior: smooth;     
   gap: 16px;
   padding: 10px;
-  width: 93%;
-  scrollbar-width: none;        
-  -webkit-overflow-scrolling: touch; 
+  width: min(100%, 1100px);
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 #aparelhoCelular::-webkit-scrollbar {
@@ -261,7 +272,9 @@ main{
     border-radius: 20px;
     gap: 20px;
     padding: 20px 15px;
-    
+    width: min(100%, 760px);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #salvarCompa{
@@ -282,6 +295,9 @@ main{
     border: 1px solid var(--cor-borda-inputs);
     border-radius: 20px;
     padding: 20px;
+    width: min(100%, 760px);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .modal-overlay {

@@ -5,6 +5,9 @@
     align-items: center;
     height: 80px;
     margin-top: 20px;
+    width: min(100%, 460px);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 a{

@@ -33,6 +33,9 @@ main{
     display: flex;
     flex-direction: column;
     margin: 0px 20px;
+    width: min(100%, 520px);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 form{
