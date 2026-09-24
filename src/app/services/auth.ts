@@ -21,34 +21,29 @@ export class Auth {
     return userStr ? JSON.parse(userStr) : null;
   }
 
-  // Devolve a lista de todos os usuários cadastrados
   getUsuariosCadastrados(): Usuario[] {
     const usuarios = localStorage.getItem('usuarios_cadastrados');
     return usuarios ? JSON.parse(usuarios) : [];
   }
 
-  // Cadastra um novo usuário no localStorage
   cadastrar(novoUsuario: Omit<Usuario, 'id'>): boolean {
     const usuarios = this.getUsuariosCadastrados();
-    
-    // Verifica se já existe uma conta com esse e-mail
+
     const jaExiste = usuarios.some(u => u.email.toLowerCase() === novoUsuario.email.toLowerCase());
     if (jaExiste) return false;
 
     const usuarioComId: Usuario = {
       ...novoUsuario,
-      id: Date.now() // Gera um ID único baseado no timestamp
+      id: Date.now()
     };
 
     usuarios.push(usuarioComId);
     localStorage.setItem('usuarios_cadastrados', JSON.stringify(usuarios));
-    
-    // Já loga automaticamente o usuário após o cadastro
+
     this.iniciarSessao(usuarioComId);
     return true;
   }
 
-  // Autentica o e-mail e senha
   autenticar(email: string, senha: string): Usuario | null {
     const usuarios = this.getUsuariosCadastrados();
     const usuario = usuarios.find(
@@ -63,7 +58,6 @@ export class Auth {
   }
 
   iniciarSessao(usuario: Usuario): void {
-    // Salva na sessão ignorando o campo da senha por segurança
     const { senha, ...usuarioSemSenha } = usuario;
     localStorage.setItem('usuario_logado', JSON.stringify(usuarioSemSenha));
   }

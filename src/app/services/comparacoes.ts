@@ -15,13 +15,11 @@ export interface Comparacao {
 })
 export class Comparacoes {
 
-  // Retorna os dados do usuário logado no localStorage
   getUsuarioLogado() {
     const userStr = localStorage.getItem('usuario_logado');
     return userStr ? JSON.parse(userStr) : null;
   }
 
-  // Busca as comparações vinculadas ao ID do usuário atual
   getComparacoes(): Comparacao[] {
     const usuario = this.getUsuarioLogado();
     if (!usuario) return [];
@@ -30,7 +28,6 @@ export class Comparacoes {
     return salvos ? JSON.parse(salvos) : [];
   }
 
-  // Adiciona uma nova comparação à lista
   salvarComparacao(celulares: Celular[]): void {
     const usuario = this.getUsuarioLogado();
     if (!usuario) return;
@@ -45,7 +42,6 @@ export class Comparacoes {
     localStorage.setItem(`salvos_${usuario.id}`, JSON.stringify(comparacoes));
   }
 
-  // Remove uma comparação por ID
   removerComparacao(id: number): void {
     const usuario = this.getUsuarioLogado();
     if (!usuario) return;

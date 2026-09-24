@@ -52,10 +52,9 @@ export class Home implements OnInit {
 
   listaCelulares: Celular[] = [];
   listaComparacao: Celular[] = [];
-  termoBusca: string = '';       
+  termoBusca: string = '';
   celularSelecionado: Celular | null = null;
 
-  // 🎯 Os 8 filtros solicitados + Custo Benefício
   filtros = [
     { key: 'naoTravar', label: '⚡ Memória RAM' },
     { key: 'muitoEspaco', label: '📦 Armazenamento' },
@@ -69,7 +68,6 @@ export class Home implements OnInit {
 
   filtrosSelecionados: string[] = [];
 
-  // 📖 Dicionário explicativo cobrindo os 8 pontos
   dicionarioTermos: Record<string, { titulo: string; explicacao: string }> = {
     ram: {
       titulo: 'Memória RAM',
@@ -139,13 +137,10 @@ export class Home implements OnInit {
     const preco = celular.precoMedio;
 
     celular.pontosFortes = {
-      // Calculados automaticamente
       naoTravar: ramNum >= 12 ? 10 : ramNum >= 8 ? 8 : ramNum >= 6 ? 6 : 4,
       muitoEspaco: armNum >= 512 ? 10 : armNum >= 256 ? 9 : armNum >= 128 ? 7 : 4,
       boaBateria: batNum >= 7000 ? 10 : batNum >= 6000 ? 9 : batNum >= 5000 ? 8 : 6,
       precoBaixo: preco <= 800 ? 10 : preco <= 1200 ? 8 : preco <= 2000 ? 6 : preco <= 4000 ? 4 : 2,
-
-      // Lidos diretamente do JSON
       placaVideo: celular.pontosFortes?.placaVideo ?? 5,
       qualidadeImagem: celular.pontosFortes?.qualidadeImagem ?? 5,
       processadorCPU: celular.pontosFortes?.processadorCPU ?? 5,

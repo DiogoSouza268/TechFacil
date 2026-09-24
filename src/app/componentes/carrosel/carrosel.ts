@@ -13,7 +13,6 @@ export interface CarouselSlide {
   styleUrl: './carrosel.css',
 })
 export class Carrosel implements OnInit, OnDestroy {
-  // Variáveis necessárias para o funcionamento
   @Input() slides: CarouselSlide[] = [];
   currentIndex: number = 0;
   private intervalId: any;

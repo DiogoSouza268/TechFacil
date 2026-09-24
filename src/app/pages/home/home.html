@@ -89,7 +89,6 @@
                     </div>
 
                     <div class="info">
-                        <!-- 1. EDITÁVEL: Armazenamento -->
                         <div class="todas-infos">
                             <app-alterar-info 
                                 label="Armazenamento" 
@@ -101,7 +100,6 @@
                             </app-alterar-info>
                         </div>
 
-                        <!-- 2. EDITÁVEL: Memória RAM -->
                         <div class="todas-infos">
                             <app-alterar-info 
                                 label="Memória RAM" 
@@ -113,7 +111,6 @@
                             </app-alterar-info>
                         </div>
 
-                        <!-- 3. NÃO EDITÁVEL: GPU -->
                         <div class="todas-infos">
                             <app-alterar-info 
                                 label="Placa de Vídeo (GPU)" 
@@ -124,7 +121,6 @@
                             </app-alterar-info>
                         </div>
 
-                        <!-- 4. NÃO EDITÁVEL: Qualidade de Imagem -->
                         <div class="todas-infos">
                             <app-alterar-info 
                                 label="Qualidade de Imagem" 
@@ -135,7 +131,6 @@
                             </app-alterar-info>
                         </div>
 
-                        <!-- 5. NÃO EDITÁVEL: Bateria -->
                         <div class="todas-infos">
                             <app-alterar-info 
                                 label="Bateria" 
@@ -146,7 +141,6 @@
                             </app-alterar-info>
                         </div>
 
-                        <!-- 6. NÃO EDITÁVEL: Processador -->
                         <div class="todas-infos">
                             <app-alterar-info 
                                 label="Processador" 
@@ -157,7 +151,6 @@
                             </app-alterar-info>
                         </div>
 
-                        <!-- 8. NÃO EDITÁVEL: Câmeras (se existir nas specs) -->
                         @if (celular.specs.camera) {
                             <div class="todas-infos">
                                 <app-alterar-info 
