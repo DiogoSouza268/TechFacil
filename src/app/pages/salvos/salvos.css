@@ -1,177 +1,301 @@
 :host {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: var(--fundo-cor);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333333;
+  box-sizing: border-box;
 }
 
-header {
-    background-color: white;
-    padding: 20px;
-    font-size: 14px;
+.salvos-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-main {
-    flex: 1;
-    padding: 20px;
-    width: min(100%, 1100px);
-    margin-left: auto;
-    margin-right: auto;
+.header-salvos {
+  background-color: #ffffff;
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.badge-icon {
+  background-color: #e6f7f0;
+  color: #00875a;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.header-salvos h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #111827;
+}
+
+.header-salvos p {
+  margin: 2px 0 0 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px 20px 90px 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .sem-salvos {
-    text-align: center;
-    margin-top: 40px;
+  text-align: center;
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 40px 20px;
+  margin-top: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e5e7eb;
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.sem-salvos h3 {
+  margin: 0 0 6px 0;
+  font-size: 1.15rem;
+  color: #111827;
+}
+
+.sem-salvos p {
+  margin: 0 0 20px 0;
+  font-size: 0.88rem;
+  color: #6b7280;
 }
 
 .btn-home {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 12px 24px;
-    background-color: var(--verde-primario, #27ae60);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background-color: #00875a;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-home:hover {
+  background-color: #006c48;
 }
 
 .lista-salvos {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .card-salvo {
-    background-color: white;
-    border-radius: 12px;
-    padding: 15px;
-    border: 1px solid var(--cor-borda-inputs, #e0e0e0);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    width: min(100%, 700px);
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 18px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .topo-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    border-bottom: 1px solid #f0f0f0;
-    padding-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f3f4f6;
 }
 
 .data {
-    font-size: 12px;
-    color: #666;
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
 }
 
 .btn-excluir {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 12px;
-    color: #e74c3c;
-    font-weight: bold;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #dc2626;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: background-color 0.2s;
+}
+
+.btn-excluir:hover {
+  background-color: #fee2e2;
 }
 
 .filtros-usados {
-    margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .filtros-usados small {
-    color: #777;
-    font-size: 11px;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .tags-filtros {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 .tag {
-    background-color: #f0f4f8;
-    color: #334e68;
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 500;
+  background-color: #f3f4f6;
+  color: #374151;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 500;
 }
 
 .bloco-vencedor {
-    background: linear-gradient(135deg, #fff9e6 0%, #fffaed 100%);
-    border: 1px solid #ffe58f;
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 15px;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1px solid #fde68a;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
 }
 
 .vencedor-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .trofeu {
-    font-size: 24px;
+  font-size: 1.4rem;
 }
 
 .vencedor-header h4 {
-    margin: 0;
-    font-size: 14px;
-    color: #b78103;
-}
-
-.pontos {
-    margin: 2px 0 0 0;
-    font-size: 11px;
-    color: #8c6300;
+  margin: 0;
+  font-size: 0.95rem;
+  color: #92400e;
+  font-weight: 700;
 }
 
 .motivos {
-    margin: 8px 0 0 0;
-    font-size: 11px;
-    color: #555;
+  margin: 8px 0 0 0;
+  font-size: 0.8rem;
+  color: #78350f;
+  line-height: 1.4;
 }
 
 .celulares-grid {
-    display: flex;
-    gap: 15px;
-    overflow-x: auto;
-    padding-top: 5px;
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
 }
 
 .item-celular {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 90px;
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 110px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background-color: #fafafa;
+  transition: border-color 0.2s, background-color 0.2s;
 }
 
 .item-celular.is-vencedor {
-    border-color: #ffe58f;
-    background-color: #fffdf5;
+  border-color: #fde68a;
+  background-color: #fffdf5;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.15);
 }
 
 .item-celular img {
-    height: 70px;
-    width: auto;
-    object-fit: contain;
+  height: 75px;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 8px;
 }
 
 .nome-celular {
-    font-size: 12px;
-    font-weight: bold;
-    text-align: center;
-    margin-top: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 0 0 4px 0;
+  color: #1f2937;
 }
 
 .preco {
-    font-size: 11px;
-    color: var(--verde-primario, #27ae60);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #00875a;
+  margin: 0;
+}
+
+footer {
+  margin-top: auto;
+}
+
+@media (min-width: 900px) {
+  .salvos-container {
+    padding-top: 30px;
+  }
+
+  .header-salvos {
+    background-color: transparent;
+    border-bottom: none;
+    padding: 0 0 20px 0;
+  }
+
+  .header-salvos h2 {
+    font-size: 1.6rem;
+  }
+
+  .main-content {
+    padding: 0 0 40px 0;
+  }
+
+  .card-salvo {
+    padding: 22px;
+  }
+
+  .celulares-grid {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
+  .item-celular {
+    flex: 1;
+    min-width: 120px;
+  }
 }

@@ -1,18 +1,22 @@
-<div id="menu">
-     
-    <a routerLink="/home" routerLinkActive="active" >
-        <span>&#x1F50D;</span>
-        <p>Home</p>
-    </a>
-   
-    <a routerLink="/salvos" routerLinkActive="active" >
-        <span>📁</span>
-        <p>Salvos</p>
-    </a>
-    
-    <a routerLink="/perfil" routerLinkActive="active">
-        <span>👤</span>
-        <p>Perfil</p>
-    </a>
-    
-</div>
+<nav id="menu">
+  <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+    <div class="icon-wrapper">
+      <span class="icon">&#128065;</span>
+    </div>
+    <span class="label">Início</span>
+  </a>
+
+  <a routerLink="/salvos" routerLinkActive="active">
+    <div class="icon-wrapper">
+      <span class="icon">&#128278;</span>
+    </div>
+    <span class="label">Salvos</span>
+  </a>
+
+  <a routerLink="/perfil" routerLinkActive="active">
+    <div class="icon-wrapper">
+      <span class="icon">&#128100;</span>
+    </div>
+    <span class="label">Perfil</span>
+  </a>
+</nav>

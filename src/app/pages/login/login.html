@@ -1,40 +1,92 @@
-<header>
-    <img src="/img/projeto/facilito.svg" alt="Logo da TechFacil">
-    <h2>Oi! Eu sou o Facilito</h2>
-    <p>Vou te ajudar a escolher o aparelho ideal</p>
+<header class="header-mobile">
+  <div class="mascote-avatar-mobile">
+    <img src="/img/projeto/facilito.svg" alt="Facilito Mascote" />
+  </div>
+  <h2>Oi! Eu sou o Facilito</h2>
+  <p>Vou te ajudar a escolher o celular ideal</p>
 </header>
 
-<main>
+<main class="login-main">
 
-    @if (mensagemAviso) {
-        <div class="banner-aviso">
-            {{ mensagemAviso }}
-        </div>
-    }
+  @if (mensagemAviso) {
+    <div class="banner-aviso">
+      {{ mensagemAviso }}
+    </div>
+  }
+
+  <div id="formularioFacilito">
     
-    <section id="main-txt">
-        <h2>Entrar na sua conta</h2>
-        <p>Acesse para salvar suas preferências</p>
-    </section>
+    <div id="tabletFacilito">
+      <div class="brand-top">
+        <span class="logo-badge">TF</span>
+        <div>
+          <h3>TechFácil</h3>
+          <p>Celular certo, sem complicação</p>
+        </div>
+      </div>
 
-    <form (ngSubmit)="fazerLogin()" autocomplete="off">
+      <div class="mascote-card-desktop">
+        <img src="/img/projeto/facilito.svg" alt="Facilito Mascote" />
+        
+        <p>Oi! Eu sou o Facilito</p>
+      </div>
+
+      <div class="desktop-hero-text">
+        <h1>Escolher celular ficou fácil para toda a família</h1>
+        <p>Compare preços da loja em linguagem simples, sem termos difíceis.</p>
+      </div>
+
+      <div id="testo" class="badges-container">
+        <span>🛡️ Seguro LGPD</span>
+        <span>👥 Feito para famílias</span>
+        <span>🏪 Use na loja</span>
+      </div>
+
+      <p class="rodape-desktop">Mais de 12 mil famílias já economizaram com o TechFácil</p>
+    </div>
+
+    <div id="inputesFormulario">
+      <section id="main-txt">
+        <h2>Entrar na sua conta</h2>
+        <p>Acesse para salvar e comparar na loja.</p>
+      </section>
+
+      <form (ngSubmit)="fazerLogin()" autocomplete="off">
         <label for="email">E-mail</label>
         <div class="inputes">
-            <span>&#x1F4E7;</span>
-            <input type="email" id="email" name="email" [(ngModel)]="email" required placeholder="Digite seu email">
+          <span class="input-icon">&#x1F4E7;</span>
+          <input type="email" id="email" name="email" [(ngModel)]="email" required placeholder="voce@exemplo.com">
         </div>
-        
-        <label for="password" style="padding-top: 15px;">Senha</label>
+
+        <div class="label-password-wrapper">
+          <label for="password">Senha</label>
+        </div>
         <div class="inputes">
-            <span>&#x1F512;</span>
-            <input type="password" id="password" maxlength="8" name="password" [(ngModel)]="senha" required placeholder="Digite sua senha">
+          <span class="input-icon">&#x1F512;</span>
+          <input type="password" id="password" maxlength="8" name="password" [(ngModel)]="senha" required placeholder="Digite sua senha">
         </div>
 
-        <button type="submit" style="margin-top: 15px;">Entrar &#x2192;</button>
-        <a routerLink="/home" id="botao2">Continuar como Anônimo</a>
-    </form>
+        <button type="submit" class="btn-primary">Entrar &#x2192;</button>
 
-    <section id="main-txt2">
-        <p>Novo por aqui? <a routerLink="/cadastrar">Crie sua conta agora</a></p>
-    </section>
+        <a routerLink="/home" id="botao2" class="btn-secondary">
+          <span>&#128100;</span> Entrar como Anônimo
+        </a>
+      </form>
+
+      <section id="main-txt2">
+        <p>Novo por aqui? <a routerLink="/cadastrar" class="link-destaque">Criar conta grátis</a></p>
+      </section>
+
+      <div class="info-box mobile-only">
+        <span class="info-icon">🛡️</span>
+        <p>Na loja sem internet? O modo anônimo funciona offline e não salva nada.</p>
+      </div>
+
+      <div class="info-box desktop-only">
+        <span class="info-icon">⚠️</span>
+        <p><strong>Modo anônimo:</strong> compare à vontade na loja sem criar conta. Nada é salvo.</p>
+      </div>
+
+    </div>
+  </div>
 </main>
