@@ -34,8 +34,11 @@
         </div>
 
         <section id="Termos">
-            <input type="checkbox" id="termos" name="aceitouTermos" [(ngModel)]="aceitouTermos">
-            <p>Li e concordo com os termos e condições. <a href="javascript:void(0)">Ler termos</a></p>
+            <input type="checkbox" id="termos" name="aceitouTermos" [(ngModel)]="aceitouTermos" required>
+            <p>
+                Li e concordo com os termos e condições. 
+                <a routerLink="/lgpd" target="_blank">Ler termos</a>
+            </p>
         </section>
 
         <button type="submit" style="margin-top: 15px;">Criar Conta &#x2192;</button>

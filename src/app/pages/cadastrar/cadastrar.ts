@@ -1,19 +1,19 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Auth } from '../../services/auth';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-cadastrar',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink], // RouterLink necessário para o link dos termos e tela de login
   templateUrl: './cadastrar.html',
   styleUrl: './cadastrar.css'
 })
 export class Cadastrar {
-  authService = inject(Auth);
-  router = inject(Router);
+
+  private router = inject(Router);
+  private location = inject(Location);
 
   nome: string = '';
   email: string = '';
@@ -21,8 +21,12 @@ export class Cadastrar {
   confirmarSenha: string = '';
   aceitouTermos: boolean = false;
 
+  voltar(): void {
+    this.location.back();
+  }
+
   cadastrar(): void {
-    if (!this.nome.trim() || !this.email.trim() || !this.senha.trim()) {
+    if (!this.nome || !this.email || !this.senha || !this.confirmarSenha) {
       alert('Por favor, preencha todos os campos!');
       return;
     }
@@ -33,25 +37,30 @@ export class Cadastrar {
     }
 
     if (!this.aceitouTermos) {
-      alert('Você precisa aceitar os termos e condições para criar uma conta.');
+      alert('Você precisa aceitar os Termos e Condições para criar sua conta.');
       return;
     }
 
-    const sucesso = this.authService.cadastrar({
+    // Lógica para registrar usuário no LocalStorage
+    const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+    const emailExiste = usuarios.some((u: any) => u.email === this.email);
+
+    if (emailExiste) {
+      alert('Este e-mail já está cadastrado!');
+      return;
+    }
+
+    const novoUsuario = {
+      id: Date.now(),
       nome: this.nome,
       email: this.email,
       senha: this.senha
-    });
+    };
 
-    if (sucesso) {
-      alert('Conta criada com sucesso!');
-      this.router.navigate(['/home']);
-    } else {
-      alert('Este e-mail já está cadastrado.');
-    }
-  }
+    usuarios.push(novoUsuario);
+    localStorage.setItem('usuarios', JSON.stringify(usuarios));
 
-  voltar(): void {
+    alert('Conta criada com sucesso! Faça seu login.');
     this.router.navigate(['/login']);
   }
 }

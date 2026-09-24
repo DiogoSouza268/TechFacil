@@ -1,112 +1,169 @@
-:host{
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: var(--fundo-cor);
+/* ===================================================
+   CADASTRAR - MOBILE FIRST (Base)
+   =================================================== */
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 20px 15px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
 
-header{
-    background-color: white;
-    display: flex;
-    padding: 20px 0px 20px 20px;
-    font-size: 14px;
+header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  width: 100%;
 }
 
-header > div{
-    padding-left: 15px;
+header button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333333;
+  padding: 5px;
 }
 
-header > button{
-    padding: 12px;
-    background-color: var(--fundo-cor);
+header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #1a1a1a;
+}
+
+header p {
+  margin: 2px 0 0 0;
+  font-size: 0.85rem;
+  color: #666666;
+}
+
+main {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.inputes {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  padding: 10px 12px;
+  gap: 10px;
+}
+
+.inputes span {
+  font-size: 1.1rem;
+}
+
+.inputes input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 0.95rem;
+  background: transparent;
+}
+
+#Termos {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+#Termos input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #0056b3;
+}
+
+#Termos p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #444444;
+  line-height: 1.3;
+}
+
+#Termos a {
+  color: var(--verde-primario);
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+button[type="submit"] {
+  background-color:  var(--verde-primario);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button[type="submit"]:hover {
+  background-color:  var(--verde-secundario);
+}
+
+#texto-final {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #666666;
+}
+
+#texto-final a {
+  color: var(--verde-primario);
+  font-weight: bold;
+  text-decoration: none;
+}
+
+#texto-final a:hover {
+  text-decoration: underline;
+}
+
+/* ===================================================
+   RESPONSIVIDADE (Tablets e Desktops)
+   =================================================== */
+
+@media (min-width: 768px) {
+  :host {
+    justify-content: center;
+    align-items: center;
+  }
+
+  header, main {
+    width: 100%;
+    max-width: 480px;
+  }
+
+  header {
+    margin-bottom: 15px;
+  }
+
+  main {
+    background-color: #ffffff;
+    padding: 35px 30px;
     border-radius: 12px;
-    border: none;
-    color: black;
-}
-
-header > div > p{
-    padding-top: 5px;
-    font-size: 13px;
-}
-
-main{
-    display: flex;
-    flex-direction: column;
-    margin: 0px 20px;
-    width: min(100%, 520px);
-    margin-left: auto;
-    margin-right: auto;
-}
-
-form{
-    display: flex;
-    flex-direction: column;
-    padding-top: 20px;
-}
-
-label{
-    font-size: 14px;
-    padding-bottom: 5px;
-
-}
-
-.inputes{
-    border: 1px solid var(--cor-borda-inputs);
-    padding: 10px;
-    border-radius: 10px;
-    display: flex;
-    background-color: white;
-}
-
-.inputes > input{
-    border: none;
-    background-color: none;
-    flex: 1;
-    margin-left: 10px;
-    color: var(--cor-texto);
-}
-
-button{
-    padding: 13px;
-    border-radius: 10px;
-    border: 1px solid var(--verde-primario);
-    color: white;
-    background-color: var(--verde-primario);
-    font-weight: bolder;
-}
-
-#botao2{
-    background-color: transparent;
-    color: var(--verde-primario);
-}
-
-#Termos{
-    display: flex;
-    gap: 10px;
-    background-color: white;
-    padding: 15px;
-    margin-top: 15px;
-    border-radius: 10px;
-    border: 1px solid var(--cor-borda-inputs);
-}
-
-#Termos > p > a{
-    color: var(--verde-primario);
-    text-decoration: none;
-    font-size: 14px;
-}
-
-#Termos > input{
-    width: 30px;
-    height: auto;
-}
-
-#texto-final{
-    text-align: center;
-    padding-top: 15px;
-}
-
-#texto-final > a{
-    text-decoration: none;
-    color: var(--verde-primario);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
 }

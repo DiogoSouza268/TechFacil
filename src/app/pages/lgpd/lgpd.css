@@ -1,0 +1,125 @@
+/* ===================================================
+   LGPD - MOBILE FIRST (Base)
+   =================================================== */
+
+.lgpd-container {
+  width: 100%;
+  max-width: 100%;
+  padding: 20px 15px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  color: #333333;
+  line-height: 1.6;
+}
+
+.lgpd-header {
+  text-align: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.lgpd-logo {
+  width: 60px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.lgpd-header h1 {
+  font-size: 1.6rem;
+  color: #1a1a1a;
+  margin: 5px 0;
+}
+
+.lgpd-subtitulo {
+  font-size: 0.95rem;
+  color: #666666;
+  margin: 0;
+}
+
+.lgpd-conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.lgpd-secao h2 {
+  font-size: 1.2rem;
+  color:  var(--verde-primario);
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+}
+
+.lgpd-secao p {
+  font-size: 0.95rem;
+  margin: 0 0 10px 0;
+  text-align: justify;
+}
+
+.lgpd-secao ul {
+  padding-left: 20px;
+  margin: 0 0 10px 0;
+}
+
+.lgpd-secao li {
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+
+.destaque-lgpd {
+  background-color: #eef6ff;
+  border-left: 4px solid #0056b3;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 0.9rem !important;
+}
+
+.lgpd-contato-box {
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 10px;
+}
+
+.lgpd-contato-box p {
+  margin: 5px 0;
+  text-align: left;
+}
+
+.lgpd-rodape {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 15px;
+  border-top: 1px solid #eeeeee;
+  font-size: 0.85rem;
+  color: #888888;
+}
+
+/* ===================================================
+   RESPONSIVIDADE (Tablets e Desktops)
+   =================================================== */
+
+@media (min-width: 768px) {
+  .lgpd-container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 35px 40px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .lgpd-header h1 {
+    font-size: 2rem;
+  }
+
+  .lgpd-secao h2 {
+    font-size: 1.35rem;
+  }
+
+  .lgpd-secao p, 
+  .lgpd-secao li {
+    font-size: 1rem;
+  }
+}
