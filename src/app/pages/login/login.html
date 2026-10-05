@@ -1,27 +1,36 @@
-<header class="header-mobile">
-  <div class="mascote-avatar-mobile">
-    <img src="/img/projeto/facilito.svg" alt="Facilito Mascote" />
-  </div>
-  <h2>Oi! Eu sou o Facilito</h2>
-  <p>Vou te ajudar a escolher o celular ideal</p>
-</header>
-
 <main>
+  
+  <!--Header do meu mobile-->
+  <section id="mobile">
+    <div id="header-mobile">
 
-  <div id="main1">
+      <div class="mascote-avatar-mobile">
+        <img src="/img/projeto/facilito.svg" alt="Facilito Mascote" />
+      </div>
+      <h2>Oi! Eu sou o Facilito</h2>
+      <p>Vou te ajudar a escolher o celular ideal</p>
+
+    </div>
+  </section>
+
+  <!--Section do formulario-->
+  <section id="formulario">
 
     <div id="entrarInfo">
       <h2>Entrar na sua conta</h2>
       <p>Acesse para salvar suas comparações</p>
     </div>
+
     <form autocomplete="off">
+
       <div>
         <label for="inpute">E-mail</label>
         <div class="inputes">
           <span>&#x2709;&#xFE0E;</span>
-          <input type="text" id="inpute" placeholder="Digite o seu e-mail">
+          <input type="email" id="inpute" placeholder="Digite o seu e-mail">
         </div>
       </div>
+
       <div>
         <label for="inpute">Senha</label>
         <div class="inputes">
@@ -29,37 +38,104 @@
           <input type="password" id="inpute" placeholder="Digite a sua senha" maxlength="8">
         </div>
       </div>
+
     </form>
-    <section>
+
+    <div id="botoes">
       <button> Entrar &rarr;</button>
-      <button id="anonimo">
+      <button id="anonimo" type="button">
         &#x1F464;&#xFE0E; Entrar como Anônimo
       </button>
       <p>Novo por aqui? <a routerLink="/cadastrar">Crie um conta agora!</a></p>
     
-    </section>
+    </div>
     
 
-  </div>
+  </section>
 
-  <div id="main2">
-
-    <section id="formularioFacilito">
+  <section id="colunaEsquerda">
 
       <section id="tabletFacilito">
 
-        
+        <div style="display: flex; align-items: center; gap: 20px; padding: 10px 0px 30px 10px;">
+
+          <h2>TF</h2>
+
+          <div style="display: flex; justify-content: center; gap: 5px; flex-direction: column;">
+            <h2>TechFácil</h2>
+            <p>Celular certo, sem complicação</p>
+          </div>
+          
+        </div>
+
+        <div id="mascote">
+          <img src="/img/projeto/facilito.svg" alt="Mascote Facilito" />
+          <p>Oi! Eu sou o Facilito e vou te auxiliar nessa busca</p>
+        </div>
+
+        <div style="text-align: center;">
+          <h1 style="padding: 20px 0px;">Escolher celular ficou <br> fácil para toda a <br> família</h1>
+          <p style="padding-bottom: 10px;">Compare preços da loja em linguagem simples, sem termos difíceis.</p>
+        </div>
+
+        <div style="display: flex; justify-content: center; gap: 20px; padding: 10px 0px 20px 0px; font-size: 12px;">
+          <span>&#x1F6E1;&#xFE0E; Seguro</span>
+          <span>&#x1F465;&#xFE0E; Feito para famílias</span>
+          <span>&#x1F3EA;&#xFE0E; Use nas lojas</span>
+        </div>
+
+        <p style="padding-bottom: 20px;">Mais de 12 mil famílias já economizaram com o TechFácil!</p>
 
       </section>
 
       <section id="inputesFormulario">
 
+        <div style="padding-bottom: 20px;">
+          <h2 style="padding-bottom: 10px;">Bem-vindo de volta!</h2>
+          <p style="color: var(--cor-texto);">Entre para comparar celulares e salvar suas escolhas.</p>
+        </div>
+
+        <form autocomplete="off">
+
+          <div>
+            <label for="email-desktop">E-mail</label>
+            <div class="inputes" style="background-color: var(--fundo-cor);">
+              <span>&#x2709;&#xFE0E;</span>
+              <input type="email" id="email-desktop" placeholder="Digite o seu e-mail">
+            </div>
+          </div>
+
+          <div>
+            <label for="senha-desktop">Senha</label>
+            <div class="inputes" style="background-color: var(--fundo-cor); margin-bottom: 20px;">
+              <span>&#x1F512;&#xFE0E;</span>
+              <input type="password" id="senha-desktop" placeholder="Digite a sua senha" maxlength="8">
+            </div>
+          </div>
+        </form>
+
+        <section>
+          <button> Entrar &rarr;</button>
+
+          <div class="linha-com-texto">
+            <span>ou</span>
+          </div>
+
+          <button id="anonimo" type="button">
+            &#x1F464;&#xFE0E; Entrar como Anônimo
+          </button>
+
+          <p>Novo por aqui? <a routerLink="/cadastrar">Crie uma conta agora!</a></p>
+
+          <div id="info-box">
+            <p><span>&#128712;</span> <strong>Modo anônimo:</strong> compare à vontade na loja sem criar conta, porém nada é salvo!</p>
+          </div>
+
+        </section>
+
       </section>
 
-    </section>
-
-  </div>
-
+      
+  </section>
 
 </main>
-
