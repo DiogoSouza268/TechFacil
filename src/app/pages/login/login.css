@@ -47,7 +47,7 @@ form{
   border-radius: 7px;
   display: flex;
   align-items: center;
-  height: 30px;
+  height: 42px;
   gap: 10px;
   padding: 5px 10px;
   margin-top: 5px;
@@ -65,6 +65,7 @@ form{
 .inputes > input{
   border: none;
   flex: 1;
+  outline: none;
   height: 100%;
 }
 
@@ -82,6 +83,7 @@ button{
   border: 1px solid var(--verde-primario);
   border-radius: 8px;
   color: white;
+  transition: background-color 0.2s ease-in-out;
   font-weight: bolder;
 }
 
@@ -109,11 +111,8 @@ button:hover {
 
 #colunaEsquerda{
   display: none;
-  max-width: 1100px;
-  min-height: 100vh;
   justify-content: center;
   align-items: center;
-  padding: 0px 40px;
 }
 
 #tabletFacilito{
@@ -122,8 +121,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   color: white;
-  height: auto;
-  width: 50%;
+  width: 100%;
   border-radius: 25px 0px 0px 25px;
 }
 
@@ -142,8 +140,7 @@ button:hover {
   flex-direction: column;
   gap: 30px;
   height: auto;
-    width: 50%;
-
+  width: 50%;
   border-radius: 0px 25px 25px 0px;
 }
 
@@ -185,4 +182,59 @@ button:hover {
   color: black;
   font-size: 14px;
   padding-right: 5px;
+}
+
+@media (min-width: 900px){
+    #mobile{
+      display: none;
+    }
+
+    #colunaEsquerda{  
+      display: flex;
+      flex: 1;
+      max-width: none;
+      height: auto; 
+      
+    }
+
+    #formulario{
+    flex: 1;
+    margin: 0;
+    border-radius: 0px 20px 20px 0px;
+    background-color: whitesmoke;
+    
+    /* Mantém o mesmo padding proporcional da coluna esquerda */
+    padding: clamp(25px, 3vw, 45px); 
+    
+    /* Centraliza o formulário verticalmente dentro da altura esticada */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    
+    /* Remove limitações fixas de altura e largura anterior */
+    height: auto;
+    max-width: none;
+    }
+
+    main{
+      flex-direction: row-reverse;
+      justify-content: center;
+      align-items: stretch;      padding: 0px 30px;
+      margin: 0 auto;
+      max-width: 1100px;
+    }
+
+    #tabletFacilito{
+      width: 100%;
+      /* O padding responsivo (em vw) faz o elemento "crescer em altura" quando a tela alarga */
+      padding: clamp(25px, 3vw, 45px); 
+      border-radius: 20px 0px 0px 20px;
+      
+      /* Garante alinhamento vertical dos itens internos */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;  
+ 
+    }
 }

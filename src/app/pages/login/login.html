@@ -24,31 +24,35 @@
     <form autocomplete="off">
 
       <div>
-        <label for="inpute">E-mail</label>
+        <label for="e-mail">E-mail</label>
         <div class="inputes">
           <span>&#x2709;&#xFE0E;</span>
-          <input type="email" id="inpute" placeholder="Digite o seu e-mail">
+          <input type="email" id="e-mail" placeholder="Digite o seu e-mail">
         </div>
       </div>
 
       <div>
-        <label for="inpute">Senha</label>
+        <label for="senha">Senha</label>
         <div class="inputes">
           <span>&#x1F512;&#xFE0E;</span>
-          <input type="password" id="inpute" placeholder="Digite a sua senha" maxlength="8">
+          <input type="password" id="senha" placeholder="Digite a sua senha" maxlength="8">
         </div>
+      </div>
+
+      <div id="botoes">
+        <button type="submit"> Entrar &rarr;</button>
+
+        <button id="anonimo" type="button">
+          &#x1F464;&#xFE0E; Entrar como Anônimo
+        </button>
+        
+        <p>Novo por aqui? <a routerLink="/cadastrar">Crie um conta agora!</a></p>
+      
       </div>
 
     </form>
 
-    <div id="botoes">
-      <button> Entrar &rarr;</button>
-      <button id="anonimo" type="button">
-        &#x1F464;&#xFE0E; Entrar como Anônimo
-      </button>
-      <p>Novo por aqui? <a routerLink="/cadastrar">Crie um conta agora!</a></p>
     
-    </div>
     
 
   </section>
@@ -88,54 +92,6 @@
 
       </section>
 
-      <section id="inputesFormulario">
-
-        <div style="padding-bottom: 20px;">
-          <h2 style="padding-bottom: 10px;">Bem-vindo de volta!</h2>
-          <p style="color: var(--cor-texto);">Entre para comparar celulares e salvar suas escolhas.</p>
-        </div>
-
-        <form autocomplete="off">
-
-          <div>
-            <label for="email-desktop">E-mail</label>
-            <div class="inputes" style="background-color: var(--fundo-cor);">
-              <span>&#x2709;&#xFE0E;</span>
-              <input type="email" id="email-desktop" placeholder="Digite o seu e-mail">
-            </div>
-          </div>
-
-          <div>
-            <label for="senha-desktop">Senha</label>
-            <div class="inputes" style="background-color: var(--fundo-cor); margin-bottom: 20px;">
-              <span>&#x1F512;&#xFE0E;</span>
-              <input type="password" id="senha-desktop" placeholder="Digite a sua senha" maxlength="8">
-            </div>
-          </div>
-        </form>
-
-        <section>
-          <button> Entrar &rarr;</button>
-
-          <div class="linha-com-texto">
-            <span>ou</span>
-          </div>
-
-          <button id="anonimo" type="button">
-            &#x1F464;&#xFE0E; Entrar como Anônimo
-          </button>
-
-          <p>Novo por aqui? <a routerLink="/cadastrar">Crie uma conta agora!</a></p>
-
-          <div id="info-box">
-            <p><span>&#128712;</span> <strong>Modo anônimo:</strong> compare à vontade na loja sem criar conta, porém nada é salvo!</p>
-          </div>
-
-        </section>
-
-      </section>
-
-      
   </section>
 
 </main>
