@@ -49,8 +49,9 @@ form{
   border-radius: 7px;
   display: flex;
   align-items: center;
-  height: 30px;
+  height: 42px;
   gap: 10px;
+  margin-top: 5px;
   padding: 5px 10px;
   margin-top: 5px;
   background-color: white;
@@ -118,6 +119,10 @@ button:hover {
   border-radius: 20px 0px 0px 20px;
 }
 
+#colunaEsquerda h1 {
+  padding: 20px 0;
+}
+
 #colunaEsquerda > #div1{
   display: flex;
   align-items: center;
@@ -146,17 +151,6 @@ button:hover {
   gap: 20px;
   padding: 10px 0px 20px 0px;
   font-size: 12px;
-}
-
-#inputesFormulario{
-  background-color: white;
-  padding: 57px 50px;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  height: auto;
-  width: 50%;
-  border-radius: 0px 25px 25px 0px;
 }
 
 .linha-com-texto {
@@ -211,32 +205,110 @@ footer{
     }
 
     #colunaEsquerda{
-      max-width: 500px;    
       display: flex;
       flex-direction: column;
-      padding: 35px 30px;
-      flex: 1;
       justify-content: space-between;
+
+      width: 500px;
+      max-width: 500px;
+
+      padding: 35px 30px;
+      margin: 0;
+
+      color: white;
       background-color: var(--verde-primario);
-      margin: 40px 0px;
+
+      border-radius: 20px 0 0 20px;
 
     }
 
     #formulario{
-      max-width: 500px;  
-      border-radius: 0px 20px 20px 0px;
-      margin: 40px 0px;
+      display: flex;
+      flex-direction: column;
       justify-content: center;
-      flex: 1;
-      gap: 15px;
-      background-color: white;
+
+      width: 500px;
+      max-width: 500px;
+
       padding: 35px 30px;
+      margin: 0;
+      gap: 25px;
+
+
+      background-color: white;
+
+      border-radius: 0 20px 20px 0;
     }
 
     main{
       flex-direction: row;
       justify-content: center;
       min-height: 100vh;
-      padding: 0px 60px;
+      padding: 40px 60px;
     }
-} 
+
+  
+}
+
+@media (min-width: 900px) and (max-height: 650px) {
+
+  main {
+    padding: 20px 40px;
+  }
+
+  #colunaEsquerda {
+    padding: 20px 25px;
+  }
+
+  #colunaEsquerda > #div1 {
+    padding: 5px 0 15px 5px;
+  }
+
+  #mascote {
+    padding-bottom: 10px;
+  }
+
+  #mascote img {
+    width: 140px;
+  }
+
+  #colunaEsquerda h1 {
+    font-size: 26px;
+    line-height: 1.1;
+    padding: 10px 0;
+  }
+
+  #colunaEsquerda > div:nth-of-type(3) p {
+    padding-bottom: 5px !important;
+    font-size: 12px !important;
+  }
+
+  #div2 {
+    gap: 10px;
+    padding: 5px 0 10px;
+    font-size: 10px;
+  }
+
+  footer {
+    padding-bottom: 5px;
+    font-size: 10px;
+  }
+
+  #formulario {
+    padding: 25px 30px;
+    gap: 10px;
+  }
+
+  #entrarInfo {
+    margin-top: 10px;
+  }
+
+  form {
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  #botoes {
+    margin-top: 10px;
+  }
+}
