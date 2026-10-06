@@ -1,16 +1,53 @@
 <main>
   
   <!--Header do meu mobile-->
-  <section id="mobile">
-    <div id="header-mobile">
+  <header>
 
       <div class="mascote-avatar-mobile">
         <img src="/img/projeto/facilito.svg" alt="Facilito Mascote" />
       </div>
+      
       <h2>Oi! Eu sou o Facilito</h2>
+
       <p>Vou te ajudar a escolher o celular ideal</p>
 
-    </div>
+  </header>
+
+  <!--Section da coluna a esquerda-->
+  <section id="colunaEsquerda">
+
+      <div id="div1">
+
+        <h2>TF</h2>
+
+        <div id="div1-1">
+          <h2>TechFácil</h2>
+          <p>Celular certo, sem complicação</p>
+        </div>
+        
+      </div>
+
+      <div id="mascote">
+        <img src="/img/projeto/facilito.svg" alt="Mascote Facilito" />
+        <p style="text-align: center;">Oi! Eu sou o Facilito <br> e vou te auxiliar nessa busca</p>
+      </div>
+
+      <div style="text-align: center;">
+
+        <h1 style="padding: 20px 0px;">Escolher celular ficou <br> fácil para toda a <br> família</h1>
+
+        <p style="padding-bottom: 10px; font-size: 14px;">Compare preços da loja em linguagem simples <br> sem termos difíceis.</p>
+
+      </div>
+
+      <div id="div2">
+        <span>&#x1F6E1;&#xFE0E; Seguro</span>
+        <span>&#x1F465;&#xFE0E; Feito para famílias</span>
+        <span>&#x1F3EA;&#xFE0E; Use nas lojas</span>
+      </div>
+
+      <footer id="footer-texto">Mais de 12 mil famílias já economizaram com o TechFácil!</footer>
+
   </section>
 
   <!--Section do formulario-->
@@ -24,10 +61,12 @@
     <form autocomplete="off">
 
       <div>
-        <label for="e-mail">E-mail</label>
+        <label for="email">E-mail</label>
         <div class="inputes">
           <span>&#x2709;&#xFE0E;</span>
-          <input type="email" id="e-mail" placeholder="Digite o seu e-mail">
+          <input type="email" id="email"
+          placeholder="Digite o seu e-mail"   name="email"
+          autocomplete="email">
         </div>
       </div>
 
@@ -35,7 +74,11 @@
         <label for="senha">Senha</label>
         <div class="inputes">
           <span>&#x1F512;&#xFE0E;</span>
-          <input type="password" id="senha" placeholder="Digite a sua senha" maxlength="8">
+          <input   type="password"
+          id="senha"
+          name="senha"
+          autocomplete="current-password"
+          placeholder="Digite a sua senha" maxlength="8">
         </div>
       </div>
 
@@ -54,43 +97,6 @@
 
     
     
-
-  </section>
-
-  <section id="colunaEsquerda">
-
-      <section id="tabletFacilito">
-
-        <div style="display: flex; align-items: center; gap: 20px; padding: 10px 0px 30px 10px;">
-
-          <h2>TF</h2>
-
-          <div style="display: flex; justify-content: center; gap: 5px; flex-direction: column;">
-            <h2>TechFácil</h2>
-            <p>Celular certo, sem complicação</p>
-          </div>
-          
-        </div>
-
-        <div id="mascote">
-          <img src="/img/projeto/facilito.svg" alt="Mascote Facilito" />
-          <p>Oi! Eu sou o Facilito e vou te auxiliar nessa busca</p>
-        </div>
-
-        <div style="text-align: center;">
-          <h1 style="padding: 20px 0px;">Escolher celular ficou <br> fácil para toda a <br> família</h1>
-          <p style="padding-bottom: 10px;">Compare preços da loja em linguagem simples, sem termos difíceis.</p>
-        </div>
-
-        <div style="display: flex; justify-content: center; gap: 20px; padding: 10px 0px 20px 0px; font-size: 12px;">
-          <span>&#x1F6E1;&#xFE0E; Seguro</span>
-          <span>&#x1F465;&#xFE0E; Feito para famílias</span>
-          <span>&#x1F3EA;&#xFE0E; Use nas lojas</span>
-        </div>
-
-        <p style="padding-bottom: 20px;">Mais de 12 mil famílias já economizaram com o TechFácil!</p>
-
-      </section>
 
   </section>
 
