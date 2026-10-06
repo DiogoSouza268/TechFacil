@@ -1,4 +1,4 @@
- main{
+main{
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -207,7 +207,7 @@ footer{
     #colunaEsquerda{
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: space-around;
 
       width: 500px;
       max-width: 500px;

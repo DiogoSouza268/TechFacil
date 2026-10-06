@@ -1,10 +1,8 @@
-:host {
+main{
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f8f9fa;
-  padding: 20px 15px;
-  box-sizing: border-box;
+  background-color: var(--fundo-cor);
   font-family: Arial, sans-serif;
 }
 
@@ -12,45 +10,34 @@ header {
   display: flex;
   align-items: center;
   gap: 15px;
-  margin-bottom: 20px;
   width: 100%;
+  background-color: white;
+  padding: 20px;
+  font-size: 13px;
 }
 
 header button {
-  background: none;
-  border: none;
+  background: var(--fundo-cor);
+  border: 1px solid black;
+  border-radius: 10px;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #333333;
+  color: black;
   padding: 5px;
 }
 
-header h2 {
-  margin: 0;
-  font-size: 1.4rem;
-  color: #1a1a1a;
-}
+/*Section formilario*/
 
-header p {
-  margin: 2px 0 0 0;
-  font-size: 0.85rem;
-  color: #666666;
-}
-
-main {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-form {
+#formulario{
   display: flex;
   flex-direction: column;
+  margin: 0px 20px;
 }
 
 label {
   font-size: 0.9rem;
   font-weight: bold;
-  color: #333333;
+  color: black;
   margin-bottom: 5px;
   display: block;
 }
@@ -77,18 +64,27 @@ label {
   background: transparent;
 }
 
+.inputes:focus-within {
+  box-shadow: 0 0 0 2px var(--cor-borda-inputs);
+}
+
 #Termos {
   display: flex;
+  width: 100%;
   align-items: center;
-  gap: 10px;
   margin-top: 20px;
+  gap: 10px;
+  background-color: white;
+  border: 1px solid var(--cor-borda-inputs);
+  padding: 20px;
+  border-radius: 10px;
 }
 
 #Termos input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
+  width: 25px;
+  height: 25px;
   cursor: pointer;
-  accent-color: #0056b3;
+  accent-color: var(--verde-primario);
 }
 
 #Termos p {
@@ -104,20 +100,21 @@ label {
   text-decoration: underline;
 }
 
-button[type="submit"] {
+form > button {
   background-color:  var(--verde-primario);
-  color: #ffffff;
+  color: white;
   border: none;
   border-radius: 8px;
   padding: 14px;
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
+  width: 100%;
   transition: background-color 0.2s;
 }
 
-button[type="submit"]:hover {
-  background-color:  var(--verde-secundario);
+button:hover {
+  background-color: var(--verde-secundario);
 }
 
 #texto-final {
@@ -137,25 +134,102 @@ button[type="submit"]:hover {
   text-decoration: underline;
 }
 
-@media (min-width: 768px) {
-  :host {
+/* Section esquerda*/
+
+#colunaEsquerda{
+  display: none;
+  background-color: var(--verde-suave);
+  padding: 30px;
+  border-radius: 20px 0px 0px 20px;
+}
+
+#colunaEsquerda > #div1{
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 12px;
+  padding: 10px 0px 30px 10px;
+}
+
+#colunaEsquerda > #div1 > #div1-1{
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  flex-direction: column;
+}
+
+#paragrafoPrin{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.caracteristicas{
+  margin-top: 20px;
+  border: 1px solid var(--cor-borda-inputs);
+  border-radius: 10px;
+  padding: 13px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background-color: white;
+  font-size: 12px;
+}
+
+.caracteristicas > span{
+  background-color: var(--verde-primario);
+  padding: 8px;
+  border-radius: 10px;
+}
+
+
+@media (min-width: 900px){
+  header{
+    display: none;
+  }
+
+  main{
+    flex-direction: row;
     justify-content: center;
-    align-items: center;
+    padding: 40px 60px;
   }
 
-  header, main {
-    width: 100%;
-    max-width: 480px;
-  }
+  #colunaEsquerda{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
-  header {
-    margin-bottom: 15px;
-  }
+    width: 500px;
+    max-width: 500px;
 
-  main {
-    background-color: #ffffff;
     padding: 35px 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin: 0;
+
+    background-color: var(--verde-suave);
+
+    border-radius: 20px 0 0 20px;
+
   }
+
+  #formulario{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    width: 500px;
+    max-width: 500px;
+
+    padding: 35px 30px;
+    margin: 0;
+    gap: 25px;
+
+
+    background-color: white;
+
+    border-radius: 0 20px 20px 0;
+  }
+
+  
+
+
 }

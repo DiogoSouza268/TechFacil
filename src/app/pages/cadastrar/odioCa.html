@@ -1,65 +1,12 @@
-<main>
-  
-  <!--Header do meu mobile-->
-    <header>
-        <button type="button">&#x1F868;</button>
-        <div>
-            <h2>Criar Conta</h2>
-            <p>Preencha as informações para continuar</p>
-        </div>
-    </header>
-
-  <!--Section da coluna a esquerda-->
-  <section id="colunaEsquerda">
-
-    <div id="div1">
-
-        <h2>TF</h2>
-
-        <div id="div1-1">
-          <h2>TechFácil</h2>
-          <p>Celular certo, sem complicação</p>
-        </div>
-    </div>
-
-    <div id="paragrafoPrin">
-        <h1>Crie sua conta!</h1>
-        <p>Salve comparações, retome na loja e compartilhe com quem voce ama</p>
-    </div>
-
+<header>
+    <button type="button" (click)="voltar()" title="Voltar para o Login">&#x1F868;</button>
     <div>
-        <div class="caracteristicas">
-            <span>&#x1F4BE;</span>
-            <div>
-                <h2>Comparações salvas</h2>
-                <p>Volte depois sem perder nada</p>
-            </div>
-        </div>
-
-        <div class="caracteristicas">
-            <span>&#x1F465;</span>
-            <div>
-                <h2>Perfil para todos</h2>
-                <p>Dicas para todas as pessoas</p>
-            </div>
-        </div>
-
-        <div class="caracteristicas">
-            <span>&#x1F6E1;&#xFE0F;</span>
-            <div>
-                <h2>100% gratuito</h2>
-                <p>Não precisa pagar por nada</p>
-            </div>
-        </div>
-
-        
-
+        <h2>Criar Conta</h2>
+        <p>Preencha as informações para continuar</p>
     </div>
-    
-  </section>
+</header>
 
-  <!--Section do formulario-->
-  <section id="formulario">
+<main>
     <form (ngSubmit)="cadastrar()" autocomplete="off">
 
         <label for="nome-completo" style="padding-top: 15px;">Nome Completo</label>
@@ -98,6 +45,4 @@
     </form>
 
     <p id="texto-final">Já tem conta? <a routerLink="/login">Entrar</a></p>
-  </section>
-
 </main>
