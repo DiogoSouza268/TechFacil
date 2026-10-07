@@ -221,6 +221,11 @@ footer{
 }
 
 @media (min-width: 900px){
+
+    .banner-aviso{
+      margin-top: 0px;
+    }
+    
     header{
       display: none;
 
