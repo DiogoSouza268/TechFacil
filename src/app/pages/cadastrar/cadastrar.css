@@ -90,7 +90,7 @@ label {
 }
 
 .inputes:focus-within {
-  box-shadow: 0 0 0 2px var(--cor-borda-inputs);
+  box-shadow: 0 0 0 2px var(--verde-primario);
 }
 
 #Termos {
