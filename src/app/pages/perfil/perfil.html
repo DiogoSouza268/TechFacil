@@ -1,107 +1,101 @@
-<div id="containerPerfil">
-  <div id="painelDesktop">
-    <div class="brand-top">
-      <span class="logo-badge">TF</span>
-      <div>
-        <h3>TechFácil</h3>
-        <p>Celular certo, sem complicação</p>
-      </div>
+<main>
+  
+  <!--Header do meu mobile-->
+  <header>
+    <h2>Área do Usuário</h2>
+    <p>Gerencie suas informações pessoais e mantenha sua conta sempre atualizada.</p>
+  </header>
+
+  <!--Section da coluna a esquerda-->
+  <section id="colunaEsquerda">
+
+    <div id="div1">
+
+        <h2>TF</h2>
+
+        <div id="div1-1">
+          <h2>TechFácil</h2>
+          <p>Celular certo, sem complicação</p>
+        </div>
     </div>
 
-    <div class="desktop-intro">
-      <h1>Área do Usuário</h1>
-      <p>Gerencie suas informações pessoais e mantenha sua conta sempre atualizada.</p>
+    <div id="paragrafoPrin">
+        <h1>Área do Usuário</h1>
+        <p>Gerencie suas informações pessoais e mantenha sua conta sempre atualizada.</p>
     </div>
 
-    <div class="recursos-lista">
-      <div class="recurso-item">
-        <span class="recurso-icon">&#128737;</span>
-        <div>
-          <strong>Dados Protegidos</strong>
-          <p>Conforme as diretrizes da LGPD</p>
-        </div>
+    <div class="lista-caracteristicas">
+      <div class="caracteristicas">
+          <span>✏️</span>
+          <div>
+              <h2>Escreveu algo errado?</h2>
+              <p>Altere suas informações e clique em "Atualizar Dados"</p>
+          </div>
       </div>
-      <div class="recurso-item">
-        <span class="recurso-icon">&#128274;</span>
-        <div>
-          <strong>Acesso Seguro</strong>
-          <p>Sua senha é criptografada</p>
-        </div>
+
+      <div class="caracteristicas">
+          <span>&#x1F465;</span>
+          <div>
+              <h2>Perfil para todos</h2>
+              <p>Suas informações serão salvas ao sair da conta</p>
+          </div>
       </div>
-      <div class="recurso-item">
-        <span class="recurso-icon">&#128100;</span>
-        <div>
-          <strong>Perfil Ativo</strong>
-          <p>Aproveite todas as comparações</p>
-        </div>
+
+      <div class="caracteristicas">
+          <span>&#x1F6E1;&#xFE0F;</span>
+          <div>
+              <h2>100% gratuito</h2>
+              <p>Não precisa pagar por nada pelas mudanças</p>
+          </div>
       </div>
     </div>
+    
+  </section>
 
-    <div class="depoimento-card">
-      <span class="depoimento-badge">i</span>
-      <p>Mantenha seus dados atualizados para facilitar a recuperação de acesso à conta.</p>
-    </div>
-  </div>
+  <!--Section do formulario-->
+  <section id="formulario">
+    <form autocomplete="off">
 
-  <div id="inputesFormulario">
-    <header class="header-mobile">
-      <div class="header-top">
-        <div class="avatar-circle">
-          <span>&#128100;</span>
+        <div class="campo">
+            <label for="nome-completo">Nome Completo</label>
+            <div class="inputes">
+                <span>&#128100;</span>
+                <input type="text" id="nome-completo" name="nomeCompleto" [(ngModel)]="nome" required placeholder="Digite seu nome completo">
+            </div>
         </div>
-        <div>
-          <h2>Seu Perfil</h2>
-          <p>Seus dados estão logo abaixo</p>
+
+        <div class="campo">
+            <label for="email" >E-mail</label>
+            <div class="inputes">
+                <span>&#x1F4E7;</span>
+                <input type="email" id="email" name="email" [(ngModel)]="email" required placeholder="Digite seu email">
+            </div>
         </div>
-      </div>
-    </header>
-
-    <section id="main-txt">
-      <h2>Seu Perfil</h2>
-      <p>Atualize seus dados cadastrais</p>
-    </section>
-
-    <form (ngSubmit)="atualizarDados()" autocomplete="off">
-      <div class="form-group">
-        <label for="nome-completo">Nome Completo</label>
-        <div class="inputes">
-          <span class="input-icon">&#128100;</span>
-          <input type="text" id="nome-completo" name="nomeCompleto" [(ngModel)]="nome" required placeholder="Digite seu nome completo">
+        
+        <div class="campo">
+            <label for="password" >Senha</label>
+            <div class="inputes">
+                <span>&#x1F512;</span>
+                <input type="password" id="password" maxlength="8" name="password" [(ngModel)]="senha" required placeholder="Digite sua senha">
+            </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="email">E-mail</label>
-        <div class="inputes">
-          <span class="input-icon">&#x1F4E7;</span>
-          <input type="email" id="email" name="email" [(ngModel)]="email" required placeholder="Digite seu e-mail">
-        </div>
-      </div>
+        <section class="acoes-conta">
 
-      <div class="form-group">
-        <label for="password">Senha</label>
-        <div class="inputes">
-          <span class="input-icon">&#x1F512;</span>
-          <input type="password" id="password" maxlength="8" name="password" [(ngModel)]="senha" required placeholder="Digite sua senha">
-        </div>
-      </div>
+          <button type="submit" id="btSubmit">Atualizar Dados </button>
 
-      <button type="submit" class="btn-submit">
-        Atualizar dados &#x2192;
-      </button>
+          <button type="button" id="btLogout">
+            Sair da Conta 🚪
+          </button>
+
+          <button type="button" id="btExcluir">
+            Excluir Conta &#x26A0;
+          </button>
+
+        </section>
+
     </form>
 
-    <div class="acoes-conta">
-      <button type="button" class="btn-logout" (click)="logout()">
-        Sair da Conta 🚪
-      </button>
-      <button type="button" class="btn-excluir" (click)="excluirConta()">
-        Excluir Conta &#x26A0;
-      </button>
-    </div>
-  </div>
-</div>
+  </section>
 
-<footer>
-  <app-menu></app-menu>
-</footer>
+</main>

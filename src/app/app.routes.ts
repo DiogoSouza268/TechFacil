@@ -12,7 +12,7 @@ export const routes: Routes = [
     {path: "cadastrar", component: Cadastrar},
     {path: "home", component: Home},
     {path: "login", component: Login},
-    {path: "perfil", component: Perfil, canActivate: [authGuard] },
+    {path: "perfil", component: Perfil, },
     {path: "salvos", component: Salvos, canActivate: [authGuard]},
     {path: "lgpd", component: Lgpd},
     {path: '**', redirectTo: 'home' }
