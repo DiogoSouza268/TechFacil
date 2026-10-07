@@ -1,9 +1,8 @@
 main{
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--fundo-cor);
-  font-family: Arial, sans-serif;
 }
 
 header {
@@ -31,26 +30,46 @@ header button {
 #formulario{
   display: flex;
   flex-direction: column;
-  margin: 0px 20px;
+  width: 100%;
+  padding: 20px;
+}
+
+#formulario form {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  gap: 15px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 label {
   font-size: 0.9rem;
   font-weight: bold;
   color: black;
-  margin-bottom: 5px;
   display: block;
 }
 
 .inputes {
   display: flex;
   align-items: center;
+
+  width: 100%;
+  min-height: 44px;
+
+  gap: 10px;
+  padding: 0px 12px;
+
   background-color: white;
+
   border: 1px solid var(--cor-borda-inputs);
   border-radius: 8px;
-  padding: 0px 12px;
-  height: 44px;
-  gap: 10px;
+  
 }
 
 .inputes span {
@@ -58,9 +77,14 @@ label {
 }
 
 .inputes input {
+
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+
   border: none;
   outline: none;
-  width: 100%;
+  
   font-size: 0.95rem;
   background: transparent;
 }
@@ -71,13 +95,17 @@ label {
 
 #Termos {
   display: flex;
-  width: 100%;
   align-items: center;
-  margin-top: 15px;
+
+  width: 100%;
+  
+  margin-top: 5px;
   gap: 12px;
+
+  padding: 14px 16px;
+
   background-color: white;
   border: 1px solid var(--cor-borda-inputs);
-  padding: 14px 16px;
   border-radius: 10px;
 }
 
@@ -112,6 +140,7 @@ form > button {
   font-weight: bold;
   cursor: pointer;
   width: 100%;
+  margin-top: 15px;
   transition: background-color 0.2s;
 }
 
@@ -193,7 +222,9 @@ button:hover {
   main{
     flex-direction: row;
     justify-content: center;
-    padding: 40px 60px;
+    align-items: stretch;
+
+    padding: clamp(20px, 5vw, 60px);
   }
 
   #colunaEsquerda{
@@ -201,50 +232,74 @@ button:hover {
     flex-direction: column;
     justify-content: space-evenly;
 
-    width: 500px;
-    max-width: 500px;
+    flex: 1 1 0;
+    width: 100%;
+    max-width: 520px;
 
     padding: 35px 30px;
-    margin: 0;
 
-    background-color: var(--verde-secundario);
+    background-color: var(--verde-suave);
 
     border-radius: 20px 0 0 20px;
 
   }
 
   #formulario{
-    display: flex;
-    flex-direction: column;
     justify-content: center;
 
-    width: 500px;
-    max-width: 500px;
+    flex: 1 1 0;
+    width: 100%;
+    max-width: 520px;
 
     padding: 35px 30px;
-    margin: 0;
-    gap: 25px;
-
 
     background-color: white;
 
     border-radius: 0 20px 20px 0;
   }
+}
 
-  @media (min-width:900px) and (max-height: 650px) {
+@media (min-width: 900px) and (max-height: 700px) {
 
-    main{
-      padding: 10px 40px;
-    }
+  main {
+    padding: 20px 30px;
+  }
 
-    #colunaEsquerda {
+  #colunaEsquerda {
     padding: 20px 25px;
   }
 
-
+  #colunaEsquerda > #div1 {
+    padding: 5px 0 15px;
   }
 
-  
+  #paragrafoPrin {
+    gap: 6px;
+  }
 
+  #paragrafoPrin h1 {
+    font-size: 26px;
+  }
 
+  .caracteristicas {
+    margin-top: 10px;
+    padding: 10px;
+    gap: 12px;
+  }
+
+  #formulario {
+    padding: 25px 30px;
+  }
+
+  #formulario form {
+    gap: 5px;
+  }
+
+  #Termos {
+    padding: 10px 12px;
+  }
+
+  #texto-final {
+    margin-top: 10px;
+  }
 }
