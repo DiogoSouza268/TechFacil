@@ -82,13 +82,13 @@
 
         <section class="acoes-conta">
 
-          <button type="submit" id="btSubmit">Atualizar Dados </button>
+          <button type="submit" id="btSubmit" >Atualizar Dados </button>
 
-          <button type="button" id="btLogout">
+          <button type="button" id="btLogout" (click)="logout()">
             Sair da Conta 🚪
           </button>
 
-          <button type="button" id="btExcluir">
+          <button type="button" id="btExcluir" (click)="excluirConta()">
             Excluir Conta &#x26A0;
           </button>
 
@@ -99,3 +99,7 @@
   </section>
 
 </main>
+
+<footer>
+  <app-menu></app-menu>
+</footer>

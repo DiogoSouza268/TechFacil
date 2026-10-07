@@ -53,6 +53,12 @@
   <!--Section do formulario-->
   <section id="formulario">
 
+    @if (mensagemAviso) {
+      <div class="banner-aviso">
+        {{ mensagemAviso }}
+      </div>
+    }
+
     <div id="entrarInfo">
       <h2>Entrar na sua conta</h2>
       <p>Acesse para salvar suas comparações</p>
@@ -65,8 +71,8 @@
         <div class="inputes">
           <span>&#x2709;&#xFE0E;</span>
           <input type="email" id="email"
-          placeholder="Digite o seu e-mail"   name="email"
-          autocomplete="email">
+          placeholder="Digite o seu e-mail" name="email"
+          autocomplete="email" [(ngModel)]="email" required>
         </div>
       </div>
 
@@ -78,7 +84,8 @@
           id="senha"
           name="senha"
           autocomplete="current-password"
-          placeholder="Digite a sua senha" maxlength="8">
+          placeholder="Digite a sua senha" maxlength="8"
+          [(ngModel)]="senha" required>
         </div>
       </div>
 
@@ -99,8 +106,10 @@
 
     </form>
 
-    
-    
+    <div class="info-box_desktop-only">
+      <span class="info-icon">⚠️</span>
+      <p><strong>Modo anônimo:</strong> compare à vontade na loja sem criar conta. Nada é salvo.</p>
+    </div>
 
   </section>
 
