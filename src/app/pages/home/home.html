@@ -45,11 +45,11 @@
             class="opcoes" 
             [class.ativo]="filtroAtivo(filtro.key)" 
             (click)="toggleFiltro(filtro.key)">
+
             <span class="btn-icon">
-              @if (filtro.key === 'desempenho') { ⚡ }
-              @else if (filtro.key === 'camera') { 📷 }
-              @else if (filtro.key === 'bateria') { 🔋 }
+              <img [src]="filtro.icone" [alt]="filtro.label" class="icone-filtro">
             </span>
+            
             <span class="btn-text">{{ filtro.label }}</span>
           </button>
         }

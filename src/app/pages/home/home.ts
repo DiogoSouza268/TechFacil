@@ -56,14 +56,14 @@ export class Home implements OnInit {
   celularSelecionado: Celular | null = null;
 
   filtros = [
-    { key: 'naoTravar', label: '⚡ Memória RAM' },
-    { key: 'muitoEspaco', label: '📦 Armazenamento' },
-    { key: 'placaVideo', label: '🎮 Placa de vídeo (GPU)' },
-    { key: 'qualidadeImagem', label: '📺 Qualidade de imagem' },
-    { key: 'boaBateria', label: '🔋 Bateria' },
-    { key: 'processadorCPU', label: '🧠 Processador' },
-    { key: 'melhorCamera', label: '📸 Qualidade das Câmeras' },
-    { key: 'precoBaixo', label: '💰 Preço baixo' }
+    { key: 'naoTravar', label: 'Memória RAM', icone: '/img/projeto/memoria.svg'},
+    { key: 'muitoEspaco', label: 'Armazenamento', icone: '/img/projeto/caixa.svg' },
+    { key: 'placaVideo', label: 'Placa de vídeo (GPU)' , icone: '/img/projeto/monitor.svg' },
+    { key: 'qualidadeImagem', label: 'Qualidade de imagem' , icone: '/img/projeto/imagem.svg' },
+    { key: 'boaBateria', label: 'Bateria' , icone: '/img/projeto/bateria.svg' },
+    { key: 'processadorCPU', label: 'Processador' , icone: '/img/projeto/raio.svg'},
+    { key: 'melhorCamera', label: 'Qualidade das Câmeras' , icone: '/img/projeto/camera.svg' },
+    { key: 'precoBaixo', label: 'Preço baixo' , icone: '/img/projeto/carteira.svg'}
   ];
 
   filtrosSelecionados: string[] = [];
