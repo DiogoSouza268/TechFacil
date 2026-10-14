@@ -22,7 +22,7 @@
   </header>
 
   <main class="main-content">
-    <section id="destaques" class="section-block">
+    <section class="section-block">
       <div class="section-title-row">
         <h3>Destaques e Lançamentos</h3>
         <span class="link-ver-tudo">Ver tudo &rarr;</span>
@@ -32,13 +32,13 @@
       </div>
     </section>
 
-    <section id="procurando" class="section-block">
+    <section class="section-block">
       <div class="filtros-header">
         <h3>O que você busca no seu celular?</h3>
         <p class="sub-instrucao">Toque nas opções para ajustarmos o vencedor para você.</p>
       </div>
 
-      <div id="botoes" class="grid-filtros">
+      <div class="grid-filtros">
         @for (filtro of filtros; track filtro.key) {
           <button 
             type="button"
@@ -56,13 +56,12 @@
       </div>
     </section>
 
-    <section id="comparando" class="section-block">
+    <section class="section-block">
       <div class="search-container">
-        <div id="inputes" class="search-bar">
+        <div class="search-bar">
           <span class="search-icon">&#128065;</span>
           <input 
-            type="text" 
-            id="busca" 
+            type="text"  
             name="busca-celular" 
             placeholder="Digite o celular que você viu na loja..."
             [(ngModel)]="termoBusca"
@@ -85,7 +84,7 @@
         </div>
       </div>
 
-      <div id="celulares" class="comparacao-status">
+      <div class="comparacao-status">
         <div class="status-info">
           <h3>Comparando {{ listaComparacao.length }} celular(es)</h3>
           <small class="dica-toque desktop-only">💡 Toque no nome do componente para entender em linguagem simples.</small>
@@ -99,7 +98,7 @@
         </div>
       </div>
 
-      <div id="aparelhoCelular" class="grid-aparelhos">
+      <div class="grid-aparelhos">
         @if (listaComparacao.length === 0) {
           <div class="mensagem-vazia">
             <span class="empty-icon">&#128241;</span>
