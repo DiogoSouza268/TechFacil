@@ -58,6 +58,12 @@ header.header-home {
   gap: 12px;
 }
 
+@media (max-width:900px){
+  .header-actions{
+    display: none;
+  }
+}
+
 .btn-salvos-header {
   display: flex;
   align-items: center;
@@ -612,6 +618,13 @@ main.main-content {
     justify-content: center;
     text-align: center;
     padding: 10px 0px;
+  }
+
+  .mensagem-vazia {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-self: stretch;
+    text-align: center;
   }
 
   .indicadores-container{

@@ -68,6 +68,12 @@ header.header-home {
   flex-shrink: 0;
 }
 
+@media (max-width:900px){
+  .header-actions{
+    display: none;
+  }
+}
+
 .btn-salvos-header {
   display: inline-flex;
   justify-content: center;
@@ -164,9 +170,8 @@ header.header-home {
 }
 
 .header-salvos {
-  background-color: #ffffff;
+  background-color: transparent;
   padding: 20px;
-  border-bottom: 1px solid #e5e7eb;
 }
 
 .header-content {
