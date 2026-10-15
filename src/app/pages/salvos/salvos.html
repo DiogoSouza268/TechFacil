@@ -1,16 +1,49 @@
-<div class="salvos-container">
+<header class="header-home">
+      <div class="header-left">
+        <div id="logo-techfacil">
+          <img
+            src="/img/projeto/facilito.svg"
+            alt="TechFácil Logo"
+            class="logo-img"
+          >
 
-  <header class="header-salvos">
-    <div class="header-content">
-      <span class="badge-icon">&#128278;</span>
-      <div>
-        <h2>Comparações Salvas</h2>
-        <p>Seus aparelhos favoritados e vencedores</p>
+          <div>
+            <h2 class="logo-title">TechFácil</h2>
+            <span class="logo-subtitle">Celular certo, sem complicação</span>
+          </div>
+        </div>
       </div>
-    </div>
+
+      <div class="header-actions">
+        <a routerLink="/home" class="btn-salvos-header" aria-current="page">
+          Nova Comparação
+        </a>
+
+        <a
+          routerLink="/perfil"
+          class="user-avatar"
+          title="Perfil do Usuário"
+          aria-label="Ir para o perfil"
+        >
+          <img src="/img/projeto/pessoa.svg" alt="">
+        </a>
+      </div>
   </header>
 
+<div class="salvos-container">
   <main class="main-content">
+
+    <div class="header-salvos">
+      <div class="header-content">
+        <span class="badge-icon">&#128278;</span>
+
+        <div>
+          <h2>Comparações Salvas</h2>
+          <p>Seus aparelhos favoritados e vencedores</p>
+        </div>
+      </div>
+    </div>
+
     @if (comparacoesSalvas.length === 0) {
       <section class="sem-salvos">
         <div class="empty-icon">&#128194;</div>

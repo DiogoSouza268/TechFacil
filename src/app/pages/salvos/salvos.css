@@ -8,16 +8,160 @@
   box-sizing: border-box;
 }
 
+/* HEADER DA PÁGINA */
+
+header.header-home {
+  width: 100%;
+  box-sizing: border-box;
+
+  background-color: #ffffff;
+
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+
+  padding: 12px 20px;
+  border-bottom: 1px solid #e2e8f0;
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  min-width: 0;
+}
+
+#logo-techfacil {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.logo-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #0f172a;
+}
+
+.logo-subtitle {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.btn-salvos-header {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 9px 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+
+  background-color: #f1f5f9;
+  color: #0f172a;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-salvos-header:hover {
+  background-color: #e2e8f0;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: var(--verde-secundario);
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.user-avatar img {
+  width: 23px;
+  height: 23px;
+  object-fit: contain;
+}
+
+.user-avatar:hover {
+  background-color: var(--verde-primario);
+}
+
+/* AJUSTES PARA CELULARES ESTREITOS */
+
+@media (max-width: 480px) {
+  header.header-home {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  #logo-techfacil {
+    gap: 8px;
+  }
+
+  .logo-img {
+    width: 34px;
+    height: 34px;
+  }
+
+  .logo-title {
+    font-size: 1rem;
+  }
+
+  .logo-subtitle {
+    font-size: 0.65rem;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  .btn-salvos-header {
+    padding: 8px 11px;
+    font-size: 0.78rem;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+  }
+}
+
 .salvos-container {
   flex: 1;
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
 }
-
-
 
 .header-salvos {
   background-color: #ffffff;
@@ -269,6 +413,11 @@ footer {
 }
 
 @media (min-width: 900px) {
+
+  header.header-home{
+    display: flex;
+  }
+  
   .salvos-container {
     padding-top: 30px;
   }
