@@ -17,6 +17,8 @@
   margin: 0 auto;
 }
 
+
+
 .header-salvos {
   background-color: #ffffff;
   padding: 20px;
@@ -183,8 +185,8 @@
 }
 
 .bloco-vencedor {
-  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-  border: 1px solid #fde68a;
+  background: var(--verde-menta);
+  border: 1px solid var(--verde-primario);
   border-radius: 12px;
   padding: 14px;
   margin-bottom: 16px;
@@ -203,14 +205,14 @@
 .vencedor-header h4 {
   margin: 0;
   font-size: 0.95rem;
-  color: #92400e;
+  color: var(--verde-secundario);
   font-weight: 700;
 }
 
 .motivos {
   margin: 8px 0 0 0;
   font-size: 0.8rem;
-  color: #78350f;
+  color: var(--verde-secundario);
   line-height: 1.4;
 }
 
@@ -235,8 +237,8 @@
 }
 
 .item-celular.is-vencedor {
-  border-color: #fde68a;
-  background-color: #fffdf5;
+  border-color: var(--verde-secundario);
+  background-color: var(--verde-menta);
   box-shadow: 0 2px 6px rgba(245, 158, 11, 0.15);
 }
 
@@ -258,7 +260,7 @@
 .preco {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #00875a;
+  color: black;
   margin: 0;
 }
 
