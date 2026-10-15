@@ -64,7 +64,7 @@
       <p>Acesse para salvar suas comparações</p>
     </div>
 
-    <form autocomplete="off">
+    <form autocomplete="off" (ngSubmit)="fazerLogin()">
 
       <div>
         <label for="email">E-mail</label>
@@ -96,7 +96,7 @@
           <span>ou</span>
         </div>
 
-        <button id="anonimo" type="button">
+        <button id="anonimo" type="button" (click)="entrarComoAnonimo()">
           &#x1F464;&#xFE0E; Entrar como Anônimo
         </button>
         

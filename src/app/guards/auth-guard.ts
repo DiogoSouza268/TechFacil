@@ -1,3 +1,4 @@
+
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { Auth } from '../services/auth';
@@ -10,6 +11,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  router.navigate(['/login'], { queryParams: { aviso: 'necessario-login' } });
-  return false;
+  return router.createUrlTree(['/login'], {
+    queryParams: { aviso: 'necessario-login' }
+  });
 };

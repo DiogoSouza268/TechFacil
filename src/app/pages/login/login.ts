@@ -20,12 +20,19 @@ export class Login implements OnInit {
   senha: string = '';
   mensagemAviso: string = '';
 
+  
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      if (params['aviso'] === 'necessario-login') {
-        this.mensagemAviso = '🔒 Você precisa logar ou criar uma conta para acessar essa página!';
-      }
+      this.mensagemAviso =
+        params['aviso'] === 'necessario-login'
+          ? '🔒 Você precisa entrar ou criar uma conta para acessar essa página!'
+          : '';
     });
+  }
+
+  
+  entrarComoAnonimo(): void {
+    this.router.navigate(['/home']);
   }
 
   fazerLogin(): void {
