@@ -62,6 +62,7 @@ header.header-home {
   display: flex;
   align-items: center;
   gap: 6px;
+  text-decoration: none;
   background-color: #f1f5f9;
   border: 1px solid #e2e8f0;
   padding: 8px 12px;
