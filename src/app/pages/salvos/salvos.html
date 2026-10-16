@@ -96,7 +96,12 @@
                 <div class="item-celular" [class.is-vencedor]="item.vencedor?.nome === celular.nome">
                   <img [src]="celular.imagem" [alt]="celular.nome">
                   <p class="nome-celular">{{ celular.nome }}</p>
-                  <p class="preco">R$ {{ celular.precoMedio }}</p>
+
+                  @if (celular.precoDisponivel === false) {
+                    <p class="preco">Preço não informado</p>
+                  } @else {
+                    <p class="preco">R$ {{ celular.precoMedio }}</p>
+                  }                  
                 </div>
               }
             </div>

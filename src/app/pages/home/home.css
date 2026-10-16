@@ -612,6 +612,130 @@ main.main-content {
   display: none;
 }
 
+
+.acoes-busca-api {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 0 4px;
+}
+
+.btn-buscar-api {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  border-radius: 18px;
+  padding: 9px 16px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-buscar-api:hover:not(:disabled) {
+  background: #d1fae5;
+}
+
+.btn-buscar-api:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.acoes-busca-api small {
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
+.lista-resultados-api {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.resultado-api {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  background: #ffffff;
+  border: none;
+  text-align: left;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.resultado-api + .resultado-api {
+  border-top: 1px solid #e2e8f0;
+}
+
+.resultado-api:hover:not(:disabled) {
+  background: #f8fafc;
+}
+
+.resultado-api:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.resultado-api img {
+  flex-shrink: 0;
+  width: 44px;
+  height: 58px;
+  object-fit: contain;
+}
+
+.resultado-api-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.resultado-api-texto strong {
+  font-size: 0.88rem;
+  overflow-wrap: anywhere;
+}
+
+.resultado-api-texto small,
+.status-busca-api,
+.erro-busca-api {
+  font-size: 0.8rem;
+}
+
+.resultado-api-texto small,
+.status-busca-api {
+  color: #64748b;
+}
+
+.status-busca-api,
+.erro-busca-api {
+  margin: 10px 4px 0;
+}
+
+.erro-busca-api {
+  color: #b91c1c;
+}
+
+@media (max-width: 600px) {
+  .acoes-busca-api {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .btn-buscar-api {
+    width: 100%;
+  }
+}
+
+
 @media (min-width: 900px) {
 
   .comparacao-status{
