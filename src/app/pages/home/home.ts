@@ -6,6 +6,11 @@ import { CommonModule } from '@angular/common';
 import { AlterarInfoComponent } from '../../componentes/alterar-info/alterar-info';
 import { AvisoLogin } from '../../componentes/aviso-login/aviso-login'; 
 import { Auth } from '../../services/auth';
+import {
+  CelularesApiService,
+  DispositivoApi,
+  DispositivoDetalhado
+} from '../../services/celulares-api.service';
 
 export interface Specs {
   armazenamento: string;
@@ -33,6 +38,8 @@ export interface Celular {
   id: number;
   nome: string;
   precoMedio: number;
+  precoDisponivel?: boolean;
+  origem?: 'local' | 'api';
   imagem: string;
   specs: Specs;
   pontosFortes: PontosFortes;
@@ -48,12 +55,23 @@ export interface Celular {
 export class Home implements OnInit {
 
   authService = inject(Auth);
+
+  // Serviço que consulta o backend
+  private celularesApi = inject(CelularesApiService);
+
   exibirAvisoModal: boolean = false;
 
   listaCelulares: Celular[] = [];
   listaComparacao: Celular[] = [];
   termoBusca: string = '';
   celularSelecionado: Celular | null = null;
+
+  // Controle da busca externa
+  resultadosApi: DispositivoApi[] = [];
+  buscandoApi = false;
+  buscandoDetalhesApi = false;
+  erroBuscaApi = '';
+  mensagemBuscaApi = '';
 
   filtros = [
     { key: 'naoTravar', label: 'Memória RAM', icone: '/img/projeto/memoria.svg'},
@@ -130,6 +148,296 @@ export class Home implements OnInit {
     }
   }
 
+  
+buscarNaApi(): void {
+  const nome = this.termoBusca.trim();
+
+  if (nome.length < 2) {
+    this.erroBuscaApi = 'Digite pelo menos 2 caracteres para pesquisar.';
+    return;
+  }
+
+  this.celularSelecionado = null;
+  this.resultadosApi = [];
+  this.erroBuscaApi = '';
+  this.mensagemBuscaApi = '';
+  this.buscandoApi = true;
+
+  this.celularesApi.buscarPorNome(nome).subscribe({
+    next: (resposta) => {
+      const encontrados = resposta.devices.filter(
+        dispositivo =>
+          !dispositivo.device_type ||
+          dispositivo.device_type.toLowerCase() === 'phone'
+      );
+
+      this.resultadosApi = encontrados.filter(dispositivo => {
+        const nomeApi = this.normalizarNome(
+          this.nomeCompletoApi(dispositivo)
+        );
+
+        return !this.listaCelulares.some(
+          celular => this.normalizarNome(celular.nome) === nomeApi
+        );
+      });
+
+      this.buscandoApi = false;
+
+      if (encontrados.length === 0) {
+        this.mensagemBuscaApi = 'Nenhum celular encontrado para essa pesquisa.';
+      } else if (this.resultadosApi.length === 0) {
+        this.mensagemBuscaApi =
+          'Os modelos encontrados já estão no catálogo local.';
+      }
+    },
+    error: (erro) => {
+      console.error('Erro ao pesquisar celulares na API:', erro);
+      this.erroBuscaApi =
+        erro.error?.error || 'Não foi possível pesquisar os celulares.';
+      this.buscandoApi = false;
+    }
+  });
+}
+
+nomeCompletoApi(dispositivo: DispositivoApi): string {
+  const marca = dispositivo.manufacturer_name?.trim() || '';
+  const nome = dispositivo.name.trim();
+
+  if (!marca) return nome;
+
+  if (
+    this.normalizarNome(nome).startsWith(this.normalizarNome(marca))
+  ) {
+    return nome;
+  }
+
+  return `${marca} ${nome}`;
+}
+
+private normalizarNome(nome: string): string {
+  return nome
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/gi, '')
+    .toLowerCase();
+}
+
+selecionarResultadoApi(dispositivo: DispositivoApi): void {
+    if (this.listaComparacao.length >= 3) {
+      alert('Você já atingiu o limite de 3 celulares para comparar.');
+      return;
+    }
+
+    const idLocal = 1_000_000 + dispositivo.id;
+
+    if (this.listaComparacao.some(celular => celular.id === idLocal)) {
+      alert('Este celular já está na sua lista de comparação.');
+      return;
+    }
+
+    this.buscandoDetalhesApi = true;
+    this.erroBuscaApi = '';
+    this.mensagemBuscaApi = '';
+
+    this.celularesApi.buscarDetalhes(dispositivo.id).subscribe({
+      next: (detalhes) => {
+        const celular = this.converterDispositivoApi(detalhes);
+
+        this.recalcularNotas(celular);
+        this.celularSelecionado = celular;
+        this.termoBusca = celular.nome;
+        this.resultadosApi = [];
+        this.mensagemBuscaApi =
+          'Celular selecionado. Clique em Adicionar para incluí-lo na comparação.';
+        this.buscandoDetalhesApi = false;
+      },
+      error: (erro) => {
+        console.error('Erro ao buscar detalhes do celular:', erro);
+        this.erroBuscaApi =
+          erro.error?.error ||
+          'Não foi possível carregar os detalhes desse celular.';
+        this.buscandoDetalhesApi = false;
+      }
+    });
+  }
+
+  
+    private converterDispositivoApi(d: DispositivoDetalhado): Celular {
+      const capacidadeRam = this.obterRamGb(d);
+      const capacidadeArmazenamento = this.obterArmazenamentoGb(d);
+
+      const chipsetOriginal = d.platform?.chipset || '';
+      const hardwareOriginal = d.hardware || '';
+
+      const processador =
+        chipsetOriginal
+          .split(/Processor clock:|Number of cores:|GPU:/i)[0]
+          .trim() ||
+        hardwareOriginal
+          .replace(
+            /^(?:\s*\d+(?:[.,]\d+)?\s*(?:GB|MB|TB)\s*)+RAM\s*,?\s*/i,
+            ''
+          )
+          .trim() ||
+        'Não informado pela API';
+
+      const gpu =
+        d.platform?.gpu?.trim() ||
+        chipsetOriginal.match(/GPU:\s*(.+)$/i)?.[1]?.trim() ||
+        'Não informado pela API';
+
+      const tela = [
+        d.display?.type,
+        d.display?.size,
+        d.display?.resolution
+      ]
+        .filter((valor): valor is string => Boolean(valor?.trim()))
+        .join(' — ') ||
+        d.screen_resolution ||
+        'Não informado pela API';
+
+      const bateriaOriginal =
+        d.battery?.type || d.battery_capacity || '';
+
+      const bateria =
+        bateriaOriginal.match(/[\d.,]+\s*mAh/i)?.[0] ||
+        bateriaOriginal ||
+        'Não informado pela API';
+
+      const cameras = [
+        d.main_camera?.modules ? `Traseira: ${d.main_camera.modules}` : '',
+        d.selfie_camera?.modules ? `Frontal: ${d.selfie_camera.modules}` : ''
+      ].filter(Boolean).join(' | ');
+
+      const preco = this.extrairPrecoEmReais(d.misc?.price);
+
+      const celular: Celular = {
+        id: 1_000_000 + d.id,
+        nome: this.nomeCompletoApi(d),
+        precoMedio: preco ?? 0,
+        precoDisponivel: preco !== null,
+        origem: 'api',
+        imagem: d.image_url || '/img/projeto/celulares.jpg',
+
+        specs: {
+          armazenamento: capacidadeArmazenamento !== null
+            ? `${capacidadeArmazenamento}GB`
+            : 'Não informado pela API',
+
+          ram: capacidadeRam !== null
+            ? `${capacidadeRam}GB`
+            : 'Não informado pela API',
+
+          bateria,
+          processador,
+          gpu,
+          qualidadeImagem: tela,
+          camera: cameras
+        },
+
+        pontosFortes: {
+          naoTravar: 0,
+          muitoEspaco: 0,
+          placaVideo: 5,
+          qualidadeImagem: 5,
+          boaBateria: 0,
+          processadorCPU: 5,
+          melhorCamera: 5,
+          precoBaixo: preco !== null ? 5 : 0
+        }
+      };
+
+      return celular;
+    }
+
+    private obterRamGb(d: DispositivoDetalhado): number | null {
+      const memoria = d.memory?.internal || '';
+
+      let textoRam =
+        memoria.match(/RAM\s*:\s*(.+)$/i)?.[1] ||
+        memoria.match(/(\d+(?:[.,]\d+)?\s*(?:GB|MB|TB))\s*RAM/i)?.[1] ||
+        d.hardware?.match(
+          /((?:\d+(?:[.,]\d+)?\s*(?:GB|MB|TB)\s*)+)RAM/i
+        )?.[1] ||
+        '';
+
+      const capacidades = this.lerCapacidadesGb(textoRam);
+      return capacidades.length ? Math.min(...capacidades) : null;
+    }
+
+    private obterArmazenamentoGb(
+      d: DispositivoDetalhado
+    ): number | null {
+      const opcoes = this.lerCapacidadesGb(d.storage || '');
+
+      if (opcoes.length) {
+        return Math.min(...opcoes);
+      }
+
+      const memoria = d.memory?.internal || '';
+      const antesDaRam = memoria.split(/\bRAM\b/i)[0];
+      const capacidades = this.lerCapacidadesGb(antesDaRam);
+
+      // Em formatos como "32GB 2GB RAM", o último valor
+      // antes de RAM pode ser a memória RAM, não o armazenamento.
+      if (
+        capacidades.length > 1 &&
+        /\bRAM\b/i.test(memoria) &&
+        !/RAM\s*:/i.test(memoria)
+      ) {
+        const valoresOriginais = this.lerCapacidadesGbNaOrdem(antesDaRam);
+        valoresOriginais.pop();
+
+        return valoresOriginais.length
+          ? Math.min(...valoresOriginais)
+          : null;
+      }
+
+      return capacidades.length ? Math.min(...capacidades) : null;
+    }
+
+    private lerCapacidadesGb(texto: string): number[] {
+      return [...new Set(this.lerCapacidadesGbNaOrdem(texto))]
+        .sort((a, b) => a - b);
+    }
+
+    private lerCapacidadesGbNaOrdem(texto: string): number[] {
+      const capacidades: number[] = [];
+      const regex = /(\d+(?:[.,]\d+)?)\s*(TB|GB|MB)/gi;
+
+      for (const resultado of texto.matchAll(regex)) {
+        let valor = Number(resultado[1].replace(',', '.'));
+        const unidade = resultado[2].toUpperCase();
+
+        if (unidade === 'TB') valor *= 1024;
+        if (unidade === 'MB') valor /= 1024;
+
+        if (Number.isFinite(valor) && valor > 0) {
+          capacidades.push(Number(valor.toFixed(2)));
+        }
+      }
+
+      return capacidades;
+    }
+
+    private extrairPrecoEmReais(
+      texto?: string | null
+    ): number | null {
+      if (!texto) return null;
+
+      // Não converte euros, dólares ou moedas desconhecidas.
+      const resultado = texto.match(/R\$\s*([\d.]+(?:,\d{1,2})?)/i);
+      if (!resultado) return null;
+
+      const valor = Number(
+        resultado[1].replace(/\./g, '').replace(',', '.')
+      );
+
+      return Number.isFinite(valor) && valor > 0 ? valor : null;
+  }
+
+
+  
   recalcularNotas(celular: Celular): void {
     const ramNum = this.extrairNumero(celular.specs.ram);
     const armNum = this.extrairNumero(celular.specs.armazenamento);
@@ -137,16 +445,47 @@ export class Home implements OnInit {
     const preco = celular.precoMedio;
 
     celular.pontosFortes = {
-      naoTravar: ramNum >= 12 ? 10 : ramNum >= 8 ? 8 : ramNum >= 6 ? 6 : 4,
-      muitoEspaco: armNum >= 512 ? 10 : armNum >= 256 ? 9 : armNum >= 128 ? 7 : 4,
-      boaBateria: batNum >= 7000 ? 10 : batNum >= 6000 ? 9 : batNum >= 5000 ? 8 : 6,
-      precoBaixo: preco <= 800 ? 10 : preco <= 1200 ? 8 : preco <= 2000 ? 6 : preco <= 4000 ? 4 : 2,
-      placaVideo: celular.pontosFortes?.placaVideo ?? 5,
-      qualidadeImagem: celular.pontosFortes?.qualidadeImagem ?? 5,
-      processadorCPU: celular.pontosFortes?.processadorCPU ?? 5,
-      melhorCamera: celular.pontosFortes?.melhorCamera ?? 5
+      naoTravar: ramNum > 0
+        ? ramNum >= 12 ? 10 : ramNum >= 8 ? 8 : ramNum >= 6 ? 6 : 4
+        : 0,
+
+      muitoEspaco: armNum > 0
+        ? armNum >= 512 ? 10 : armNum >= 256 ? 9 : armNum >= 128 ? 7 : 4
+        : 0,
+
+      boaBateria: batNum > 0
+        ? batNum >= 7000 ? 10 : batNum >= 6000 ? 9 : batNum >= 5000 ? 8 : 6
+        : 0,
+
+      precoBaixo: celular.precoDisponivel === false
+        ? 0
+        : preco <= 800 ? 10 : preco <= 1200 ? 8 : preco <= 2000 ? 6 : preco <= 4000 ? 4 : 2,
+
+      placaVideo: this.temInformacao(celular.specs.gpu)
+        ? celular.pontosFortes?.placaVideo ?? 5
+        : 0,
+
+      qualidadeImagem: this.temInformacao(celular.specs.qualidadeImagem)
+        ? celular.pontosFortes?.qualidadeImagem ?? 5
+        : 0,
+
+      processadorCPU: this.temInformacao(celular.specs.processador)
+        ? celular.pontosFortes?.processadorCPU ?? 5
+        : 0,
+
+      melhorCamera: this.temInformacao(celular.specs.camera)
+        ? celular.pontosFortes?.melhorCamera ?? 5
+        : 0
     };
   }
+
+  private temInformacao(valor?: string): boolean {
+    return Boolean(
+      valor?.trim() &&
+      !valor.toLowerCase().includes('não informado')
+    );
+  }
+
 
   private extrairNumero(valor: string | number): number {
     if (typeof valor === 'number') return valor;
@@ -250,9 +589,20 @@ export class Home implements OnInit {
         maiorPontuacao = pontuacao;
         melhorCelular = celular;
       } else if (pontuacao === maiorPontuacao && melhorCelular) {
-        if (celular.precoMedio < melhorCelular.precoMedio) {
-          melhorCelular = celular;
-        }
+
+        const precoAtual =
+          celular.precoDisponivel === false
+            ? Number.POSITIVE_INFINITY
+            : celular.precoMedio;
+
+        const precoMelhor =
+          melhorCelular.precoDisponivel === false
+            ? Number.POSITIVE_INFINITY
+            : melhorCelular.precoMedio;
+
+          if (precoAtual < precoMelhor) {
+            melhorCelular = celular;
+          }
       }
     }
 

@@ -7,12 +7,12 @@ export interface DispositivoApi {
   id: number;
   name: string;
   manufacturer_name: string;
-  device_type: string;
-  storage: string | null;
-  screen_resolution: string | null;
-  battery_capacity: string | null;
-  hardware: string | null;
-  image_url: string | null;
+  device_type?: string | null;
+  storage?: string | null;
+  screen_resolution?: string | null;
+  battery_capacity?: string | null;
+  hardware?: string | null;
+  image_url?: string | null;
   match_certainty?: string;
 }
 
@@ -27,14 +27,56 @@ export interface RespostaBuscaDispositivos {
   cached?: boolean;
 }
 
+export interface DispositivoDetalhado extends DispositivoApi {
+  display?: {
+    type?: string | null;
+    size?: string | null;
+    resolution?: string | null;
+    other?: string | null;
+  } | null;
+
+  platform?: {
+    os?: string | null;
+    chipset?: string | null;
+    cpu?: string | null;
+    gpu?: string | null;
+  } | null;
+
+  memory?: {
+    internal?: string | null;
+    card_slot?: string | null;
+  } | null;
+
+  battery?: {
+    type?: string | null;
+    charging?: string | null;
+  } | null;
+
+  main_camera?: {
+    modules?: string | null;
+    features?: string | null;
+    video?: string | null;
+  } | null;
+
+  selfie_camera?: {
+    modules?: string | null;
+    features?: string | null;
+    video?: string | null;
+  } | null;
+
+  misc?: {
+    price?: string | null;
+    model_numbers?: string | null;
+  } | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class CelularesApiService {
   private readonly http = inject(HttpClient);
 
-  private readonly apiUrl =
-    'http://localhost:3000/api/devices/search';
+  private readonly baseUrl = 'http://localhost:3000/api';
 
   buscarPorNome(nome: string): Observable<RespostaBuscaDispositivos> {
     const params = new HttpParams()
@@ -43,8 +85,14 @@ export class CelularesApiService {
       .set('page', 1);
 
     return this.http.get<RespostaBuscaDispositivos>(
-      this.apiUrl,
+      `${this.baseUrl}/devices/search`,
       { params }
+    );
+  }
+
+  buscarDetalhes(id: number): Observable<DispositivoDetalhado> {
+    return this.http.get<DispositivoDetalhado>(
+      `${this.baseUrl}/devices/${id}`
     );
   }
 }
