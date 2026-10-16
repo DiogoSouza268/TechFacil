@@ -724,6 +724,31 @@ main.main-content {
   color: #b91c1c;
 }
 
+
+.aviso-resultado-busca {
+  width: 100%;
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid #f59e0b;
+  border-left: 5px solid #d97706;
+  border-radius: 10px;
+  background: #fffbeb;
+  color: #78350f;
+}
+
+.aviso-resultado-busca strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.aviso-resultado-busca p {
+  margin: 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+
 @media (max-width: 600px) {
   .acoes-busca-api {
     align-items: flex-start;

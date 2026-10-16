@@ -27,6 +27,17 @@ const cache = new Map();
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hora
 const CACHE_MAX_ITEMS = 100;
 
+
+let mobileApiBlockedUntil = 0;
+
+function getMobileApiWaitSeconds() {
+  return Math.max(
+    0,
+    Math.ceil((mobileApiBlockedUntil - Date.now()) / 1000)
+  );
+}
+
+
 function getCached(key) {
   const item = cache.get(key);
   if (!item) return undefined;
@@ -64,6 +75,19 @@ function removeLargeBase64Images(payload) {
 }
 
 async function callMobileApi(path, query = {}) {
+
+  
+  const waitSeconds = getMobileApiWaitSeconds();
+
+  if (waitSeconds > 0) {
+    const error = new Error(
+      `A pesquisa está temporariamente limitada. Aguarde ${waitSeconds} segundos e tente novamente.`
+    );
+    error.statusCode = 429;
+    throw error;
+  }
+
+
   if (!apiKey) {
     const error = new Error('A chave MOBILEAPI_API_KEY não foi configurada no backend.');
     error.statusCode = 500;
@@ -88,16 +112,37 @@ async function callMobileApi(path, query = {}) {
 
   const body = await response.json().catch(() => null);
   if (!response.ok) {
-    const error = new Error(
-      response.status === 401
-        ? 'A MobileAPI.dev recusou a chave configurada no backend.'
-        : response.status === 429
-          ? 'A MobileAPI.dev informou limite de uso excedido.'
-          : `A MobileAPI.dev respondeu com status ${response.status}.`
+  console.error('[MobileAPI.dev]', {
+    status: response.status,
+    body
+  });
+
+  let message;
+
+  if (response.status === 401) {
+    message = 'A MobileAPI.dev recusou a chave configurada no backend.';
+  } else if (response.status === 429) {
+    const retryAfter = Number(body?.retry_after);
+    const waitSeconds = Number.isFinite(retryAfter) && retryAfter > 0
+      ? retryAfter
+      : 5;
+
+    mobileApiBlockedUntil = Math.max(
+      mobileApiBlockedUntil,
+      Date.now() + waitSeconds * 1000
     );
-    error.statusCode = response.status === 401 ? 502 : response.status === 429 ? 429 : 502;
-    throw error;
+
+    message = `A pesquisa está temporariamente limitada. Aguarde ${Math.ceil(waitSeconds)} segundos e tente novamente.`;
+
+  } else {
+    message = `A MobileAPI.dev respondeu com status ${response.status}.`;
   }
+
+  const error = new Error(message);
+  error.statusCode = response.status === 401 ? 502 : response.status === 429 ? 429 : 502;
+  throw error;
+  }
+    
 
   return removeLargeBase64Images(body);
 }

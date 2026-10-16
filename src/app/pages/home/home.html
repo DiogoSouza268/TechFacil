@@ -64,6 +64,7 @@
             name="busca-celular" 
             placeholder="Digite o celular que você viu na loja..."
             [(ngModel)]="termoBusca"
+            (ngModelChange)="aoAlterarBusca()"
             autocomplete="off">
 
           <button type="button" class="btn-adicionar" (click)="adicionarAComparacao()">
@@ -82,18 +83,32 @@
           }
         </div>
 
-        <div class="acoes-busca-api">
-          <button
-            type="button"
-            class="btn-buscar-api"
-            (click)="buscarNaApi()"
-            [disabled]="buscandoApi || termoBusca.trim().length < 2"
-          >
-            {{ buscandoApi ? 'Pesquisando...' : 'Buscar mais celulares' }}
-          </button>
+        @if (
+          termoBusca.trim().length >= 2 &&
+          !celularSelecionado &&
+          (!buscaApiRealizada || erroBuscaApi)
+        ) {
+          <div class="acoes-busca-api">
+            <p>Não encontrou o celular que procura?</p>
+            <small>Vamos procurar mais modelos para você.</small>
 
-          <small>Não encontrou o aparelho no catálogo local? Pesquise na API.</small>
-        </div>
+            <button
+              type="button"
+              class="btn-buscar-api"
+              (click)="buscarNaApi()"
+              [disabled]="buscandoApi || buscandoDetalhesApi || tempoEsperaApi > 0"
+            >
+              @if (buscandoApi) {
+                Procurando...
+              } @else if (tempoEsperaApi > 0) {
+                Tente novamente em {{ tempoEsperaApi }}s
+              } @else {
+                Buscar mais modelos
+              }
+            </button>
+
+          </div>
+        }
 
         @if (buscandoDetalhesApi) {
           <p class="status-busca-api">Carregando as especificações do celular...</p>
@@ -103,9 +118,27 @@
           <p class="erro-busca-api">{{ erroBuscaApi }}</p>
         }
 
+        
         @if (mensagemBuscaApi) {
-          <p class="status-busca-api">{{ mensagemBuscaApi }}</p>
+          <div
+            class="aviso-resultado-busca"
+            role="status"
+            aria-live="polite"
+          >
+            <strong>
+              @if (mensagemBuscaApi.includes('Nenhum celular encontrado')) {
+                Celular não encontrado
+              } @else if (mensagemBuscaApi.includes('já estão no catálogo local')) {
+                Modelos já disponíveis
+              } @else {
+                Busca concluída
+              }
+            </strong>
+
+            <p>{{ mensagemBuscaApi }}</p>
+          </div>
         }
+
 
         @if (resultadosApi.length > 0) {
           <div class="lista-resultados-api">

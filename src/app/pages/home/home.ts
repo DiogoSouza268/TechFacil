@@ -71,7 +71,9 @@ export class Home implements OnInit {
   buscandoApi = false;
   buscandoDetalhesApi = false;
   erroBuscaApi = '';
+  tempoEsperaApi = 0;
   mensagemBuscaApi = '';
+  buscaApiRealizada = false;
 
   filtros = [
     { key: 'naoTravar', label: 'Memória RAM', icone: '/img/projeto/memoria.svg'},
@@ -149,6 +151,23 @@ export class Home implements OnInit {
   }
 
   
+  aoAlterarBusca(): void {
+    const termoAtual = this.termoBusca.trim();
+
+    if (
+      this.celularSelecionado &&
+      termoAtual !== this.celularSelecionado.nome
+    ) {
+      this.celularSelecionado = null;
+    }
+
+    this.resultadosApi = [];
+    this.erroBuscaApi = '';
+    this.mensagemBuscaApi = '';
+    this.buscaApiRealizada = false;
+  }
+
+  
 buscarNaApi(): void {
   const nome = this.termoBusca.trim();
 
@@ -157,11 +176,14 @@ buscarNaApi(): void {
     return;
   }
 
+  
   this.celularSelecionado = null;
   this.resultadosApi = [];
   this.erroBuscaApi = '';
   this.mensagemBuscaApi = '';
+  this.buscaApiRealizada = false;
   this.buscandoApi = true;
+
 
   this.celularesApi.buscarPorNome(nome).subscribe({
     next: (resposta) => {
@@ -182,6 +204,7 @@ buscarNaApi(): void {
       });
 
       this.buscandoApi = false;
+      this.buscaApiRealizada = true;
 
       if (encontrados.length === 0) {
         this.mensagemBuscaApi = 'Nenhum celular encontrado para essa pesquisa.';
@@ -190,13 +213,51 @@ buscarNaApi(): void {
           'Os modelos encontrados já estão no catálogo local.';
       }
     },
+    
     error: (erro) => {
       console.error('Erro ao pesquisar celulares na API:', erro);
+
+      this.resultadosApi = [];
+      this.mensagemBuscaApi = '';
+      this.buscandoApi = false;
+      this.buscaApiRealizada = true;
+
       this.erroBuscaApi =
         erro.error?.error || 'Não foi possível pesquisar os celulares.';
-      this.buscandoApi = false;
+
+      const correspondencia = this.erroBuscaApi.match(
+        /Aguarde\s+(\d+(?:[.,]\d+)?)\s+segundos?/i
+      );
+
+      if (correspondencia) {
+        this.iniciarContagemRegressiva(
+          Math.ceil(Number(correspondencia[1].replace(',', '.')))
+        );
+      }
     }
+
   });
+  
+}
+
+iniciarContagemRegressiva(segundos: number): void {
+  this.tempoEsperaApi = Math.max(0, segundos);
+
+  const contar = () => {
+    setTimeout(() => {
+      if (this.tempoEsperaApi > 0) {
+        this.tempoEsperaApi--;
+      }
+
+      if (this.tempoEsperaApi > 0) {
+        contar();
+      }
+    }, 1000);
+  };
+
+  if (this.tempoEsperaApi > 0) {
+    contar();
+  }
 }
 
 nomeCompletoApi(dispositivo: DispositivoApi): string {
@@ -505,10 +566,18 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
     );
   }
 
+  
   selecionarSugestao(celular: Celular): void {
     this.termoBusca = celular.nome;
     this.celularSelecionado = celular;
+
+    this.resultadosApi = [];
+    this.erroBuscaApi = '';
+    this.mensagemBuscaApi =
+    'Celular selecionado. Clique em Adicionar para incluí-lo na comparação.';
+    this.buscaApiRealizada = false;
   }
+
 
   adicionarAComparacao(): void {
     if (!this.celularSelecionado) {
@@ -530,6 +599,10 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
     this.listaComparacao.push(structuredClone(this.celularSelecionado));
     this.termoBusca = '';
     this.celularSelecionado = null;
+    this.mensagemBuscaApi = '';
+    this.erroBuscaApi = '';
+    this.resultadosApi = [];
+    this.buscaApiRealizada = false;
   }
 
   removerDaComparacao(index: number): void {
