@@ -180,6 +180,40 @@ header.header-home {
   gap: 14px;
 }
 
+
+/* Destaque dos celulares empatados */
+.item-celular.is-empatado {
+  border: 2px solid #059669;
+  background-color: #d1fae5;
+}
+
+/* Selo de empate */
+.badge-empate {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background-color: #059669;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Selo do vencedor */
+.badge-campeao {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background-color: #059669;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+
 .badge-icon {
   background-color: #e6f7f0;
   color: #00875a;

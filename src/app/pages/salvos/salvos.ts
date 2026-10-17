@@ -12,13 +12,16 @@ export interface VencedorSalvo {
   motivos: string[];
 }
 
+
 export interface ComparacaoSalva {
   id: number;
   data: string;
   celulares: Celular[];
   filtros: string[];
   vencedor: VencedorSalvo | null;
+  empatados?: VencedorSalvo[];
 }
+
 
 @Component({
   selector: 'app-salvos',
@@ -43,6 +46,12 @@ export class Salvos implements OnInit {
       this.comparacoesSalvas = JSON.parse(localStorage.getItem(chave) || '[]');
     }
   }
+
+    celularEstaEmpatado(item: ComparacaoSalva, nomeCelular: string): boolean {
+      return item.empatados?.some(
+        celular => celular.nome === nomeCelular
+      ) ?? false;
+    }
 
   removerComparacao(id: number): void {
     const usuario = this.authService.getUsuario();

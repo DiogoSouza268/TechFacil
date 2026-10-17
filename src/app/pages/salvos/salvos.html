@@ -75,34 +75,54 @@
               </div>
             }
 
-            @if (item.vencedor) {
-              <div class="bloco-vencedor">
-                <div class="vencedor-header">
-                  <span class="trofeu">&#127942;</span>
-                  <div>
-                    <h4>Vencedor: {{ item.vencedor.nome }}</h4>
-                  </div>
+          @if (item.empatados && item.empatados.length > 1) {
+            <div class="bloco-empate">
+              <div class="vencedor-header">
+                <span class="trofeu">🤝</span>
+                <div>
+                  <h4>Empate técnico!</h4>
                 </div>
-                @if (item.vencedor.motivos && item.vencedor.motivos.length > 0) {
-                  <p class="motivos">
-                    <strong>Motivos:</strong> {{ item.vencedor.motivos.join(', ') }}
-                  </p>
-                }
               </div>
-            }
+
+            </div>
+          } @else if (item.vencedor) {
+            <div class="bloco-vencedor">
+              <div class="vencedor-header">
+                <span class="trofeu">&#127942;</span>
+                <div>
+                  <h4>Vencedor: {{ item.vencedor.nome }}</h4>
+                </div>
+              </div>
+
+              @if (item.vencedor.motivos && item.vencedor.motivos.length > 0) {
+                <p class="motivos">
+                  <strong>Motivos:</strong> {{ item.vencedor.motivos.join(', ') }}
+                </p>
+              }
+            </div>
+          }
+
 
             <div class="celulares-grid">
               @for (celular of item.celulares; track celular.id) {
-                <div class="item-celular" [class.is-vencedor]="item.vencedor?.nome === celular.nome">
-                  <img [src]="celular.imagem" [alt]="celular.nome">
-                  <p class="nome-celular">{{ celular.nome }}</p>
+                
+                
+              <div
+                class="item-celular"
+                [class.is-vencedor]="item.vencedor?.nome === celular.nome"
+                [class.is-empatado]="celularEstaEmpatado(item, celular.nome)"
+              >
+                <img [src]="celular.imagem" [alt]="celular.nome">
 
-                  @if (celular.precoDisponivel === false) {
-                    <p class="preco">Preço não informado</p>
-                  } @else {
-                    <p class="preco">R$ {{ celular.precoMedio }}</p>
-                  }                  
-                </div>
+                <p class="nome-celular">{{ celular.nome }}</p>
+
+                @if (item.empatados && celularEstaEmpatado(item, celular.nome)) {
+                  <span class="badge-empate">🤝 Empate técnico</span>
+                } @else if (item.vencedor?.nome === celular.nome) {
+                  <span class="badge-campeao">🏆 Vencedor</span>
+                }
+              </div>
+
               }
             </div>
           </article>

@@ -806,6 +806,7 @@ get celularVencedor(): {
         const salvosAnteriores = JSON.parse(localStorage.getItem(chave) || '[]');
         const vencedorObj = this.celularVencedor;
 
+        
         const novaComparacao = {
           id: Date.now(),
           data: new Date().toLocaleDateString('pt-BR'),
@@ -813,13 +814,22 @@ get celularVencedor(): {
           filtros: this.filtros
             .filter(f => this.filtrosSelecionados.includes(f.key))
             .map(f => f.label),
+
           vencedor: vencedorObj ? {
             nome: vencedorObj.celular.nome,
             imagem: vencedorObj.celular.imagem,
             pontos: vencedorObj.pontos,
             motivos: vencedorObj.motivos
-          } : null
+          } : null,
+
+          empatados: this.celularesEmpatados.map(celular => ({
+            nome: celular.nome,
+            imagem: celular.imagem,
+            pontos: this.calcularPontuacao(celular),
+            motivos: []
+          }))
         };
+
 
         salvosAnteriores.push(novaComparacao);
         localStorage.setItem(chave, JSON.stringify(salvosAnteriores));
