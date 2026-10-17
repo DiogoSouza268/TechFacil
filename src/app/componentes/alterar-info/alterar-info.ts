@@ -27,22 +27,24 @@ export class AlterarInfoComponent {
   sufixo: string = '';
   valorTexto: string = '';
 
+  
   iniciarEdicao(): void {
     if (!this.editavel) return;
 
-    const valStr = String(this.valor);
+    const valStr = String(this.valor).trim();
 
     if (this.tipoInput === 'texto') {
       this.valorTexto = valStr;
     } else {
-      const match = valStr.match(/^([^\d]*)([\d\.]+)(.*)$/);
+      const match = valStr.match(/^([^\d]*)(\d+(?:[.,]\d+)?)\s*(.*)$/);
+
       if (match) {
         this.prefixo = match[1];
-        this.numeroEditavel = parseFloat(match[2]);
+        this.numeroEditavel = Number(match[2].replace(',', '.'));
         this.sufixo = match[3];
       } else {
         this.prefixo = '';
-        this.numeroEditavel = typeof this.valor === 'number' ? this.valor : 0;
+        this.numeroEditavel = null;
         this.sufixo = '';
       }
     }
@@ -50,19 +52,30 @@ export class AlterarInfoComponent {
     this.editando = true;
   }
 
+
+  
   salvar(): void {
     let novoValor: string | number;
 
-    if (this.tipoInput === 'texto' || (this.numeroEditavel === null && this.valorTexto)) {
-      novoValor = this.valorTexto;
+    if (this.tipoInput === 'texto') {
+      novoValor = this.valorTexto.trim();
+
+      if (!novoValor) {
+        alert('Por favor, preencha o campo.');
+        return;
+      }
     } else {
-      if (this.numeroEditavel === null || isNaN(this.numeroEditavel)) {
+      if (
+        this.numeroEditavel === null ||
+        !Number.isFinite(this.numeroEditavel) ||
+        this.numeroEditavel < 0
+      ) {
         alert('Por favor, insira um número válido.');
         return;
       }
 
       if (typeof this.valor === 'number' && !this.prefixo && !this.sufixo) {
-        novoValor = Number(this.numeroEditavel);
+        novoValor = this.numeroEditavel;
       } else {
         novoValor = `${this.prefixo}${this.numeroEditavel}${this.sufixo}`;
       }
@@ -71,6 +84,7 @@ export class AlterarInfoComponent {
     this.editando = false;
     this.valorChange.emit(novoValor);
   }
+
 
   cancelar(): void {
     this.editando = false;

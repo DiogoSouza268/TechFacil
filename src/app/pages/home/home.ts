@@ -546,13 +546,25 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
       !valor.toLowerCase().includes('não informado')
     );
   }
-
-
+  
   private extrairNumero(valor: string | number): number {
     if (typeof valor === 'number') return valor;
-    const match = String(valor).replace(',', '.').match(/[\d\.]+/);
-    return match ? parseFloat(match[0]) : 0;
+
+    const texto = String(valor).trim().replace(',', '.');
+
+    const match = texto.match(/(\d+(?:\.\d+)?)\s*(TB|GB|MB)?/i);
+
+    if (!match) return 0;
+
+    const numero = Number(match[1]);
+    const unidade = (match[2] || '').toUpperCase();
+
+    if (unidade === 'TB') return numero * 1024;
+    if (unidade === 'MB') return numero / 1024;
+
+    return numero;
   }
+
 
   atualizarSpec(celular: Celular, chave: keyof Specs, novoValor: string | number): void {
     celular.specs[chave] = String(novoValor);
@@ -569,8 +581,7 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
   
   selecionarSugestao(celular: Celular): void {
     this.termoBusca = celular.nome;
-    this.celularSelecionado = celular;
-
+    this.celularSelecionado = structuredClone(celular);
     this.resultadosApi = [];
     this.erroBuscaApi = '';
     this.mensagemBuscaApi =
