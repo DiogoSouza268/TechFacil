@@ -749,6 +749,50 @@ main.main-content {
 }
 
 
+.empate-tecnico {
+  color: #334155;
+  background: #f8fafc;
+  padding: 20px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.empate-tecnico h2 {
+  color: #047857;
+  margin-bottom: 12px;
+}
+
+.empate-tecnico p {
+  color: #334155;
+  margin-bottom: 12px;
+}
+
+.empate-tecnico ul {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+}
+
+.empate-tecnico li {
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+
+.badge-empate {
+  display: inline-block;
+  width: fit-content;
+  padding: 8px 14px;
+  margin-bottom: 12px;
+  border-radius: 20px;
+  background: #d1fae5;
+  color: #047857;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+
 @media (max-width: 600px) {
   .acoes-busca-api {
     align-items: flex-start;

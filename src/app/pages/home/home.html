@@ -199,11 +199,17 @@
             class="card-comparativo"
             [class.is-vencedor-card]="celularVencedor?.celular?.id === celular.id">
 
-            @if (celularVencedor?.celular?.id === celular.id) {
+            @if (celularEstaEmpatado(celular.id)) {
+              <div class="badge-empate">
+                🤝 Empate técnico
+              </div>
+            }
+            @else if (celularVencedor?.celular?.id === celular.id) {
               <div class="badge-campeao">
                 🏆 Campeão TechFácil
               </div>
             }
+
 
             <button type="button" class="removerBotao" (click)="removerDaComparacao(i)" title="Remover da comparação">
               ✕
@@ -214,14 +220,27 @@
               <h2 class="celular-nome">{{ celular.nome }}</h2>
               
               <div class="preco-container">
-                @if (celular.precoDisponivel === false) {
-                  <h3 class="preco-loja">Preço não informado</h3>
-                  <span class="preco-sub">Consulte uma loja</span>
-                } @else {
+                <label [for]="'preco-loja-' + i">
+                  Preço encontrado na loja (R$)
+                </label>
+
+                <input
+                  [id]="'preco-loja-' + i"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="Digite o preço"
+                  [ngModel]="celular.precoLoja ?? null"
+                  (ngModelChange)="atualizarPrecoLoja(celular, $event)"
+                  [attr.aria-label]="'Preço de ' + celular.nome"
+                >
+
+                @if (celular.precoLoja != null && celular.precoLoja > 0) {
                   <h3 class="preco-loja">
-                    R$ {{ celular.precoMedio | number:'1.2-2' }}
+                    {{ celular.precoLoja | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
                   </h3>
-                  <span class="preco-sub">Preço médio na loja</span>
+                } @else {
+                  <h3 class="preco-loja">Valor não informado</h3>
                 }
               </div>
 
@@ -340,24 +359,58 @@
 
     <section id="melhorOpcao" class="banner-campeao">
       <div class="vencedor-info-wrapper">
-        <div class="trofeu-badge">&#127942;</div>
+        
+          @if (celularesEmpatados.length > 1 && filtrosSelecionados.length > 0) {
+            <div class="trofeu-badge icone-empate">
+              &#129309;
+            </div>
+          } @else {
+            <div class="trofeu-badge">&#127942;</div>
+          }
+
         <div class="vencedor-textos">
+          
           <h4>Melhor Opção para Você</h4>
 
           @if (listaComparacao.length < 2) {
-            <p>Adicione pelo menos 2 celulares à comparação para ver qual é o vencedor!</p>
-          } 
+            <p>Adicione pelo menos 2 celulares à comparação para ver o resultado!</p>
+          }
           @else if (filtrosSelecionados.length === 0) {
-            <p>Selecione acima o que você mais valoriza para calcularmos o campeão.</p>
-          } 
+            <p>Selecione acima o que você mais valoriza para calcularmos o resultado.</p>
+          }
+          @else if (celularesEmpatados.length > 1) {
+            <section class="empate-tecnico">
+              <h2>🤝 Empate técnico!</h2>
+
+              <p>Estes celulares tiveram o mesmo resultado:</p>
+
+              <ul>
+                @for (celular of celularesEmpatados; track celular.id) {
+                  <li>
+                    <strong>{{ celular.nome }}</strong>
+                  </li>
+                }
+              </ul>
+
+              <p>
+                Compare os preços e as características para decidir
+                qual faz mais sentido para você.
+              </p>
+            </section>
+          }
           @else if (celularVencedor) {
             <p>
-              <strong>{{ celularVencedor.celular.nome }} VENCEU!</strong> 
+              <strong>{{ celularVencedor.celular.nome }} VENCEU!</strong>
+
               @if (celularVencedor.motivos.length > 0) {
-                <span>Ele se destaca em: {{ celularVencedor.motivos.join(', ') }}.</span>
+                <span>
+                  Ele se destaca em:
+                  {{ celularVencedor.motivos.join(', ') }}.
+                </span>
               }
             </p>
           }
+
         </div>
       </div>
 

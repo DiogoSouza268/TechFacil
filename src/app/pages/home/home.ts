@@ -37,8 +37,7 @@ export interface PontosFortes {
 export interface Celular {
   id: number;
   nome: string;
-  precoMedio: number;
-  precoDisponivel?: boolean;
+  precoLoja?: number | null;
   origem?: 'local' | 'api';
   imagem: string;
   specs: Specs;
@@ -370,13 +369,10 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
         d.selfie_camera?.modules ? `Frontal: ${d.selfie_camera.modules}` : ''
       ].filter(Boolean).join(' | ');
 
-      const preco = this.extrairPrecoEmReais(d.misc?.price);
-
       const celular: Celular = {
         id: 1_000_000 + d.id,
         nome: this.nomeCompletoApi(d),
-        precoMedio: preco ?? 0,
-        precoDisponivel: preco !== null,
+        precoLoja: null,
         origem: 'api',
         imagem: d.image_url || '/img/projeto/celulares.jpg',
 
@@ -404,7 +400,7 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
           boaBateria: 0,
           processadorCPU: 5,
           melhorCamera: 5,
-          precoBaixo: preco !== null ? 5 : 0
+          precoBaixo: 0
         }
       };
 
@@ -481,46 +477,75 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
       return capacidades;
     }
 
-    private extrairPrecoEmReais(
-      texto?: string | null
-    ): number | null {
-      if (!texto) return null;
-
-      // Não converte euros, dólares ou moedas desconhecidas.
-      const resultado = texto.match(/R\$\s*([\d.]+(?:,\d{1,2})?)/i);
-      if (!resultado) return null;
-
-      const valor = Number(
-        resultado[1].replace(/\./g, '').replace(',', '.')
-      );
-
-      return Number.isFinite(valor) && valor > 0 ? valor : null;
+  
+  celularEstaEmpatado(celularId: number): boolean {
+    return this.celularesEmpatados.some(
+      celular => celular.id === celularId
+    );
   }
 
-
-  
   recalcularNotas(celular: Celular): void {
     const ramNum = this.extrairNumero(celular.specs.ram);
     const armNum = this.extrairNumero(celular.specs.armazenamento);
     const batNum = this.extrairNumero(celular.specs.bateria);
-    const preco = celular.precoMedio;
 
     celular.pontosFortes = {
+      
       naoTravar: ramNum > 0
-        ? ramNum >= 12 ? 10 : ramNum >= 8 ? 8 : ramNum >= 6 ? 6 : 4
+        ? ramNum < 2 ? 1
+        : ramNum < 3 ? 2
+        : ramNum < 4 ? 3
+        : ramNum < 6 ? 4
+        : ramNum < 8 ? 5
+        : ramNum < 10 ? 6
+        : ramNum < 12 ? 7
+        : ramNum < 16 ? 8
+        : ramNum < 24 ? 9
+        : 10
         : 0,
 
+
+      
       muitoEspaco: armNum > 0
-        ? armNum >= 512 ? 10 : armNum >= 256 ? 9 : armNum >= 128 ? 7 : 4
+        ? armNum < 16 ? 1
+        : armNum < 32 ? 2
+        : armNum < 64 ? 3
+        : armNum < 128 ? 4
+        : armNum < 192 ? 5
+        : armNum < 256 ? 6
+        : armNum < 384 ? 7
+        : armNum < 512 ? 8
+        : armNum < 1024 ? 9
+        : 10
         : 0,
 
+
+      
       boaBateria: batNum > 0
-        ? batNum >= 7000 ? 10 : batNum >= 6000 ? 9 : batNum >= 5000 ? 8 : 6
+        ? batNum < 2000 ? 1
+        : batNum < 2500 ? 2
+        : batNum < 3000 ? 3
+        : batNum < 3500 ? 4
+        : batNum < 4000 ? 5
+        : batNum < 4500 ? 6
+        : batNum < 5000 ? 7
+        : batNum < 5500 ? 8
+        : batNum < 6000 ? 9
+        : 10
         : 0,
 
-      precoBaixo: celular.precoDisponivel === false
-        ? 0
-        : preco <= 800 ? 10 : preco <= 1200 ? 8 : preco <= 2000 ? 6 : preco <= 4000 ? 4 : 2,
+
+      
+      precoBaixo: celular.precoLoja != null &&
+                  Number.isFinite(celular.precoLoja) &&
+                  celular.precoLoja > 0
+        ? celular.precoLoja <= 800 ? 10
+        : celular.precoLoja <= 1200 ? 8
+        : celular.precoLoja <= 2000 ? 6
+        : celular.precoLoja <= 4000 ? 4
+        : 2
+        : 0,
+
 
       placaVideo: this.temInformacao(celular.specs.gpu)
         ? celular.pontosFortes?.placaVideo ?? 5
@@ -570,6 +595,20 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
     celular.specs[chave] = String(novoValor);
     this.recalcularNotas(celular);
   }
+
+  
+  atualizarPrecoLoja(
+    celular: Celular,
+    valor: number | null
+  ): void {
+    celular.precoLoja =
+      valor !== null && Number.isFinite(valor) && valor > 0
+        ? valor
+        : null;
+
+    this.recalcularNotas(celular);
+  }
+
 
   get sugestoesBusca(): Celular[] {
     if (!this.termoBusca.trim()) return [];
@@ -645,21 +684,69 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
     return this.filtrosSelecionados.includes(key);
   }
 
+  
   calcularPontuacao(celular: Celular): number {
     if (this.filtrosSelecionados.length === 0) return 0;
 
     let total = 0;
+
+    const algumPrecoAusente = this.listaComparacao.some(
+      c => c.precoLoja == null || c.precoLoja <= 0
+    );
+
     for (const key of this.filtrosSelecionados) {
+      // Se algum preço estiver ausente, não considera o critério de preço.
+      if (key === 'precoBaixo' && algumPrecoAusente) {
+        continue;
+      }
+
       const chavePontos = key as keyof PontosFortes;
-      if (celular.pontosFortes && celular.pontosFortes[chavePontos] !== undefined) {
-        total += celular.pontosFortes[chavePontos];
+      const pontos = celular.pontosFortes?.[chavePontos];
+
+      if (pontos !== undefined) {
+        total += pontos;
       }
     }
+
     return total;
   }
 
-  get celularVencedor(): { celular: Celular; pontos: number; motivos: string[] } | null {
-    if (this.listaComparacao.length < 2 || this.filtrosSelecionados.length === 0) {
+get celularesEmpatados(): Celular[] {
+  if (
+    this.filtrosSelecionados.length === 0 ||
+    this.listaComparacao.length < 2
+  ) {
+    return [];
+  }
+
+  const pontuacoes = this.listaComparacao.map(celular => ({
+    celular,
+    pontos: this.calcularPontuacao(celular)
+  }));
+
+  const maiorPontuacao = Math.max(
+    ...pontuacoes.map(item => item.pontos)
+  );
+
+  return pontuacoes
+    .filter(item => item.pontos === maiorPontuacao)
+    .map(item => item.celular)
+    .filter((celular, _, lista) => lista.length > 1);
+}
+  
+  
+get celularVencedor(): {
+    celular: Celular;
+    pontos: number;
+    motivos: string[];
+  } | null {
+    // Sem filtros, não existe campeão.
+    if (this.filtrosSelecionados.length === 0) {
+      return null;
+    }
+
+    // Com menos de dois celulares, não existe comparação.
+    if (this.listaComparacao.length < 2) {
       return null;
     }
 
@@ -672,36 +759,33 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
       if (pontuacao > maiorPontuacao) {
         maiorPontuacao = pontuacao;
         melhorCelular = celular;
-      } else if (pontuacao === maiorPontuacao && melhorCelular) {
-
-        const precoAtual =
-          celular.precoDisponivel === false
-            ? Number.POSITIVE_INFINITY
-            : celular.precoMedio;
-
-        const precoMelhor =
-          melhorCelular.precoDisponivel === false
-            ? Number.POSITIVE_INFINITY
-            : melhorCelular.precoMedio;
-
-          if (precoAtual < precoMelhor) {
-            melhorCelular = celular;
-          }
-      }
+      } 
     }
 
     if (!melhorCelular) return null;
+    if (this.celularesEmpatados.length > 1) {
+      return null;
+    }
+
+    const algumPrecoAusente = this.listaComparacao.some(
+      c => c.precoLoja == null || c.precoLoja <= 0
+    );
 
     const motivos = this.filtros
-      .filter(f => this.filtrosSelecionados.includes(f.key))
-      .map(f => f.label.replace(/^[^\s]+\s/, '')); 
+      .filter(f =>
+        this.filtrosSelecionados.includes(f.key) &&
+        !(f.key === 'precoBaixo' && algumPrecoAusente)
+      )
+      .map(f => f.label);
 
     return {
       celular: melhorCelular,
       pontos: maiorPontuacao,
-      motivos: motivos
+      motivos
     };
   }
+
+
 
   salvarComparacao(): void {
     if (this.listaComparacao.length < 2) {
