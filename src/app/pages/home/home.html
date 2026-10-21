@@ -270,13 +270,39 @@
               </div>
 
               <div class="todas-infos">
-                <app-alterar-info 
-                  label="Placa de Vídeo (GPU)" 
-                  [valor]="celular.specs.gpu"
-                  [editavel]="false"
-                  tipoInput="texto"
-                  (infoClick)="abrirDicionario('gpu')">
-                </app-alterar-info>
+                @if (celular.gpuSemDados) {
+                  <div class="qualidade-imagem-status">
+                    <strong>Placa de vídeo (GPU)</strong>
+
+                    <span
+                      class="qualidade-imagem-aviso"
+                      role="status"
+                      title="Não há informações sobre a placa de vídeo deste celular.">
+                      <span class="icone-info" aria-hidden="true">ⓘ</span>
+                      Dados insuficientes
+                    </span>
+                  </div>
+                } @else if (celular.gpuParcial) {
+                  <div class="qualidade-imagem-status">
+                    <strong>Placa de vídeo (GPU)</strong>
+
+                    <span
+                      class="qualidade-imagem-aviso"
+                      role="status"
+                      title="Não foi possível avaliar a placa de vídeo deste celular.">
+                      <span class="icone-info" aria-hidden="true">⚠️</span>
+                      Informação incompleta
+                    </span>
+                  </div>
+                } @else {
+                  <app-alterar-info
+                    label="Placa de Vídeo (GPU)"
+                    [valor]="celular.specs.gpu"
+                    [editavel]="false"
+                    tipoInput="texto"
+                    (infoClick)="abrirDicionario('gpu')">
+                  </app-alterar-info>
+                }
               </div>
 
 
@@ -452,7 +478,22 @@
                   </p>
                 </div>
               </div>
-            } @else if (processadorIndisponivel) {
+            } @else if (gpuIndisponivel) {
+              <div class="aviso-comparacao-incompleta" role="alert">
+                <span class="aviso-icone" aria-hidden="true">⚠️</span>
+
+                <div class="aviso-conteudo">
+                  <h3>Não foi possível comparar as placas de vídeo</h3>
+                  <p>
+                    Faltam informações para avaliar a placa de vídeo de um ou mais celulares.
+                    Escolha outro critério ou compare aparelhos com informações completas
+                    para continuar.
+                  </p>
+                </div>
+              </div>
+            }
+            
+            @else if (processadorIndisponivel) {
               <div class="aviso-comparacao-incompleta" role="alert">
                 <span class="aviso-icone" aria-hidden="true">⚠️</span>
 

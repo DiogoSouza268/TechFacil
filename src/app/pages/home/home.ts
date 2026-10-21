@@ -26,7 +26,7 @@ export interface Specs {
 export interface PontosFortes {
   naoTravar: number;         
   muitoEspaco: number;       
-  placaVideo: number;        
+  placaVideo: number | null;        
   qualidadeImagem: number;   
   boaBateria: number;        
   processadorCPU: number | null;    
@@ -46,9 +46,18 @@ export interface Celular {
   qualidadeImagemSemDados?: boolean;
   processadorParcial?: boolean;
   processadorSemDados?: boolean;
+  gpuParcial?: boolean;
+  gpuSemDados?: boolean;
 }
 
 export interface ProcessadorCatalogo {
+  nome: string;
+  aliases: string[];
+  fonteUrl: string;
+  benchmark: number | null;
+}
+
+export interface GpuCatalogo {
   nome: string;
   aliases: string[];
   fonteUrl: string;
@@ -74,6 +83,7 @@ export class Home implements OnInit {
   listaCelulares: Celular[] = [];
   catalogoProcessadores: ProcessadorCatalogo[] = [];
   listaComparacao: Celular[] = [];
+  catalogoGpus: GpuCatalogo[] = [];
   termoBusca: string = '';
   celularSelecionado: Celular | null = null;
 
@@ -172,6 +182,21 @@ export class Home implements OnInit {
       );
 
       this.catalogoProcessadores = [];
+    }
+
+    // Carrega o catálogo local de GPUs.
+    try {
+      const respostaGpus = await fetch('/data/gpus.json');
+
+      if (!respostaGpus.ok) {
+        throw new Error('Não foi possível carregar o catálogo de GPUs.');
+      }
+
+      this.catalogoGpus = await respostaGpus.json();
+
+    } catch (erro) {
+      console.error('Erro ao carregar o catálogo de GPUs:', erro);
+      this.catalogoGpus = [];
     }
 
     // Depois, carrega os celulares normalmente.
@@ -330,26 +355,45 @@ private normalizarNome(nome: string): string {
 }
 
 
-private encontrarProcessador(
-  nomeProcessador: string
-): ProcessadorCatalogo | undefined {
-  const nomeNormalizado = this.normalizarNome(nomeProcessador);
+  private encontrarProcessador(
+    nomeProcessador: string
+  ): ProcessadorCatalogo | undefined {
+    const nomeNormalizado = this.normalizarNome(nomeProcessador);
 
-  if (!nomeNormalizado) {
-    return undefined;
+    if (!nomeNormalizado) {
+      return undefined;
+    }
+
+    return this.catalogoProcessadores.find(processador => {
+      const nomesPossiveis = [
+        processador.nome,
+        ...processador.aliases
+      ];
+
+      return nomesPossiveis.some(nome =>
+        this.normalizarNome(nome) === nomeNormalizado
+      );
+    });
   }
 
-  return this.catalogoProcessadores.find(processador => {
-    const nomesPossiveis = [
-      processador.nome,
-      ...processador.aliases
-    ];
+  private encontrarGpu(nomeGpu: string): GpuCatalogo | undefined {
+    const nomeNormalizado = this.normalizarNome(nomeGpu);
 
-    return nomesPossiveis.some(nome =>
-      this.normalizarNome(nome) === nomeNormalizado
-    );
-  });
-}
+    if (!nomeNormalizado) {
+      return undefined;
+    }
+
+    return this.catalogoGpus.find(gpu => {
+      const nomesPossiveis = [
+        gpu.nome,
+        ...gpu.aliases
+      ];
+
+      return nomesPossiveis.some(nome =>
+        this.normalizarNome(nome) === nomeNormalizado
+      );
+    });
+  }
 
 
 selecionarResultadoApi(dispositivo: DispositivoApi): void {
@@ -660,6 +704,27 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
     celular.qualidadeImagemSemDados = resultadoTela.semDados;
 
     
+    const gpuInformada = this.temInformacao(celular.specs.gpu);
+
+    const registroGpu = gpuInformada
+      ? this.encontrarGpu(celular.specs.gpu)
+      : undefined;
+
+    const notaGpu =
+      registroGpu &&
+      registroGpu.benchmark !== null &&
+      Number.isFinite(registroGpu.benchmark) &&
+      registroGpu.benchmark >= 1 &&
+      registroGpu.benchmark <= 10
+        ? registroGpu.benchmark
+        : null;
+
+    celular.gpuSemDados = !gpuInformada;
+
+    celular.gpuParcial =
+      gpuInformada && notaGpu === null;
+
+
     const registroProcessador = this.temInformacao(
       celular.specs.processador
     )
@@ -738,10 +803,7 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
 
       qualidadeImagem: resultadoTela.nota,  
 
-      placaVideo: this.temInformacao(celular.specs.gpu)
-        ? celular.pontosFortes?.placaVideo ?? 5
-        : 0,
-
+      placaVideo: notaGpu,
 
       processadorCPU: notaProcessador,
 
@@ -892,6 +954,15 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
     return this.filtrosSelecionados.includes(key);
   }
 
+  get gpuIndisponivel(): boolean {
+  return (
+    this.filtrosSelecionados.includes('placaVideo') &&
+    this.listaComparacao.some(
+      celular => celular.pontosFortes.placaVideo == null
+    )
+  );
+}
+
   
   calcularPontuacao(celular: Celular): number {
     if (this.filtrosSelecionados.length === 0) return 0;
@@ -900,6 +971,10 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
 
     const algumPrecoAusente = this.listaComparacao.some(
       c => c.precoLoja == null || c.precoLoja <= 0
+    );
+
+    const algumaGpuSemNota = this.listaComparacao.some(
+      c => c.pontosFortes.placaVideo == null
     );
 
     const algumProcessadorSemNota = this.listaComparacao.some(
@@ -915,6 +990,10 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
     for (const key of this.filtrosSelecionados) {
       // O preço só participa se todos os celulares tiverem preço.
       if (key === 'precoBaixo' && algumPrecoAusente) {
+        continue;
+      }
+
+      if (key === 'placaVideo' && algumaGpuSemNota) {
         continue;
       }
 
@@ -948,7 +1027,11 @@ get filtrosComparaveis(): string[] {
 
   const algumProcessadorSemNota = this.listaComparacao.some(
   celular => celular.pontosFortes.processadorCPU == null
-);
+  );
+
+  const algumaGpuSemNota = this.listaComparacao.some(
+    celular => celular.pontosFortes.placaVideo == null
+  );
 
   const algumaTelaIncompleta = this.listaComparacao.some(
     celular => celular.qualidadeImagemParcial
@@ -956,6 +1039,10 @@ get filtrosComparaveis(): string[] {
 
   return this.filtrosSelecionados.filter(key => {
     if (key === 'precoBaixo' && algumPrecoAusente) {
+      return false;
+    }
+
+    if (key === 'placaVideo' && algumaGpuSemNota) {
       return false;
     }
 
