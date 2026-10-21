@@ -279,19 +279,35 @@
                 </app-alterar-info>
               </div>
 
-              
+
               <div class="todas-infos">
                 @if (celular.qualidadeImagemSemDados) {
-                  <div class="qualidade-imagem-aviso" role="status">
-                    Dados insuficientes
+                  <div class="qualidade-imagem-status">
+                    <strong>Qualidade de imagem</strong>
+
+                    <span
+                      class="qualidade-imagem-aviso"
+                      title="Não há dados suficientes sobre a tela deste celular."
+                      role="status">
+                      <span class="icone-info" aria-hidden="true">ⓘ</span>
+                      Dados insuficientes
+                    </span>
                   </div>
                 } @else if (celular.qualidadeImagemParcial) {
-                  <div class="qualidade-imagem-aviso" role="status">
-                    Informação incompleta
+                  <div class="qualidade-imagem-status">
+                    <strong>Qualidade de imagem</strong>
+
+                    <span
+                      class="qualidade-imagem-aviso"
+                      title="Faltam informações sobre a tela deste celular."
+                      role="status">
+                      <span class="icone-info" aria-hidden="true">⚠️</span>
+                      Informação incompleta
+                    </span>
                   </div>
                 } @else {
                   <app-alterar-info
-                    label="Qualidade de Imagem"
+                    label="Qualidade de imagem"
                     [valor]="celular.specs.qualidadeImagem"
                     [editavel]="false"
                     tipoInput="texto"
@@ -299,6 +315,8 @@
                   </app-alterar-info>
                 }
               </div>
+              
+              
 
 
               <div class="todas-infos">
@@ -391,13 +409,37 @@
             <p>Selecione acima o que você mais valoriza para calcularmos o resultado.</p>
           }
 
+        
           @else if (filtrosComparaveis.length === 0) {
-            <p>
-              Não há informações suficientes para comparar os critérios selecionados.
-              Escolha outros critérios para continuar.
-            </p>
+            @if (qualidadeImagemIndisponivel) {
+              <div class="aviso-comparacao-incompleta" role="alert">
+                <span class="aviso-icone" aria-hidden="true">⚠️</span>
+
+                <div class="aviso-conteudo">
+                  <h3>Não foi possível comparar a qualidade de imagem</h3>
+                  <p>
+                    Faltam informações sobre a tela de um ou mais celulares.
+                    Escolha outro critério ou compare celulares com informações
+                    completas para continuar.
+                  </p>
+                </div>
+              </div>
+            } @else {
+              <div class="aviso-comparacao-incompleta" role="alert">
+                <span class="aviso-icone" aria-hidden="true">⚠️</span>
+
+                <div class="aviso-conteudo">
+                  <h3>Não foi possível realizar a comparação</h3>
+                  <p>
+                    Não há informações suficientes para comparar os critérios
+                    selecionados. Escolha outros critérios para continuar.
+                  </p>
+                </div>
+              </div>
+            }
           }
-          
+
+
           @else if (celularesEmpatados.length > 1) {
             <section class="empate-tecnico">
               <h2>🤝 Empate técnico!</h2>

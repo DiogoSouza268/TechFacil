@@ -851,7 +851,15 @@ get filtrosComparaveis(): string[] {
   });
 }
 
-  
+get qualidadeImagemIndisponivel(): boolean {
+  return (
+    this.filtrosSelecionados.includes('qualidadeImagem') &&
+    this.listaComparacao.some(
+      celular => celular.qualidadeImagemParcial
+    )
+  );
+}
+
 
 get celularesEmpatados(): Celular[] {
   if (
