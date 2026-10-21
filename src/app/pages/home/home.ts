@@ -29,7 +29,7 @@ export interface PontosFortes {
   placaVideo: number;        
   qualidadeImagem: number;   
   boaBateria: number;        
-  processadorCPU: number;    
+  processadorCPU: number | null;    
   melhorCamera: number;     
   precoBaixo?: number;       
 }
@@ -44,7 +44,15 @@ export interface Celular {
   pontosFortes: PontosFortes;
   qualidadeImagemParcial?: boolean;
   qualidadeImagemSemDados?: boolean;
+  processadorParcial?: boolean;
+  processadorSemDados?: boolean;
+}
 
+export interface ProcessadorCatalogo {
+  nome: string;
+  aliases: string[];
+  fonteUrl: string;
+  benchmark: number | null;
 }
 
 @Component({
@@ -64,6 +72,7 @@ export class Home implements OnInit {
   exibirAvisoModal: boolean = false;
 
   listaCelulares: Celular[] = [];
+  catalogoProcessadores: ProcessadorCatalogo[] = [];
   listaComparacao: Celular[] = [];
   termoBusca: string = '';
   celularSelecionado: Celular | null = null;
@@ -143,12 +152,47 @@ export class Home implements OnInit {
   }
 
   async carregarCelulares(): Promise<void> {
+    // Primeiro, carrega o catálogo de processadores.
+    try {
+      const respostaProcessadores = await fetch(
+        '/data/processadores.json'
+      );
+
+      if (!respostaProcessadores.ok) {
+        throw new Error('Não foi possível carregar o catálogo de processadores.');
+      }
+
+      this.catalogoProcessadores =
+        await respostaProcessadores.json();
+
+    } catch (erro) {
+      console.error(
+        'Erro ao carregar o catálogo de processadores:',
+        erro
+      );
+
+      this.catalogoProcessadores = [];
+    }
+
+    // Depois, carrega os celulares normalmente.
     try {
       const resposta = await fetch('/data/celulares.json');
+
+      if (!resposta.ok) {
+        throw new Error('Não foi possível carregar o catálogo de celulares.');
+      }
+
       this.listaCelulares = await resposta.json();
-      this.listaCelulares.forEach(celular => this.recalcularNotas(celular));
+
+      this.listaCelulares.forEach(celular => {
+        this.recalcularNotas(celular);
+      });
+
     } catch (erro) {
-      console.error('Erro ao carregar a lista de celulares:', erro);
+      console.error(
+        'Erro ao carregar a lista de celulares:',
+        erro
+      );
     }
   }
 
@@ -285,6 +329,29 @@ private normalizarNome(nome: string): string {
     .toLowerCase();
 }
 
+
+private encontrarProcessador(
+  nomeProcessador: string
+): ProcessadorCatalogo | undefined {
+  const nomeNormalizado = this.normalizarNome(nomeProcessador);
+
+  if (!nomeNormalizado) {
+    return undefined;
+  }
+
+  return this.catalogoProcessadores.find(processador => {
+    const nomesPossiveis = [
+      processador.nome,
+      ...processador.aliases
+    ];
+
+    return nomesPossiveis.some(nome =>
+      this.normalizarNome(nome) === nomeNormalizado
+    );
+  });
+}
+
+
 selecionarResultadoApi(dispositivo: DispositivoApi): void {
     if (this.listaComparacao.length >= 3) {
       alert('Você já atingiu o limite de 3 celulares para comparar.');
@@ -401,7 +468,7 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
           placaVideo: 5,
           qualidadeImagem: 5,
           boaBateria: 0,
-          processadorCPU: 5,
+          processadorCPU: null,
           melhorCamera: 5,
           precoBaixo: 0
         }
@@ -592,6 +659,25 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
     celular.qualidadeImagemParcial = resultadoTela.parcial;
     celular.qualidadeImagemSemDados = resultadoTela.semDados;
 
+    
+    const registroProcessador = this.temInformacao(
+      celular.specs.processador
+    )
+      ? this.encontrarProcessador(celular.specs.processador)
+      : undefined;
+
+    const notaProcessador = registroProcessador
+      ? this.calcularNotaProcessador(registroProcessador.benchmark)
+      : null;
+    celular.processadorSemDados = !this.temInformacao(
+      celular.specs.processador
+    );
+
+  celular.processadorParcial =
+  celular.processadorSemDados !== true &&
+  notaProcessador === null;
+
+
     celular.pontosFortes = {
       
       naoTravar: ramNum > 0
@@ -648,20 +734,16 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
         : celular.precoLoja <= 4000 ? 4
         : 2
         : 0,
-  
+
+
+      qualidadeImagem: resultadoTela.nota,  
 
       placaVideo: this.temInformacao(celular.specs.gpu)
         ? celular.pontosFortes?.placaVideo ?? 5
         : 0,
 
 
-      qualidadeImagem: resultadoTela.nota,  
-
-
-
-      processadorCPU: this.temInformacao(celular.specs.processador)
-        ? celular.pontosFortes?.processadorCPU ?? 5
-        : 0,
+      processadorCPU: notaProcessador,
 
       melhorCamera: this.temInformacao(celular.specs.camera)
         ? celular.pontosFortes?.melhorCamera ?? 5
@@ -674,6 +756,28 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
       valor?.trim() &&
       !valor.toLowerCase().includes('não informado')
     );
+  }
+
+    private calcularNotaProcessador(benchmark: number | null): number | null {
+    if (
+      benchmark === null ||
+      !Number.isFinite(benchmark) ||
+      benchmark <= 0
+    ) {
+      return null;
+    }
+
+    if (benchmark < 1000) return 1;
+    if (benchmark < 1500) return 2;
+    if (benchmark < 2000) return 3;
+    if (benchmark < 2500) return 4;
+    if (benchmark < 3000) return 5;
+    if (benchmark < 3500) return 6;
+    if (benchmark < 4000) return 7;
+    if (benchmark < 5000) return 8;
+    if (benchmark < 7000) return 9;
+
+    return 10;
   }
   
   private extrairNumero(valor: string | number): number {
@@ -798,6 +902,10 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
       c => c.precoLoja == null || c.precoLoja <= 0
     );
 
+    const algumProcessadorSemNota = this.listaComparacao.some(
+      c => c.pontosFortes.processadorCPU == null
+    );
+
     // Se qualquer celular tiver dados incompletos da tela,
     // não usamos esse critério para comparar nenhum deles.
     const algumaTelaIncompleta = this.listaComparacao.some(
@@ -807,6 +915,10 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
     for (const key of this.filtrosSelecionados) {
       // O preço só participa se todos os celulares tiverem preço.
       if (key === 'precoBaixo' && algumPrecoAusente) {
+        continue;
+      }
+
+      if (key === 'processadorCPU' && algumProcessadorSemNota) {
         continue;
       }
 
@@ -834,6 +946,10 @@ get filtrosComparaveis(): string[] {
     celular => celular.precoLoja == null || celular.precoLoja <= 0
   );
 
+  const algumProcessadorSemNota = this.listaComparacao.some(
+  celular => celular.pontosFortes.processadorCPU == null
+);
+
   const algumaTelaIncompleta = this.listaComparacao.some(
     celular => celular.qualidadeImagemParcial
   );
@@ -847,6 +963,10 @@ get filtrosComparaveis(): string[] {
       return false;
     }
 
+    if (key === 'processadorCPU' && algumProcessadorSemNota) {
+  return false;
+}
+
     return true;
   });
 }
@@ -856,6 +976,15 @@ get qualidadeImagemIndisponivel(): boolean {
     this.filtrosSelecionados.includes('qualidadeImagem') &&
     this.listaComparacao.some(
       celular => celular.qualidadeImagemParcial
+    )
+  );
+}
+
+get processadorIndisponivel(): boolean {
+  return (
+    this.filtrosSelecionados.includes('processadorCPU') &&
+    this.listaComparacao.some(
+      celular => celular.pontosFortes.processadorCPU == null
     )
   );
 }
@@ -969,7 +1098,7 @@ get celularVencedor(): {
           data: new Date().toLocaleDateString('pt-BR'),
           celulares: [...this.listaComparacao],
           filtros: this.filtros
-            .filter(f => this.filtrosSelecionados.includes(f.key))
+            .filter(f => this.filtrosComparaveis.includes(f.key))
             .map(f => f.label),
 
           vencedor: vencedorObj ? {

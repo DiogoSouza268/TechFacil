@@ -329,15 +329,43 @@
                 </app-alterar-info>
               </div>
 
+              
               <div class="todas-infos">
-                <app-alterar-info 
-                  label="Processador" 
-                  [valor]="celular.specs.processador"
-                  [editavel]="false"
-                  tipoInput="texto"
-                  (infoClick)="abrirDicionario('processador')">
-                </app-alterar-info>
+                @if (celular.processadorSemDados) {
+                  <div class="qualidade-imagem-status">
+                    <strong>Processador</strong>
+
+                    <span
+                      class="qualidade-imagem-aviso"
+                      title="Não há dados sobre o processador deste celular."
+                      role="status">
+                      <span class="icone-info" aria-hidden="true">ⓘ</span>
+                      Dados insuficientes
+                    </span>
+                  </div>
+                } @else if (celular.processadorParcial) {
+                  <div class="qualidade-imagem-status">
+                    <strong>Processador</strong>
+
+                    <span
+                      class="qualidade-imagem-aviso"
+                      title="Não há informações suficientes para avaliar o processador deste celular."
+                      role="status">
+                      <span class="icone-info" aria-hidden="true">⚠️</span>
+                      Informação incompleta
+                    </span>
+                  </div>
+                } @else {
+                  <app-alterar-info
+                    label="Processador"
+                    [valor]="celular.specs.processador"
+                    [editavel]="false"
+                    tipoInput="texto"
+                    (infoClick)="abrirDicionario('processador')">
+                  </app-alterar-info>
+                }
               </div>
+
 
               @if (celular.specs.camera) {
                 <div class="todas-infos">
@@ -421,6 +449,19 @@
                     Faltam informações sobre a tela de um ou mais celulares.
                     Escolha outro critério ou compare celulares com informações
                     completas para continuar.
+                  </p>
+                </div>
+              </div>
+            } @else if (processadorIndisponivel) {
+              <div class="aviso-comparacao-incompleta" role="alert">
+                <span class="aviso-icone" aria-hidden="true">⚠️</span>
+
+                <div class="aviso-conteudo">
+                  <h3>Não foi possível comparar os processadores</h3>
+                  <p>
+                    Faltam informações para avaliar o processador de um ou mais celulares.
+                    Escolha outro critério ou compare aparelhos com informações completas
+                    para continuar.
                   </p>
                 </div>
               </div>

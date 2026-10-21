@@ -1,0 +1,72 @@
+
+[
+  {
+    "nome": "MediaTek Helio G81 Extreme",
+    "aliases": ["Helio G81 Extreme MediaTek"],
+    "fonteUrl": "",
+    "benchmark": 1500
+  },
+  {
+    "nome": "Qualcomm Snapdragon 685",
+    "aliases": ["Snapdragon 685 Qualcomm SM6225-AD"],
+    "fonteUrl": "",
+    "benchmark": 1600
+  },
+  {
+    "nome": "MediaTek Dimensity 8500 Ultra",
+    "aliases": [
+    "Dimensity 8500 Ultra",
+    "MediaTek Dimensity 8500 Ultra (4 nm)"
+    ],
+    "fonteUrl": "",
+    "benchmark": 6000
+  },
+  {
+    "nome": "MediaTek Helio G85",
+    "aliases": [],
+    "fonteUrl": "",
+    "benchmark": 1300
+  },
+  {
+    "nome": "MediaTek Helio G99",
+    "aliases": ["MT6789"],
+    "fonteUrl": "",
+    "benchmark": 1800
+  },
+  {
+    "nome": "Apple A18",
+    "aliases": [],
+    "fonteUrl": "",
+    "benchmark": 8754
+  },
+  {
+    "nome": "Apple A19",
+    "aliases": [],
+    "fonteUrl": "",
+    "benchmark": 9443
+  },
+  {
+    "nome": "Unisoc T606",
+    "aliases": ["Spreadtrum T606"],
+    "fonteUrl": "",
+    "benchmark": 1383
+  },
+  {
+    "nome": "MediaTek Helio G100",
+    "aliases": [],
+    "fonteUrl": "",
+    "benchmark": 1900
+  },
+  {
+    "nome": "Unisoc T7250",
+    "aliases": [],
+    "fonteUrl": "",
+    "benchmark": 1500
+  },
+  {
+    "nome": "Unisoc T612",
+    "aliases": ["T612B"],
+    "fonteUrl": "",
+    "benchmark": 1200
+  }
+]
