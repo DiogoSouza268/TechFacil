@@ -42,6 +42,9 @@ export interface Celular {
   imagem: string;
   specs: Specs;
   pontosFortes: PontosFortes;
+  qualidadeImagemParcial?: boolean;
+  qualidadeImagemSemDados?: boolean;
+
 }
 
 @Component({
@@ -483,11 +486,111 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
       celular => celular.id === celularId
     );
   }
+  
+  
+  private calcularNotaTela(tela: string): {
+    nota: number;
+    parcial: boolean;
+    semDados: boolean;
+  } {
+    const texto = tela?.toLowerCase() || '';
+    const notas: number[] = [];
+
+    // 1. Tecnologia da tela: máximo de 3 pontos.
+    if (/amoled|oled/i.test(texto)) {
+      notas.push(3);
+    } else if (/ips|pls/i.test(texto)) {
+      notas.push(2);
+    } else if (/\blcd\b|\btft\b|\bltps\b/i.test(texto)) {
+      notas.push(1);
+    }
+
+    // 2. Resolução: máximo de 3 pontos.
+    const dimensoes = texto.match(
+      /(\d{3,4})\s*[x×]\s*(\d{3,4})/
+    );
+
+    if (/4k|2160p|qhd|wqhd|2k|1\.5k|1440p/i.test(texto)) {
+      notas.push(3);
+    } else if (/fhd\+?|full\s*hd|1080p/i.test(texto)) {
+      notas.push(2);
+    } else if (/hd\+?|720p/i.test(texto)) {
+      notas.push(1);
+    } else if (dimensoes) {
+      const menorDimensao = Math.min(
+        Number(dimensoes[1]),
+        Number(dimensoes[2])
+      );
+
+      if (menorDimensao >= 1440) {
+        notas.push(3);
+      } else if (menorDimensao >= 1080) {
+        notas.push(2);
+      } else if (menorDimensao >= 720) {
+        notas.push(1);
+      }
+    }
+
+    // 3. Taxa de atualização: máximo de 3 pontos.
+    const resultadoHz = texto.match(/(\d{2,3})\s*hz/i);
+
+    if (resultadoHz) {
+      const hz = Number(resultadoHz[1]);
+
+      if (hz >= 120) {
+        notas.push(3);
+      } else if (hz >= 90) {
+        notas.push(2);
+      } else if (hz >= 60) {
+        notas.push(1);
+      } else {
+        notas.push(0.5);
+      }
+    }
+
+    // Nenhum critério foi identificado.
+    if (notas.length === 0) {
+      return {
+        nota: 0,
+        parcial: true,
+        semDados: true
+      };
+    }
+
+    // Se faltar qualquer critério, não existe nota final.
+    if (notas.length < 3) {
+      return {
+        nota: 0,
+        parcial: true,
+        semDados: false
+      };
+    }
+
+    // Só os três critérios completos geram nota de 0 a 10.
+    const soma = notas.reduce((total, nota) => total + nota, 0);
+    const nota = Math.round((soma / 9) * 10);
+
+    return {
+      nota,
+      parcial: false,
+      semDados: false
+    };
+  }
+
+
 
   recalcularNotas(celular: Celular): void {
     const ramNum = this.extrairNumero(celular.specs.ram);
     const armNum = this.extrairNumero(celular.specs.armazenamento);
     const batNum = this.extrairNumero(celular.specs.bateria);
+
+    
+    const resultadoTela = this.calcularNotaTela(
+      celular.specs.qualidadeImagem
+    );
+
+    celular.qualidadeImagemParcial = resultadoTela.parcial;
+    celular.qualidadeImagemSemDados = resultadoTela.semDados;
 
     celular.pontosFortes = {
       
@@ -545,15 +648,16 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
         : celular.precoLoja <= 4000 ? 4
         : 2
         : 0,
-
+  
 
       placaVideo: this.temInformacao(celular.specs.gpu)
         ? celular.pontosFortes?.placaVideo ?? 5
         : 0,
 
-      qualidadeImagem: this.temInformacao(celular.specs.qualidadeImagem)
-        ? celular.pontosFortes?.qualidadeImagem ?? 5
-        : 0,
+
+      qualidadeImagem: resultadoTela.nota,  
+
+
 
       processadorCPU: this.temInformacao(celular.specs.processador)
         ? celular.pontosFortes?.processadorCPU ?? 5
@@ -694,16 +798,29 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
       c => c.precoLoja == null || c.precoLoja <= 0
     );
 
+    // Se qualquer celular tiver dados incompletos da tela,
+    // não usamos esse critério para comparar nenhum deles.
+    const algumaTelaIncompleta = this.listaComparacao.some(
+      c => c.qualidadeImagemParcial
+    );
+
     for (const key of this.filtrosSelecionados) {
-      // Se algum preço estiver ausente, não considera o critério de preço.
+      // O preço só participa se todos os celulares tiverem preço.
       if (key === 'precoBaixo' && algumPrecoAusente) {
         continue;
       }
 
-      const chavePontos = key as keyof PontosFortes;
-      const pontos = celular.pontosFortes?.[chavePontos];
+      // A qualidade da tela só participa se todos os celulares
+      // tiverem os três critérios identificados.
+      if (key === 'qualidadeImagem' && algumaTelaIncompleta) {
+        continue;
+      }
 
-      if (pontos !== undefined) {
+      const pontos = celular.pontosFortes[
+        key as keyof PontosFortes
+      ];
+
+      if (typeof pontos === 'number') {
         total += pontos;
       }
     }
@@ -711,9 +828,34 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
     return total;
   }
 
+
+get filtrosComparaveis(): string[] {
+  const algumPrecoAusente = this.listaComparacao.some(
+    celular => celular.precoLoja == null || celular.precoLoja <= 0
+  );
+
+  const algumaTelaIncompleta = this.listaComparacao.some(
+    celular => celular.qualidadeImagemParcial
+  );
+
+  return this.filtrosSelecionados.filter(key => {
+    if (key === 'precoBaixo' && algumPrecoAusente) {
+      return false;
+    }
+
+    if (key === 'qualidadeImagem' && algumaTelaIncompleta) {
+      return false;
+    }
+
+    return true;
+  });
+}
+
+  
+
 get celularesEmpatados(): Celular[] {
   if (
-    this.filtrosSelecionados.length === 0 ||
+    this.filtrosComparaveis.length === 0 ||
     this.listaComparacao.length < 2
   ) {
     return [];
@@ -741,7 +883,7 @@ get celularVencedor(): {
     motivos: string[];
   } | null {
     // Sem filtros, não existe campeão.
-    if (this.filtrosSelecionados.length === 0) {
+    if (this.filtrosComparaveis.length === 0) {
       return null;
     }
 
@@ -773,7 +915,7 @@ get celularVencedor(): {
 
     const motivos = this.filtros
       .filter(f =>
-        this.filtrosSelecionados.includes(f.key) &&
+        this.filtrosComparaveis.includes(f.key) &&
         !(f.key === 'precoBaixo' && algumPrecoAusente)
       )
       .map(f => f.label);
@@ -795,6 +937,13 @@ get celularVencedor(): {
 
     if (this.filtrosSelecionados.length === 0) {
       alert('Selecione pelo menos um filtro de preferência para definir o vencedor antes de salvar!');
+      return;
+    }
+
+    if (this.filtrosComparaveis.length === 0) {
+      alert(
+        'Não há informações suficientes para comparar os filtros selecionados.'
+      );
       return;
     }
 

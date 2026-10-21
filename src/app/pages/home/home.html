@@ -279,15 +279,27 @@
                 </app-alterar-info>
               </div>
 
+              
               <div class="todas-infos">
-                <app-alterar-info 
-                  label="Qualidade de Imagem" 
-                  [valor]="celular.specs.qualidadeImagem"
-                  [editavel]="false"
-                  tipoInput="texto"
-                  (infoClick)="abrirDicionario('qualidadeImagem')">
-                </app-alterar-info>
+                @if (celular.qualidadeImagemSemDados) {
+                  <div class="qualidade-imagem-aviso" role="status">
+                    Dados insuficientes
+                  </div>
+                } @else if (celular.qualidadeImagemParcial) {
+                  <div class="qualidade-imagem-aviso" role="status">
+                    Informação incompleta
+                  </div>
+                } @else {
+                  <app-alterar-info
+                    label="Qualidade de Imagem"
+                    [valor]="celular.specs.qualidadeImagem"
+                    [editavel]="false"
+                    tipoInput="texto"
+                    (infoClick)="abrirDicionario('qualidadeImagem')">
+                  </app-alterar-info>
+                }
               </div>
+
 
               <div class="todas-infos">
                 <app-alterar-info 
@@ -378,6 +390,14 @@
           @else if (filtrosSelecionados.length === 0) {
             <p>Selecione acima o que você mais valoriza para calcularmos o resultado.</p>
           }
+
+          @else if (filtrosComparaveis.length === 0) {
+            <p>
+              Não há informações suficientes para comparar os critérios selecionados.
+              Escolha outros critérios para continuar.
+            </p>
+          }
+          
           @else if (celularesEmpatados.length > 1) {
             <section class="empate-tecnico">
               <h2>🤝 Empate técnico!</h2>

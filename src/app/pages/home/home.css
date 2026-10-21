@@ -793,6 +793,29 @@ main.main-content {
 }
 
 
+.qualidade-imagem-aviso {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--cor-borda-inputs);
+  border-radius: 8px;
+  background: var(--fundo-cor);
+  color: var(--cor-texto);
+}
+
+.qualidade-imagem-aviso strong {
+  font-size: 0.95rem;
+}
+
+.qualidade-imagem-aviso p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+
+
 @media (max-width: 600px) {
   .acoes-busca-api {
     align-items: flex-start;
