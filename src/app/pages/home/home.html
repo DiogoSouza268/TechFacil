@@ -392,7 +392,6 @@
                 }
               </div>
 
-
               @if (celular.specs.camera) {
                 <div class="todas-infos">
                   <app-alterar-info 
@@ -404,6 +403,23 @@
                   </app-alterar-info>
                 </div>
               }
+
+              @if (celular.cameraSemDados) {
+                <div class="todas-infos">
+                  <div class="qualidade-imagem-status">
+                    <strong>Qualidade das câmeras</strong>
+
+                    <span
+                      class="qualidade-imagem-aviso"
+                      role="status"
+                      title="Ainda não temos uma avaliação confiável da qualidade das câmeras deste celular.">
+                      <span class="icone-info" aria-hidden="true">ⓘ</span>
+                      Informação incompleta
+                    </span>
+                  </div>
+                </div>
+              }
+
             </div>
 
             
@@ -456,6 +472,62 @@
           
           <h4>Melhor Opção para Você</h4>
 
+          
+          @if (listaComparacao.length >= 2 && filtrosSelecionados.length > 0) {
+            @if (qualidadeImagemIndisponivel) {
+              <div class="aviso-comparacao-incompleta" role="alert">
+                <span class="aviso-icone" aria-hidden="true">⚠️</span>
+                <div class="aviso-conteudo">
+                  <h3>Qualidade de imagem indisponível</h3>
+                  <p>
+                    Faltam informações sobre a tela de um ou mais celulares.
+                    Esse critério não será considerado no resultado.
+                  </p>
+                </div>
+              </div>
+            }
+
+            @if (gpuIndisponivel) {
+              <div class="aviso-comparacao-incompleta" role="alert">
+                <span class="aviso-icone" aria-hidden="true">⚠️</span>
+                <div class="aviso-conteudo">
+                  <h3>Placa de vídeo indisponível</h3>
+                  <p>
+                    Faltam informações para comparar a placa de vídeo de todos
+                    os celulares. Esse critério não será considerado no resultado.
+                  </p>
+                </div>
+              </div>
+            }
+
+            @if (processadorIndisponivel) {
+              <div class="aviso-comparacao-incompleta" role="alert">
+                <span class="aviso-icone" aria-hidden="true">⚠️</span>
+                <div class="aviso-conteudo">
+                  <h3>Processador indisponível</h3>
+                  <p>
+                    Faltam informações para avaliar o processador de todos
+                    os celulares. Esse critério não será considerado no resultado.
+                  </p>
+                </div>
+              </div>
+            }
+
+            @if (cameraIndisponivel) {
+              <div class="aviso-comparacao-incompleta" role="alert">
+                <span class="aviso-icone" aria-hidden="true">⚠️</span>
+                <div class="aviso-conteudo">
+                  <h3>Qualidade das câmeras indisponível</h3>
+                  <p>
+                    Ainda não temos avaliações confiáveis para todos os celulares
+                    selecionados. Esse critério não será considerado no resultado.
+                  </p>
+                </div>
+              </div>
+            }
+          }
+
+
           @if (listaComparacao.length < 2) {
             <p>Adicione pelo menos 2 celulares à comparação para ver o resultado!</p>
           }
@@ -463,50 +535,14 @@
             <p>Selecione acima o que você mais valoriza para calcularmos o resultado.</p>
           }
 
-        
+          
           @else if (filtrosComparaveis.length === 0) {
-            @if (qualidadeImagemIndisponivel) {
-              <div class="aviso-comparacao-incompleta" role="alert">
-                <span class="aviso-icone" aria-hidden="true">⚠️</span>
-
-                <div class="aviso-conteudo">
-                  <h3>Não foi possível comparar a qualidade de imagem</h3>
-                  <p>
-                    Faltam informações sobre a tela de um ou mais celulares.
-                    Escolha outro critério ou compare celulares com informações
-                    completas para continuar.
-                  </p>
-                </div>
-              </div>
-            } @else if (gpuIndisponivel) {
-              <div class="aviso-comparacao-incompleta" role="alert">
-                <span class="aviso-icone" aria-hidden="true">⚠️</span>
-
-                <div class="aviso-conteudo">
-                  <h3>Não foi possível comparar as placas de vídeo</h3>
-                  <p>
-                    Faltam informações para avaliar a placa de vídeo de um ou mais celulares.
-                    Escolha outro critério ou compare aparelhos com informações completas
-                    para continuar.
-                  </p>
-                </div>
-              </div>
-            }
-            
-            @else if (processadorIndisponivel) {
-              <div class="aviso-comparacao-incompleta" role="alert">
-                <span class="aviso-icone" aria-hidden="true">⚠️</span>
-
-                <div class="aviso-conteudo">
-                  <h3>Não foi possível comparar os processadores</h3>
-                  <p>
-                    Faltam informações para avaliar o processador de um ou mais celulares.
-                    Escolha outro critério ou compare aparelhos com informações completas
-                    para continuar.
-                  </p>
-                </div>
-              </div>
-            } @else {
+            @if (
+              !qualidadeImagemIndisponivel &&
+              !gpuIndisponivel &&
+              !processadorIndisponivel &&
+              !cameraIndisponivel
+            ) {
               <div class="aviso-comparacao-incompleta" role="alert">
                 <span class="aviso-icone" aria-hidden="true">⚠️</span>
 
@@ -520,6 +556,7 @@
               </div>
             }
           }
+
 
 
           @else if (celularesEmpatados.length > 1) {

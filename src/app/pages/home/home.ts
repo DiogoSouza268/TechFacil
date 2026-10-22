@@ -30,7 +30,7 @@ export interface PontosFortes {
   qualidadeImagem: number;   
   boaBateria: number;        
   processadorCPU: number | null;    
-  melhorCamera: number;     
+  melhorCamera: number | null;     
   precoBaixo?: number;       
 }
 
@@ -48,6 +48,7 @@ export interface Celular {
   processadorSemDados?: boolean;
   gpuParcial?: boolean;
   gpuSemDados?: boolean;
+  cameraSemDados?: boolean;
 }
 
 export interface ProcessadorCatalogo {
@@ -56,6 +57,17 @@ export interface ProcessadorCatalogo {
   fonteUrl: string;
   benchmark: number | null;
 }
+
+
+export interface CameraCatalogo {
+  modelo: string;
+  aliases: string[];
+  fonte: string;
+  fonteUrl: string | null;
+  nota: number | null;
+  protocolo: 'V5' | 'V6' | null;
+}
+
 
 export interface GpuCatalogo {
   nome: string;
@@ -84,6 +96,7 @@ export class Home implements OnInit {
   catalogoProcessadores: ProcessadorCatalogo[] = [];
   listaComparacao: Celular[] = [];
   catalogoGpus: GpuCatalogo[] = [];
+  catalogoCameras: CameraCatalogo[] = [];
   termoBusca: string = '';
   celularSelecionado: Celular | null = null;
 
@@ -198,6 +211,32 @@ export class Home implements OnInit {
       console.error('Erro ao carregar o catálogo de GPUs:', erro);
       this.catalogoGpus = [];
     }
+
+    
+    try {
+      const respostaCameras = await fetch('/data/cameras.json');
+
+      if (!respostaCameras.ok) {
+        throw new Error(
+          'Não foi possível carregar o catálogo de câmeras.'
+        );
+      }
+
+      this.catalogoCameras = await respostaCameras.json();
+
+      console.log(
+        'Catálogo de câmeras carregado:',
+        this.catalogoCameras.length
+      );
+    } catch (erro) {
+      console.error(
+        'Erro ao carregar o catálogo de câmeras:',
+        erro
+      );
+
+      this.catalogoCameras = [];
+    }
+
 
     // Depois, carrega os celulares normalmente.
     try {
@@ -395,6 +434,29 @@ private normalizarNome(nome: string): string {
     });
   }
 
+  
+private encontrarCamera(
+  nomeCelular: string
+): CameraCatalogo | undefined {
+  const nomeNormalizado = this.normalizarNome(nomeCelular);
+
+  if (!nomeNormalizado) {
+    return undefined;
+  }
+
+  return this.catalogoCameras.find(camera => {
+    const nomesPossiveis = [
+      camera.modelo,
+      ...camera.aliases
+    ];
+
+    return nomesPossiveis.some(nome =>
+      this.normalizarNome(nome) === nomeNormalizado
+    );
+  });
+}
+
+
 
 selecionarResultadoApi(dispositivo: DispositivoApi): void {
     if (this.listaComparacao.length >= 3) {
@@ -513,7 +575,7 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
           qualidadeImagem: 5,
           boaBateria: 0,
           processadorCPU: null,
-          melhorCamera: 5,
+          melhorCamera: null,
           precoBaixo: 0
         }
       };
@@ -739,8 +801,22 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
     );
 
   celular.processadorParcial =
-  celular.processadorSemDados !== true &&
-  notaProcessador === null;
+    celular.processadorSemDados !== true &&
+    notaProcessador === null;
+
+    
+  const registroCamera = this.encontrarCamera(celular.nome);
+
+  const notaCamera =
+    registroCamera?.nota != null &&
+    Number.isFinite(registroCamera.nota) &&
+    registroCamera.nota >= 1 &&
+    registroCamera.nota <= 10
+      ? registroCamera.nota
+      : null;
+
+  celular.cameraSemDados = notaCamera === null;
+
 
 
     celular.pontosFortes = {
@@ -800,16 +876,14 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
         : 2
         : 0,
 
-
+      
       qualidadeImagem: resultadoTela.nota,  
 
       placaVideo: notaGpu,
 
       processadorCPU: notaProcessador,
 
-      melhorCamera: this.temInformacao(celular.specs.camera)
-        ? celular.pontosFortes?.melhorCamera ?? 5
-        : 0
+      melhorCamera: notaCamera
     };
   }
 
@@ -955,13 +1029,22 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
   }
 
   get gpuIndisponivel(): boolean {
-  return (
-    this.filtrosSelecionados.includes('placaVideo') &&
-    this.listaComparacao.some(
-      celular => celular.pontosFortes.placaVideo == null
-    )
-  );
-}
+    return (
+      this.filtrosSelecionados.includes('placaVideo') &&
+      this.listaComparacao.some(
+        celular => celular.pontosFortes.placaVideo == null
+      )
+    );
+  }
+
+  get cameraIndisponivel(): boolean {
+    return (
+      this.filtrosSelecionados.includes('melhorCamera') &&
+      this.listaComparacao.some(
+        celular => celular.pontosFortes.melhorCamera == null
+      )
+    );
+  }
 
   
   calcularPontuacao(celular: Celular): number {
@@ -977,6 +1060,10 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
       c => c.pontosFortes.placaVideo == null
     );
 
+    const algumaCameraSemNota = this.listaComparacao.some(
+      c => c.pontosFortes.melhorCamera == null
+    );
+
     const algumProcessadorSemNota = this.listaComparacao.some(
       c => c.pontosFortes.processadorCPU == null
     );
@@ -990,6 +1077,10 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
     for (const key of this.filtrosSelecionados) {
       // O preço só participa se todos os celulares tiverem preço.
       if (key === 'precoBaixo' && algumPrecoAusente) {
+        continue;
+      }
+
+      if (key === 'melhorCamera' && algumaCameraSemNota) {
         continue;
       }
 
@@ -1033,12 +1124,20 @@ get filtrosComparaveis(): string[] {
     celular => celular.pontosFortes.placaVideo == null
   );
 
+  const algumaCameraSemNota = this.listaComparacao.some(
+    celular => celular.pontosFortes.melhorCamera == null
+  );
+
   const algumaTelaIncompleta = this.listaComparacao.some(
     celular => celular.qualidadeImagemParcial
   );
 
   return this.filtrosSelecionados.filter(key => {
     if (key === 'precoBaixo' && algumPrecoAusente) {
+      return false;
+    }
+
+    if (key === 'melhorCamera' && algumaCameraSemNota) {
       return false;
     }
 

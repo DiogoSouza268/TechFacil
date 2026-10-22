@@ -1,0 +1,24 @@
+[
+  {
+    "modelo": "Apple Iphone 16",
+    "aliases": [
+      "appleiphone16",
+      "iphone16"
+    ],
+    "fonte": "DXOMARK",
+    "fonteUrl": "https://www.dxomark.com/apple-iphone-16-camera-test/",
+    "nota": null,
+    "protocolo": "V5"
+  },
+  {
+    "modelo": "Apple Iphone 17",
+    "aliases": [
+      "appleiphone17",
+      "iphone17"
+    ],
+    "fonte": "DXOMARK",
+    "fonteUrl": "https://www.dxomark.com/apple-iphone-17-camera-test/",
+    "nota": null,
+    "protocolo": "V6"
+  }
+]
