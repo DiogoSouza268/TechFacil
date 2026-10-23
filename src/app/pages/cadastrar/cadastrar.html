@@ -1,0 +1,111 @@
+<main>
+  
+  <!--Header do meu mobile-->
+    <header>
+        <button type="button" (click)="voltar()" title="Voltar para o Login">&#x1F868;</button>
+        <div>
+            <h2>Criar Conta</h2>
+            <p>Preencha as informações para continuar</p>
+        </div>
+    </header>
+
+  <!--Section da coluna a esquerda-->
+  <section id="colunaEsquerda">
+
+    <div id="div1">
+
+        <h2>TF</h2>
+
+        <div id="div1-1">
+          <h2>TechFácil</h2>
+          <p>Celular certo, sem complicação</p>
+        </div>
+    </div>
+
+    <div id="paragrafoPrin">
+        <h1>Crie sua conta!</h1>
+        <p>Salve comparações, retome na loja e compartilhe com quem voce ama</p>
+    </div>
+
+    <div>
+        <div class="caracteristicas">
+            <span>&#x1F4BE;</span>
+            <div>
+                <h2>Comparações salvas</h2>
+                <p>Volte depois sem perder nada</p>
+            </div>
+        </div>
+
+        <div class="caracteristicas">
+            <span>&#x1F465;</span>
+            <div>
+                <h2>Perfil para todos</h2>
+                <p>Dicas para todas as pessoas</p>
+            </div>
+        </div>
+
+        <div class="caracteristicas">
+            <span>&#x1F6E1;&#xFE0F;</span>
+            <div>
+                <h2>100% gratuito</h2>
+                <p>Não precisa pagar por nada</p>
+            </div>
+        </div>
+
+        
+
+    </div>
+    
+  </section>
+
+  <!--Section do formulario-->
+  <section id="formulario">
+    <form (ngSubmit)="cadastrar()" autocomplete="off">
+
+        <div class="campo">
+            <label for="nome-completo" style="padding-top: 15px;">Nome Completo</label>
+            <div class="inputes">
+                <span>&#128100;</span>
+                <input type="text" id="nome-completo" name="nomeCompleto" [(ngModel)]="nome" required placeholder="Digite seu nome completo">
+            </div>
+        </div>
+
+        <div class="campo">
+            <label for="email" style="padding-top: 15px;">E-mail</label>
+            <div class="inputes">
+                <span>&#x1F4E7;</span>
+                <input type="email" id="email" name="email" [(ngModel)]="email" required placeholder="Digite seu email">
+            </div>
+        </div>
+        
+        <div class="campo">
+            <label for="password" style="padding-top: 15px;">Senha</label>
+            <div class="inputes">
+                <span>&#x1F512;</span>
+                <input type="password" id="password" maxlength="8" name="password" [(ngModel)]="senha" required placeholder="Digite sua senha">
+            </div>
+        </div>
+
+        <div class="campo">
+            <label for="repete-password" style="padding-top: 15px;">Confirmar Senha</label>
+            <div class="inputes">
+                <span>&#x1F512;</span>
+                <input type="password" id="repete-password" maxlength="8" name="repetePassword" [(ngModel)]="confirmarSenha" required placeholder="Confirme sua senha">
+            </div>
+        </div>
+
+        <section id="Termos">
+            <input type="checkbox" id="termos" name="aceitouTermos" [(ngModel)]="aceitouTermos" required>
+            <p>
+                Li e concordo com os termos e condições. 
+                <a routerLink="/lgpd" target="_blank">Ler termos</a>
+            </p>
+        </section>
+
+        <button type="submit">Criar Conta &#x2192;</button>
+    </form>
+
+    <p id="texto-final">Já tem conta? <a routerLink="/login">Entrar</a></p>
+  </section>
+
+</main>

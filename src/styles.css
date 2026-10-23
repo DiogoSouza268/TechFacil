@@ -1,1 +1,23 @@
-/* You can add global styles to this file, and also import other style files */
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+:root{
+    --verde-primario: #059669;
+    --verde-secundario: #047857;
+    --verde-menta: #d1fae5;
+    --fundo-cor: #eaf0f5;
+    --cor-borda-inputs: #7687a0;
+    --cor-texto: #64748b;
+    --verde-suave: #78f0b8; 
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+}
+

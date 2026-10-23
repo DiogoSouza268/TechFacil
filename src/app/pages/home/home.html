@@ -1,0 +1,616 @@
+<div class="home-container">
+  <header class="header-home">
+    <div class="header-left">
+      <div id="logo-techfacil">
+        <img src="/img/projeto/facilito.svg" alt="TechFácil Logo" class="logo-img">
+        <div>
+          <h2 class="logo-title">TechFácil</h2>
+          <span class="logo-subtitle">Celular certo, sem complicação</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+
+      <a href="/salvos" class="btn-salvos-header">
+        Salvos
+      </a>
+
+      <div class="user-avatar" title="Perfil do Usuário">
+        <a href="/perfil"><img src="/img/projeto/pessoa.svg" alt="perfil logo-img"></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <section class="section-block">
+      <div class="section-title-row">
+        <h3>TechFácil para Todos</h3>
+      </div>
+      <div id="carosel1">
+        <app-carrosel [slides]="homeCarosel"></app-carrosel>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="filtros-header">
+        <h3>O que você busca no seu celular?</h3>
+        <p class="sub-instrucao">Toque nas opções para ajustarmos o vencedor para você.</p>
+      </div>
+
+      <div class="grid-filtros">
+        @for (filtro of filtros; track filtro.key) {
+          <button 
+            type="button"
+            class="opcoes" 
+            [class.ativo]="filtroAtivo(filtro.key)" 
+            (click)="toggleFiltro(filtro.key)">
+
+            <span class="btn-icon">
+              <img [src]="filtro.icone" [alt]="filtro.label" class="icone-filtro">
+            </span>
+            
+            <span class="btn-text">{{ filtro.label }}</span>
+          </button>
+        }
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="search-container">
+        <div class="search-bar">
+          <input 
+            type="text"  
+            name="busca-celular" 
+            placeholder="Digite o celular que você viu na loja..."
+            [(ngModel)]="termoBusca"
+            (ngModelChange)="aoAlterarBusca()"
+            autocomplete="off">
+
+          <button type="button" class="btn-adicionar" (click)="adicionarAComparacao()">
+            Adicionar
+          </button>
+
+          @if (sugestoesBusca.length > 0 && termoBusca !== celularSelecionado?.nome) {
+            <ul class="lista-sugestoes">
+              @for (sugestao of sugestoesBusca; track sugestao.id) {
+                <li (click)="selecionarSugestao(sugestao)">
+                  <img [src]="sugestao.imagem" [alt]="sugestao.nome" width="30">
+                  <span>{{ sugestao.nome }}</span>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+        @if (
+          termoBusca.trim().length >= 2 &&
+          !celularSelecionado &&
+          (!buscaApiRealizada || erroBuscaApi)
+        ) {
+          <div class="acoes-busca-api">
+            <p>Não encontrou o celular que procura?</p>
+            <small>Vamos procurar mais modelos para você.</small>
+
+            <button
+              type="button"
+              class="btn-buscar-api"
+              (click)="buscarNaApi()"
+              [disabled]="buscandoApi || buscandoDetalhesApi || tempoEsperaApi > 0"
+            >
+              @if (buscandoApi) {
+                Procurando...
+              } @else if (tempoEsperaApi > 0) {
+                Tente novamente em {{ tempoEsperaApi }}s
+              } @else {
+                Buscar mais modelos
+              }
+            </button>
+
+          </div>
+        }
+
+        @if (buscandoDetalhesApi) {
+          <p class="status-busca-api">Carregando as especificações do celular...</p>
+        }
+
+        @if (erroBuscaApi) {
+          <p class="erro-busca-api">{{ erroBuscaApi }}</p>
+        }
+
+        
+        @if (mensagemBuscaApi) {
+          <div
+            class="aviso-resultado-busca"
+            role="status"
+            aria-live="polite"
+          >
+            <strong>
+              @if (mensagemBuscaApi.includes('Nenhum celular encontrado')) {
+                Celular não encontrado
+              } @else if (mensagemBuscaApi.includes('já estão no catálogo local')) {
+                Modelos já disponíveis
+              } @else {
+                Busca concluída
+              }
+            </strong>
+
+            <p>{{ mensagemBuscaApi }}</p>
+          </div>
+        }
+
+
+        @if (resultadosApi.length > 0) {
+          <div class="lista-resultados-api">
+            @for (dispositivo of resultadosApi; track dispositivo.id) {
+              <button
+                type="button"
+                class="resultado-api"
+                (click)="selecionarResultadoApi(dispositivo)"
+                [disabled]="buscandoDetalhesApi"
+              >
+                <img
+                  [src]="dispositivo.image_url || '/img/projeto/celulares.jpg'"
+                  [alt]="nomeCompletoApi(dispositivo)"
+                >
+
+                <span class="resultado-api-texto">
+                  <strong>{{ nomeCompletoApi(dispositivo) }}</strong>
+                  <small>
+                    {{ dispositivo.match_certainty
+                      ? 'Correspondência: ' + dispositivo.match_certainty
+                      : 'Selecionar aparelho'
+                    }}
+                  </small>
+                </span>
+              </button>
+            }
+          </div>
+        }
+ 
+      </div>
+
+      <div class="comparacao-status">
+        <div class="status-info">
+          <h3>Comparando {{ listaComparacao.length }} celular(es)</h3>
+          <small class="dica-toque desktop-only">💡 Toque no nome do componente para entender em linguagem simples.</small>
+        </div>
+
+        <div class="indicadores-container">
+          <button type="button" class="num-comparacao" [class.ativo]="listaComparacao[0]" (click)="irParaCelular(0)">1</button>
+          <button type="button" class="num-comparacao" [class.ativo]="listaComparacao[1]" (click)="irParaCelular(1)">2</button>
+          <button type="button" class="num-comparacao" [class.ativo]="listaComparacao[2]" (click)="irParaCelular(2)">3</button>
+          <span class="deslize-hint mobile-only">Deslize &rarr;</span>
+        </div>
+      </div>
+
+      <div class="grid-aparelhos" >
+        @if (listaComparacao.length === 0) {
+          <div class="mensagem-vazia">
+            <span class="empty-icon">&#128241;</span>
+            <p>Nenhum celular adicionado para comparar ainda.</p>
+            <small>Busque e adicione os aparelhos no campo acima!</small>
+          </div>
+        } 
+
+        @for (celular of listaComparacao; track celular.id; let i = $index) {
+          <article 
+            [id]="'card-celular-' + i" 
+            class="card-comparativo"
+            [class.is-vencedor-card]="celularVencedor?.celular?.id === celular.id">
+
+            @if (celularEstaEmpatado(celular.id)) {
+              <div class="badge-empate">
+                🤝 Empate técnico
+              </div>
+            }
+            @else if (celularVencedor?.celular?.id === celular.id) {
+              <div class="badge-campeao">
+                🏆 Campeão TechFácil
+              </div>
+            }
+
+
+            <button type="button" class="removerBotao" (click)="removerDaComparacao(i)" title="Remover da comparação">
+              ✕
+            </button>
+
+            <div class="celular-img">
+              <img [src]="celular.imagem" [alt]="celular.nome">
+              <h2 class="celular-nome">{{ celular.nome }}</h2>
+              
+              <div class="preco-container">
+                <label [for]="'preco-loja-' + i">
+                  Preço encontrado na loja (R$)
+                </label>
+
+                <input
+                  [id]="'preco-loja-' + i"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="Digite o preço"
+                  [ngModel]="celular.precoLoja ?? null"
+                  (ngModelChange)="atualizarPrecoLoja(celular, $event)"
+                  [attr.aria-label]="'Preço de ' + celular.nome"
+                >
+
+                @if (celular.precoLoja != null && celular.precoLoja > 0) {
+                  <h3 class="preco-loja">
+                    {{ celular.precoLoja | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+                  </h3>
+                } @else {
+                  <h3 class="preco-loja">Valor não informado</h3>
+                }
+              </div>
+
+            </div>
+
+            <div class="info">
+              <div class="todas-infos">
+                <app-alterar-info 
+                  label="Armazenamento" 
+                  [valor]="celular.specs.armazenamento"
+                  [editavel]="true"
+                  tipoInput="numero"
+                  (valorChange)="atualizarSpec(celular, 'armazenamento', $event)"
+                  (infoClick)="abrirDicionario('armazenamento')">
+                </app-alterar-info>
+              </div>
+
+              <div class="todas-infos">
+                <app-alterar-info 
+                  label="Memória RAM" 
+                  [valor]="celular.specs.ram"
+                  [editavel]="true"
+                  tipoInput="numero"
+                  (valorChange)="atualizarSpec(celular, 'ram', $event)"
+                  (infoClick)="abrirDicionario('ram')">
+                </app-alterar-info>
+              </div>
+
+              <div class="todas-infos">
+                @if (celular.gpuSemDados) {
+                  <div class="qualidade-imagem-status">
+                    <strong>Placa de vídeo (GPU)</strong>
+
+                    <span
+                      class="qualidade-imagem-aviso"
+                      role="status"
+                      title="Não há informações sobre a placa de vídeo deste celular.">
+                      <span class="icone-info" aria-hidden="true">ⓘ</span>
+                      Dados insuficientes
+                    </span>
+                  </div>
+                } @else if (celular.gpuParcial) {
+                  <div class="qualidade-imagem-status">
+                    <strong>Placa de vídeo (GPU)</strong>
+
+                    <span
+                      class="qualidade-imagem-aviso"
+                      role="status"
+                      title="Não foi possível avaliar a placa de vídeo deste celular.">
+                      <span class="icone-info" aria-hidden="true">⚠️</span>
+                      Informação incompleta
+                    </span>
+                  </div>
+                } @else {
+                  <app-alterar-info
+                    label="Placa de Vídeo (GPU)"
+                    [valor]="celular.specs.gpu"
+                    [editavel]="false"
+                    tipoInput="texto"
+                    (infoClick)="abrirDicionario('gpu')">
+                  </app-alterar-info>
+                }
+              </div>
+
+
+              <div class="todas-infos">
+                @if (celular.qualidadeImagemSemDados) {
+                  <div class="qualidade-imagem-status">
+                    <strong>Qualidade de imagem</strong>
+
+                    <span
+                      class="qualidade-imagem-aviso"
+                      title="Não há dados suficientes sobre a tela deste celular."
+                      role="status">
+                      <span class="icone-info" aria-hidden="true">ⓘ</span>
+                      Dados insuficientes
+                    </span>
+                  </div>
+                } @else if (celular.qualidadeImagemParcial) {
+                  <div class="qualidade-imagem-status">
+                    <strong>Qualidade de imagem</strong>
+
+                    <span
+                      class="qualidade-imagem-aviso"
+                      title="Faltam informações sobre a tela deste celular."
+                      role="status">
+                      <span class="icone-info" aria-hidden="true">⚠️</span>
+                      Informação incompleta
+                    </span>
+                  </div>
+                } @else {
+                  <app-alterar-info
+                    label="Qualidade de imagem"
+                    [valor]="celular.specs.qualidadeImagem"
+                    [editavel]="false"
+                    tipoInput="texto"
+                    (infoClick)="abrirDicionario('qualidadeImagem')">
+                  </app-alterar-info>
+                }
+              </div>
+              
+              
+
+
+              <div class="todas-infos">
+                <app-alterar-info 
+                  label="Bateria" 
+                  [valor]="celular.specs.bateria"
+                  [editavel]="false"
+                  tipoInput="texto"
+                  (infoClick)="abrirDicionario('bateria')">
+                </app-alterar-info>
+              </div>
+
+              
+              <div class="todas-infos">
+                @if (celular.processadorSemDados) {
+                  <div class="qualidade-imagem-status">
+                    <strong>Processador</strong>
+
+                    <span
+                      class="qualidade-imagem-aviso"
+                      title="Não há dados sobre o processador deste celular."
+                      role="status">
+                      <span class="icone-info" aria-hidden="true">ⓘ</span>
+                      Dados insuficientes
+                    </span>
+                  </div>
+                } @else if (celular.processadorParcial) {
+                  <div class="qualidade-imagem-status">
+                    <strong>Processador</strong>
+
+                    <span
+                      class="qualidade-imagem-aviso"
+                      title="Não há informações suficientes para avaliar o processador deste celular."
+                      role="status">
+                      <span class="icone-info" aria-hidden="true">⚠️</span>
+                      Informação incompleta
+                    </span>
+                  </div>
+                } @else {
+                  <app-alterar-info
+                    label="Processador"
+                    [valor]="celular.specs.processador"
+                    [editavel]="false"
+                    tipoInput="texto"
+                    (infoClick)="abrirDicionario('processador')">
+                  </app-alterar-info>
+                }
+              </div>
+
+              @if (celular.specs.camera) {
+                <div class="todas-infos">
+                  <app-alterar-info 
+                    label="Câmeras" 
+                    [valor]="celular.specs.camera"
+                    [editavel]="false"
+                    tipoInput="texto"
+                    (infoClick)="abrirDicionario('camera')">
+                  </app-alterar-info>
+                </div>
+              }
+
+              @if (celular.cameraSemDados) {
+                <div class="todas-infos">
+                  <div class="qualidade-imagem-status">
+                    <strong>Qualidade das câmeras</strong>
+
+                    <span
+                      class="qualidade-imagem-aviso"
+                      role="status"
+                      title="Ainda não temos uma avaliação confiável da qualidade das câmeras deste celular.">
+                      <span class="icone-info" aria-hidden="true">ⓘ</span>
+                      Informação incompleta
+                    </span>
+                  </div>
+                </div>
+              }
+
+            </div>
+
+            
+          </article>
+        }
+      </div>
+    </section>
+
+    <section id="infoFacil" class="card-dicionario">
+      @if (termoExibido) {
+        <div class="dicionario-header">
+          <div class="dicionario-title">
+            <span class="info-icon">&#8505;</span>
+            <h4>{{ termoExibido.titulo }}</h4>
+          </div>
+          <button type="button" class="btn-fechar-dic" (click)="fecharDicionario()">✕</button>
+        </div>
+
+        <p class="dicionario-explicacao">
+          {{ termoExibido.explicacao }}
+        </p>
+
+        <button 
+          type="button"
+          class="input-botao btn-entendi" 
+          (click)="fecharDicionario()">
+          Entendi!
+        </button>
+      } 
+      @else {
+        <div class="dicionario-placeholder">
+          <span class="info-icon">&#8505;</span>
+          <p>Toque no ícone ℹ️ ao lado de qualquer especificação para entender em linguagem simples.</p>
+        </div>
+      }
+    </section>
+
+    <section id="melhorOpcao" class="banner-campeao">
+      <div class="vencedor-info-wrapper">
+        
+          @if (celularesEmpatados.length > 1 && filtrosSelecionados.length > 0) {
+            <div class="trofeu-badge icone-empate">
+              &#129309;
+            </div>
+          } @else {
+            <div class="trofeu-badge">&#127942;</div>
+          }
+
+        <div class="vencedor-textos">
+          
+          <h4>Melhor Opção para Você</h4>
+
+          
+          @if (listaComparacao.length >= 2 && filtrosSelecionados.length > 0) {
+            @if (qualidadeImagemIndisponivel) {
+              <div class="aviso-comparacao-incompleta" role="alert">
+                <span class="aviso-icone" aria-hidden="true">⚠️</span>
+                <div class="aviso-conteudo">
+                  <h3>Qualidade de imagem indisponível</h3>
+                  <p>
+                    Faltam informações sobre a tela de um ou mais celulares.
+                    Esse critério não será considerado no resultado.
+                  </p>
+                </div>
+              </div>
+            }
+
+            @if (gpuIndisponivel) {
+              <div class="aviso-comparacao-incompleta" role="alert">
+                <span class="aviso-icone" aria-hidden="true">⚠️</span>
+                <div class="aviso-conteudo">
+                  <h3>Placa de vídeo indisponível</h3>
+                  <p>
+                    Faltam informações para comparar a placa de vídeo de todos
+                    os celulares. Esse critério não será considerado no resultado.
+                  </p>
+                </div>
+              </div>
+            }
+
+            @if (processadorIndisponivel) {
+              <div class="aviso-comparacao-incompleta" role="alert">
+                <span class="aviso-icone" aria-hidden="true">⚠️</span>
+                <div class="aviso-conteudo">
+                  <h3>Processador indisponível</h3>
+                  <p>
+                    Faltam informações para avaliar o processador de todos
+                    os celulares. Esse critério não será considerado no resultado.
+                  </p>
+                </div>
+              </div>
+            }
+
+            @if (cameraIndisponivel) {
+              <div class="aviso-comparacao-incompleta" role="alert">
+                <span class="aviso-icone" aria-hidden="true">⚠️</span>
+                <div class="aviso-conteudo">
+                  <h3>Qualidade das câmeras indisponível</h3>
+                  <p>
+                    Ainda não temos avaliações confiáveis para todos os celulares
+                    selecionados. Esse critério não será considerado no resultado.
+                  </p>
+                </div>
+              </div>
+            }
+          }
+
+
+          @if (listaComparacao.length < 2) {
+            <p>Adicione pelo menos 2 celulares à comparação para ver o resultado!</p>
+          }
+          @else if (filtrosSelecionados.length === 0) {
+            <p>Selecione acima o que você mais valoriza para calcularmos o resultado.</p>
+          }
+
+          
+          @else if (filtrosComparaveis.length === 0) {
+            @if (
+              !qualidadeImagemIndisponivel &&
+              !gpuIndisponivel &&
+              !processadorIndisponivel &&
+              !cameraIndisponivel
+            ) {
+              <div class="aviso-comparacao-incompleta" role="alert">
+                <span class="aviso-icone" aria-hidden="true">⚠️</span>
+
+                <div class="aviso-conteudo">
+                  <h3>Não foi possível realizar a comparação</h3>
+                  <p>
+                    Não há informações suficientes para comparar os critérios
+                    selecionados. Escolha outros critérios para continuar.
+                  </p>
+                </div>
+              </div>
+            }
+          }
+
+
+
+          @else if (celularesEmpatados.length > 1) {
+            <section class="empate-tecnico">
+              <h2>🤝 Empate técnico!</h2>
+
+              <p>Estes celulares tiveram o mesmo resultado:</p>
+
+              <ul>
+                @for (celular of celularesEmpatados; track celular.id) {
+                  <li>
+                    <strong>{{ celular.nome }}</strong>
+                  </li>
+                }
+              </ul>
+
+              <p>
+                Compare os preços e as características para decidir
+                qual faz mais sentido para você.
+              </p>
+            </section>
+          }
+          @else if (celularVencedor) {
+            <p>
+              <strong>{{ celularVencedor.celular.nome }} VENCEU!</strong>
+
+              @if (celularVencedor.motivos.length > 0) {
+                <span>
+                  Ele se destaca em:
+                  {{ celularVencedor.motivos.join(', ') }}.
+                </span>
+              }
+            </p>
+          }
+
+        </div>
+      </div>
+
+      <button id="salvarCompa" [disabled]="listaComparacao.length === 0" (click)="salvarComparacao()">
+        Salvar Comparação
+      </button>
+
+      @if (exibirAvisoModal) {
+        <div class="modal-overlay" (click)="fecharModal()">
+          <div class="modal-card" (click)="$event.stopPropagation()">
+            <button type="button" class="btn-fechar" (click)="fecharModal()">✕</button>
+            <app-aviso-login></app-aviso-login>
+          </div>
+        </div>
+      }
+    </section>
+  </main>
+
+  <footer>
+    <app-menu></app-menu>
+  </footer>
+</div>

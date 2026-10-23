@@ -1,0 +1,116 @@
+<main>
+  
+  <!--Header do meu mobile-->
+  <header>
+
+      <div class="mascote-avatar-mobile">
+        <img src="/img/projeto/facilito.svg" alt="Facilito Mascote" />
+      </div>
+
+      <h2>Oi! Eu sou o Facilito</h2>
+
+      <p>Vou te ajudar a escolher o celular ideal</p>
+
+  </header>
+
+  <!--Section da coluna a esquerda-->
+  <section id="colunaEsquerda">
+
+      <div id="div1">
+
+        <h2>TF</h2>
+
+        <div id="div1-1">
+          <h2>TechFácil</h2>
+          <p>Celular certo, sem complicação</p>
+        </div>
+        
+      </div>
+
+      <div id="mascote">
+        <img src="/img/projeto/facilito.svg" alt="Mascote Facilito" />
+        <p style="text-align: center;">Oi! Eu sou o Facilito <br> e vou te auxiliar nessa busca</p>
+      </div>
+
+      <div style="text-align: center;">
+
+        <h1>Escolher celular ficou <br> fácil para toda a <br> família</h1>
+
+        <p style="padding-bottom: 10px; font-size: 14px;">Compare preços da loja em linguagem simples <br> sem termos difíceis.</p>
+
+      </div>
+
+      <div id="div2">
+        <span>&#x1F6E1;&#xFE0E; Seguro</span>
+        <span>&#x1F465;&#xFE0E; Feito para famílias</span>
+        <span>&#x1F3EA;&#xFE0E; Use nas lojas</span>
+      </div>
+
+      <footer id="footer-texto">Mais de 12 mil famílias já economizaram com o TechFácil!</footer>
+
+  </section>
+
+  <!--Section do formulario-->
+  <section id="formulario">
+
+    @if (mensagemAviso) {
+      <div class="banner-aviso">
+        {{ mensagemAviso }}
+      </div>
+    }
+
+    <div id="entrarInfo">
+      <h2>Entrar na sua conta</h2>
+      <p>Acesse para salvar suas comparações</p>
+    </div>
+
+    <form autocomplete="off" (ngSubmit)="fazerLogin()">
+
+      <div>
+        <label for="email">E-mail</label>
+        <div class="inputes">
+          <span>&#x2709;&#xFE0E;</span>
+          <input type="email" id="email"
+          placeholder="Digite o seu e-mail" name="email"
+          autocomplete="email" [(ngModel)]="email" required>
+        </div>
+      </div>
+
+      <div>
+        <label for="senha">Senha</label>
+        <div class="inputes">
+          <span>&#x1F512;&#xFE0E;</span>
+          <input   type="password"
+          id="senha"
+          name="senha"
+          autocomplete="current-password"
+          placeholder="Digite a sua senha" maxlength="8"
+          [(ngModel)]="senha" required>
+        </div>
+      </div>
+
+      <div id="botoes">
+        <button type="submit"> Entrar &rarr;</button>
+
+        <div class="linha-com-texto">
+          <span>ou</span>
+        </div>
+
+        <button id="anonimo" type="button" (click)="entrarComoAnonimo()">
+          &#x1F464;&#xFE0E; Entrar como Anônimo
+        </button>
+        
+        <p>Novo por aqui? <a routerLink="/cadastrar">Crie um conta agora!</a></p>
+      
+      </div>
+
+    </form>
+
+    <div class="info-box_desktop-only">
+      <span class="info-icon">⚠️</span>
+      <p><strong>Modo anônimo:</strong> compare à vontade na loja sem criar conta. Nada é salvo.</p>
+    </div>
+
+  </section>
+
+</main>

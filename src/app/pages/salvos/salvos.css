@@ -1,0 +1,491 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333333;
+  box-sizing: border-box;
+}
+
+/* HEADER DA PÁGINA */
+
+header.header-home {
+  width: 100%;
+  box-sizing: border-box;
+
+  background-color: #ffffff;
+
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+
+  padding: 12px 20px;
+  border-bottom: 1px solid #e2e8f0;
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  min-width: 0;
+}
+
+#logo-techfacil {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.logo-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #0f172a;
+}
+
+.logo-subtitle {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+@media (max-width:900px){
+  .header-actions{
+    display: none;
+  }
+}
+
+.btn-salvos-header {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 9px 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+
+  background-color: #f1f5f9;
+  color: #0f172a;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-salvos-header:hover {
+  background-color: #e2e8f0;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: var(--verde-secundario);
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.user-avatar img {
+  width: 23px;
+  height: 23px;
+  object-fit: contain;
+}
+
+.user-avatar:hover {
+  background-color: var(--verde-primario);
+}
+
+/* AJUSTES PARA CELULARES ESTREITOS */
+
+@media (max-width: 480px) {
+  header.header-home {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  #logo-techfacil {
+    gap: 8px;
+  }
+
+  .logo-img {
+    width: 34px;
+    height: 34px;
+  }
+
+  .logo-title {
+    font-size: 1rem;
+  }
+
+  .logo-subtitle {
+    font-size: 0.65rem;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  .btn-salvos-header {
+    padding: 8px 11px;
+    font-size: 0.78rem;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+.salvos-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header-salvos {
+  background-color: transparent;
+  padding: 20px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+
+/* Destaque dos celulares empatados */
+.item-celular.is-empatado {
+  border: 2px solid #059669;
+  background-color: #d1fae5;
+}
+
+/* Selo de empate */
+.badge-empate {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background-color: #059669;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Selo do vencedor */
+.badge-campeao {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background-color: #059669;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+
+.badge-icon {
+  background-color: #e6f7f0;
+  color: #00875a;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.header-salvos h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #111827;
+}
+
+.header-salvos p {
+  margin: 2px 0 0 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px 20px 90px 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sem-salvos {
+  text-align: center;
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 40px 20px;
+  margin-top: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e5e7eb;
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.sem-salvos h3 {
+  margin: 0 0 6px 0;
+  font-size: 1.15rem;
+  color: #111827;
+}
+
+.sem-salvos p {
+  margin: 0 0 20px 0;
+  font-size: 0.88rem;
+  color: #6b7280;
+}
+
+.btn-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background-color: #00875a;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-home:hover {
+  background-color: #006c48;
+}
+
+.lista-salvos {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-salvo {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 18px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.topo-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.data {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.btn-excluir {
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #dc2626;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: background-color 0.2s;
+}
+
+.btn-excluir:hover {
+  background-color: #fee2e2;
+}
+
+.filtros-usados {
+  margin-bottom: 14px;
+}
+
+.filtros-usados small {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tags-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.tag {
+  background-color: #f3f4f6;
+  color: #374151;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.bloco-vencedor {
+  background: var(--verde-menta);
+  border: 1px solid var(--verde-primario);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.vencedor-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.trofeu {
+  font-size: 1.4rem;
+}
+
+.vencedor-header h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--verde-secundario);
+  font-weight: 700;
+}
+
+.motivos {
+  margin: 8px 0 0 0;
+  font-size: 0.8rem;
+  color: var(--verde-secundario);
+  line-height: 1.4;
+}
+
+.celulares-grid {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+}
+
+.item-celular {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 110px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background-color: #fafafa;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.item-celular.is-vencedor {
+  border-color: var(--verde-secundario);
+  background-color: var(--verde-menta);
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.15);
+}
+
+.item-celular img {
+  height: 75px;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.nome-celular {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 0 0 4px 0;
+  color: #1f2937;
+}
+
+.preco {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: black;
+  margin: 0;
+}
+
+footer {
+  margin-top: auto;
+}
+
+@media (min-width: 900px) {
+
+  header.header-home{
+    display: flex;
+  }
+  
+  .salvos-container {
+    padding-top: 30px;
+  }
+
+  .header-salvos {
+    background-color: transparent;
+    border-bottom: none;
+    padding: 0 0 20px 0;
+  }
+
+  .header-salvos h2 {
+    font-size: 1.6rem;
+  }
+
+  .main-content {
+    padding: 0 0 40px 0;
+  }
+
+  .card-salvo {
+    padding: 22px;
+  }
+
+  .celulares-grid {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
+  .item-celular {
+    flex: 1;
+    min-width: 120px;
+  }
+}

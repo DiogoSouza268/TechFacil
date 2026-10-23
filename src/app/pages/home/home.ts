@@ -1,0 +1,1334 @@
+import { Component, inject, OnInit } from '@angular/core';
+import { Menu } from '../../componentes/menu/menu';
+import { FormsModule } from '@angular/forms';
+import { CarouselSlide, Carrosel } from '../../componentes/carrosel/carrosel';
+import { CommonModule } from '@angular/common';
+import { AlterarInfoComponent } from '../../componentes/alterar-info/alterar-info';
+import { AvisoLogin } from '../../componentes/aviso-login/aviso-login'; 
+import { Auth } from '../../services/auth';
+import {
+  CelularesApiService,
+  DispositivoApi,
+  DispositivoDetalhado
+} from '../../services/celulares-api.service';
+
+export interface Specs {
+  armazenamento: string;
+  ram: string;
+  bateria: string;
+  processador: string;
+  gpu: string;
+  qualidadeImagem: string;
+  camera?: string;
+  imagem?: string;
+}
+
+export interface PontosFortes {
+  naoTravar: number;         
+  muitoEspaco: number;       
+  placaVideo: number | null;        
+  qualidadeImagem: number;   
+  boaBateria: number;        
+  processadorCPU: number | null;    
+  melhorCamera: number | null;     
+  precoBaixo?: number;       
+}
+
+export interface Celular {
+  id: number;
+  nome: string;
+  precoLoja?: number | null;
+  origem?: 'local' | 'api';
+  imagem: string;
+  specs: Specs;
+  pontosFortes: PontosFortes;
+  qualidadeImagemParcial?: boolean;
+  qualidadeImagemSemDados?: boolean;
+  processadorParcial?: boolean;
+  processadorSemDados?: boolean;
+  gpuParcial?: boolean;
+  gpuSemDados?: boolean;
+  cameraSemDados?: boolean;
+}
+
+export interface ProcessadorCatalogo {
+  nome: string;
+  aliases: string[];
+  fonteUrl: string;
+  benchmark: number | null;
+}
+
+
+export interface CameraCatalogo {
+  modelo: string;
+  aliases: string[];
+  fonte: string;
+  fonteUrl: string | null;
+  nota: number | null;
+  protocolo: 'V5' | 'V6' | null;
+}
+
+
+export interface GpuCatalogo {
+  nome: string;
+  aliases: string[];
+  fonteUrl: string;
+  benchmark: number | null;
+}
+
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [Menu, Carrosel, CommonModule, AlterarInfoComponent, FormsModule, AvisoLogin],
+  templateUrl: './home.html',
+  styleUrl: './home.css',
+})
+export class Home implements OnInit {
+
+  authService = inject(Auth);
+
+  // Serviço que consulta o backend
+  private celularesApi = inject(CelularesApiService);
+
+  exibirAvisoModal: boolean = false;
+
+  listaCelulares: Celular[] = [];
+  catalogoProcessadores: ProcessadorCatalogo[] = [];
+  listaComparacao: Celular[] = [];
+  catalogoGpus: GpuCatalogo[] = [];
+  catalogoCameras: CameraCatalogo[] = [];
+  termoBusca: string = '';
+  celularSelecionado: Celular | null = null;
+
+  // Controle da busca externa
+  resultadosApi: DispositivoApi[] = [];
+  buscandoApi = false;
+  buscandoDetalhesApi = false;
+  erroBuscaApi = '';
+  tempoEsperaApi = 0;
+  mensagemBuscaApi = '';
+  buscaApiRealizada = false;
+
+  filtros = [
+    { key: 'naoTravar', label: 'Memória RAM', icone: '/img/projeto/memoria.svg'},
+    { key: 'muitoEspaco', label: 'Armazenamento', icone: '/img/projeto/caixa.svg' },
+    { key: 'placaVideo', label: 'Placa de vídeo (GPU)' , icone: '/img/projeto/monitor.svg' },
+    { key: 'qualidadeImagem', label: 'Qualidade de imagem' , icone: '/img/projeto/imagem.svg' },
+    { key: 'boaBateria', label: 'Bateria' , icone: '/img/projeto/bateria.svg' },
+    { key: 'processadorCPU', label: 'Processador' , icone: '/img/projeto/raio.svg'},
+    { key: 'melhorCamera', label: 'Qualidade das Câmeras' , icone: '/img/projeto/camera.svg' },
+    { key: 'precoBaixo', label: 'Preço baixo' , icone: '/img/projeto/carteira.svg'}
+  ];
+
+  filtrosSelecionados: string[] = [];
+
+  dicionarioTermos: Record<string, { titulo: string; explicacao: string }> = {
+    ram: {
+      titulo: 'Memória RAM',
+      explicacao: 'É a memória de trabalho. Quanto maior a RAM (4GB, 8GB, 12GB), mais aplicativos você consegue abrir ao mesmo tempo sem o celular travar ou fechar sozinho.'
+    },
+    armazenamento: {
+      titulo: 'Armazenamento',
+      explicacao: 'Pense como uma grande gaveta: quanto maior (128GB, 256GB), mais fotos, vídeos e aplicativos cabem sem precisar apagar nada.'
+    },
+    gpu: {
+      titulo: 'Placa de Vídeo (GPU)',
+      explicacao: 'É o motor gráfico. Cuida dos jogos e das animações. Quanto maior a nota, mais lisinho o celular roda jogos pesados sem travar.'
+    },
+    qualidadeImagem: {
+      titulo: 'Qualidade de Imagem',
+      explicacao: 'Define a nitidez, o brilho e as cores do visor. Notas altas (telas AMOLED/OLED) entregam cores bem vivas, preto perfeito e ótima visibilidade até sob o sol forte.'
+    },
+    bateria: {
+      titulo: 'Bateria',
+      explicacao: 'Medida em mAh. Quanto maior o número (ex: 5000 mAh), mais tempo o celular dura longe da tomada durante o dia.'
+    },
+    processador: {
+      titulo: 'Processador',
+      explicacao: 'É o cérebro do celular. Um processador bom faz os jogos rodarem lisinhos e os aplicativos abrirem instantaneamente.'
+    },
+    camera: {
+      titulo: 'Qualidade das Câmeras',
+      explicacao: 'Mede a qualidade real de fotos e vídeos (não só megapixels). Notas altas garantem fotos incríveis à noite e vídeos sem tremedeira.'
+    }
+  };
+
+  termoExibido: { titulo: string; explicacao: string } | null = null;
+
+  homeCarosel: CarouselSlide[] = [
+    {
+      image: "/img/projeto/celulares.jpg",
+      title: 'Aprenda a escolher qual o melhor aparelho'
+    },
+    {
+      image: "/img/projeto/familia-unida.jpg",
+      title: 'O celular perfeito para todos os membros da família'
+    },
+    {
+      image: "/img/projeto/hardware_smartphone.jpg",
+      title: 'Venha aprender sobre as peças de um celular'
+    }
+  ];
+
+  ngOnInit(): void {
+    this.carregarCelulares();
+  }
+
+  async carregarCelulares(): Promise<void> {
+    // Primeiro, carrega o catálogo de processadores.
+    try {
+      const respostaProcessadores = await fetch(
+        '/data/processadores.json'
+      );
+
+      if (!respostaProcessadores.ok) {
+        throw new Error('Não foi possível carregar o catálogo de processadores.');
+      }
+
+      this.catalogoProcessadores =
+        await respostaProcessadores.json();
+
+    } catch (erro) {
+      console.error(
+        'Erro ao carregar o catálogo de processadores:',
+        erro
+      );
+
+      this.catalogoProcessadores = [];
+    }
+
+    // Carrega o catálogo local de GPUs.
+    try {
+      const respostaGpus = await fetch('/data/gpus.json');
+
+      if (!respostaGpus.ok) {
+        throw new Error('Não foi possível carregar o catálogo de GPUs.');
+      }
+
+      this.catalogoGpus = await respostaGpus.json();
+
+    } catch (erro) {
+      console.error('Erro ao carregar o catálogo de GPUs:', erro);
+      this.catalogoGpus = [];
+    }
+
+    
+    try {
+      const respostaCameras = await fetch('/data/cameras.json');
+
+      if (!respostaCameras.ok) {
+        throw new Error(
+          'Não foi possível carregar o catálogo de câmeras.'
+        );
+      }
+
+      this.catalogoCameras = await respostaCameras.json();
+
+      console.log(
+        'Catálogo de câmeras carregado:',
+        this.catalogoCameras.length
+      );
+    } catch (erro) {
+      console.error(
+        'Erro ao carregar o catálogo de câmeras:',
+        erro
+      );
+
+      this.catalogoCameras = [];
+    }
+
+
+    // Depois, carrega os celulares normalmente.
+    try {
+      const resposta = await fetch('/data/celulares.json');
+
+      if (!resposta.ok) {
+        throw new Error('Não foi possível carregar o catálogo de celulares.');
+      }
+
+      this.listaCelulares = await resposta.json();
+
+      this.listaCelulares.forEach(celular => {
+        this.recalcularNotas(celular);
+      });
+
+    } catch (erro) {
+      console.error(
+        'Erro ao carregar a lista de celulares:',
+        erro
+      );
+    }
+  }
+
+  
+  aoAlterarBusca(): void {
+    const termoAtual = this.termoBusca.trim();
+
+    if (
+      this.celularSelecionado &&
+      termoAtual !== this.celularSelecionado.nome
+    ) {
+      this.celularSelecionado = null;
+    }
+
+    this.resultadosApi = [];
+    this.erroBuscaApi = '';
+    this.mensagemBuscaApi = '';
+    this.buscaApiRealizada = false;
+  }
+
+  
+buscarNaApi(): void {
+  const nome = this.termoBusca.trim();
+
+  if (nome.length < 2) {
+    this.erroBuscaApi = 'Digite pelo menos 2 caracteres para pesquisar.';
+    return;
+  }
+
+  
+  this.celularSelecionado = null;
+  this.resultadosApi = [];
+  this.erroBuscaApi = '';
+  this.mensagemBuscaApi = '';
+  this.buscaApiRealizada = false;
+  this.buscandoApi = true;
+
+
+  this.celularesApi.buscarPorNome(nome).subscribe({
+    next: (resposta) => {
+      const encontrados = resposta.devices.filter(
+        dispositivo =>
+          !dispositivo.device_type ||
+          dispositivo.device_type.toLowerCase() === 'phone'
+      );
+
+      this.resultadosApi = encontrados.filter(dispositivo => {
+        const nomeApi = this.normalizarNome(
+          this.nomeCompletoApi(dispositivo)
+        );
+
+        return !this.listaCelulares.some(
+          celular => this.normalizarNome(celular.nome) === nomeApi
+        );
+      });
+
+      this.buscandoApi = false;
+      this.buscaApiRealizada = true;
+
+      if (encontrados.length === 0) {
+        this.mensagemBuscaApi = 'Nenhum celular encontrado para essa pesquisa.';
+      } else if (this.resultadosApi.length === 0) {
+        this.mensagemBuscaApi =
+          'Os modelos encontrados já estão no catálogo local.';
+      }
+    },
+    
+    error: (erro) => {
+      console.error('Erro ao pesquisar celulares na API:', erro);
+
+      this.resultadosApi = [];
+      this.mensagemBuscaApi = '';
+      this.buscandoApi = false;
+      this.buscaApiRealizada = true;
+
+      this.erroBuscaApi =
+        erro.error?.error || 'Não foi possível pesquisar os celulares.';
+
+      const correspondencia = this.erroBuscaApi.match(
+        /Aguarde\s+(\d+(?:[.,]\d+)?)\s+segundos?/i
+      );
+
+      if (correspondencia) {
+        this.iniciarContagemRegressiva(
+          Math.ceil(Number(correspondencia[1].replace(',', '.')))
+        );
+      }
+    }
+
+  });
+  
+}
+
+iniciarContagemRegressiva(segundos: number): void {
+  this.tempoEsperaApi = Math.max(0, segundos);
+
+  const contar = () => {
+    setTimeout(() => {
+      if (this.tempoEsperaApi > 0) {
+        this.tempoEsperaApi--;
+      }
+
+      if (this.tempoEsperaApi > 0) {
+        contar();
+      }
+    }, 1000);
+  };
+
+  if (this.tempoEsperaApi > 0) {
+    contar();
+  }
+}
+
+nomeCompletoApi(dispositivo: DispositivoApi): string {
+  const marca = dispositivo.manufacturer_name?.trim() || '';
+  const nome = dispositivo.name.trim();
+
+  if (!marca) return nome;
+
+  if (
+    this.normalizarNome(nome).startsWith(this.normalizarNome(marca))
+  ) {
+    return nome;
+  }
+
+  return `${marca} ${nome}`;
+}
+
+private normalizarNome(nome: string): string {
+  return nome
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/gi, '')
+    .toLowerCase();
+}
+
+
+  private encontrarProcessador(
+    nomeProcessador: string
+  ): ProcessadorCatalogo | undefined {
+    const nomeNormalizado = this.normalizarNome(nomeProcessador);
+
+    if (!nomeNormalizado) {
+      return undefined;
+    }
+
+    return this.catalogoProcessadores.find(processador => {
+      const nomesPossiveis = [
+        processador.nome,
+        ...processador.aliases
+      ];
+
+      return nomesPossiveis.some(nome =>
+        this.normalizarNome(nome) === nomeNormalizado
+      );
+    });
+  }
+
+  private encontrarGpu(nomeGpu: string): GpuCatalogo | undefined {
+    const nomeNormalizado = this.normalizarNome(nomeGpu);
+
+    if (!nomeNormalizado) {
+      return undefined;
+    }
+
+    return this.catalogoGpus.find(gpu => {
+      const nomesPossiveis = [
+        gpu.nome,
+        ...gpu.aliases
+      ];
+
+      return nomesPossiveis.some(nome =>
+        this.normalizarNome(nome) === nomeNormalizado
+      );
+    });
+  }
+
+  
+private encontrarCamera(
+  nomeCelular: string
+): CameraCatalogo | undefined {
+  const nomeNormalizado = this.normalizarNome(nomeCelular);
+
+  if (!nomeNormalizado) {
+    return undefined;
+  }
+
+  return this.catalogoCameras.find(camera => {
+    const nomesPossiveis = [
+      camera.modelo,
+      ...camera.aliases
+    ];
+
+    return nomesPossiveis.some(nome =>
+      this.normalizarNome(nome) === nomeNormalizado
+    );
+  });
+}
+
+
+
+selecionarResultadoApi(dispositivo: DispositivoApi): void {
+    if (this.listaComparacao.length >= 3) {
+      alert('Você já atingiu o limite de 3 celulares para comparar.');
+      return;
+    }
+
+    const idLocal = 1_000_000 + dispositivo.id;
+
+    if (this.listaComparacao.some(celular => celular.id === idLocal)) {
+      alert('Este celular já está na sua lista de comparação.');
+      return;
+    }
+
+    this.buscandoDetalhesApi = true;
+    this.erroBuscaApi = '';
+    this.mensagemBuscaApi = '';
+
+    this.celularesApi.buscarDetalhes(dispositivo.id).subscribe({
+      next: (detalhes) => {
+        const celular = this.converterDispositivoApi(detalhes);
+
+        this.recalcularNotas(celular);
+        this.celularSelecionado = celular;
+        this.termoBusca = celular.nome;
+        this.resultadosApi = [];
+        this.mensagemBuscaApi =
+          'Celular selecionado. Clique em Adicionar para incluí-lo na comparação.';
+        this.buscandoDetalhesApi = false;
+      },
+      error: (erro) => {
+        console.error('Erro ao buscar detalhes do celular:', erro);
+        this.erroBuscaApi =
+          erro.error?.error ||
+          'Não foi possível carregar os detalhes desse celular.';
+        this.buscandoDetalhesApi = false;
+      }
+    });
+  }
+
+  
+    private converterDispositivoApi(d: DispositivoDetalhado): Celular {
+      const capacidadeRam = this.obterRamGb(d);
+      const capacidadeArmazenamento = this.obterArmazenamentoGb(d);
+
+      const chipsetOriginal = d.platform?.chipset || '';
+      const hardwareOriginal = d.hardware || '';
+
+      const processador =
+        chipsetOriginal
+          .split(/Processor clock:|Number of cores:|GPU:/i)[0]
+          .trim() ||
+        hardwareOriginal
+          .replace(
+            /^(?:\s*\d+(?:[.,]\d+)?\s*(?:GB|MB|TB)\s*)+RAM\s*,?\s*/i,
+            ''
+          )
+          .trim() ||
+        'Não informado pela API';
+
+      const gpu =
+        d.platform?.gpu?.trim() ||
+        chipsetOriginal.match(/GPU:\s*(.+)$/i)?.[1]?.trim() ||
+        'Não informado pela API';
+
+      const tela = [
+        d.display?.type,
+        d.display?.size,
+        d.display?.resolution
+      ]
+        .filter((valor): valor is string => Boolean(valor?.trim()))
+        .join(' — ') ||
+        d.screen_resolution ||
+        'Não informado pela API';
+
+      const bateriaOriginal =
+        d.battery?.type || d.battery_capacity || '';
+
+      const bateria =
+        bateriaOriginal.match(/[\d.,]+\s*mAh/i)?.[0] ||
+        bateriaOriginal ||
+        'Não informado pela API';
+
+      const cameras = [
+        d.main_camera?.modules ? `Traseira: ${d.main_camera.modules}` : '',
+        d.selfie_camera?.modules ? `Frontal: ${d.selfie_camera.modules}` : ''
+      ].filter(Boolean).join(' | ');
+
+      const celular: Celular = {
+        id: 1_000_000 + d.id,
+        nome: this.nomeCompletoApi(d),
+        precoLoja: null,
+        origem: 'api',
+        imagem: d.image_url || '/img/projeto/celulares.jpg',
+
+        specs: {
+          armazenamento: capacidadeArmazenamento !== null
+            ? `${capacidadeArmazenamento}GB`
+            : 'Não informado pela API',
+
+          ram: capacidadeRam !== null
+            ? `${capacidadeRam}GB`
+            : 'Não informado pela API',
+
+          bateria,
+          processador,
+          gpu,
+          qualidadeImagem: tela,
+          camera: cameras
+        },
+
+        pontosFortes: {
+          naoTravar: 0,
+          muitoEspaco: 0,
+          placaVideo: 5,
+          qualidadeImagem: 5,
+          boaBateria: 0,
+          processadorCPU: null,
+          melhorCamera: null,
+          precoBaixo: 0
+        }
+      };
+
+      return celular;
+    }
+
+    private obterRamGb(d: DispositivoDetalhado): number | null {
+      const memoria = d.memory?.internal || '';
+
+      let textoRam =
+        memoria.match(/RAM\s*:\s*(.+)$/i)?.[1] ||
+        memoria.match(/(\d+(?:[.,]\d+)?\s*(?:GB|MB|TB))\s*RAM/i)?.[1] ||
+        d.hardware?.match(
+          /((?:\d+(?:[.,]\d+)?\s*(?:GB|MB|TB)\s*)+)RAM/i
+        )?.[1] ||
+        '';
+
+      const capacidades = this.lerCapacidadesGb(textoRam);
+      return capacidades.length ? Math.min(...capacidades) : null;
+    }
+
+    private obterArmazenamentoGb(
+      d: DispositivoDetalhado
+    ): number | null {
+      const opcoes = this.lerCapacidadesGb(d.storage || '');
+
+      if (opcoes.length) {
+        return Math.min(...opcoes);
+      }
+
+      const memoria = d.memory?.internal || '';
+      const antesDaRam = memoria.split(/\bRAM\b/i)[0];
+      const capacidades = this.lerCapacidadesGb(antesDaRam);
+
+      // Em formatos como "32GB 2GB RAM", o último valor
+      // antes de RAM pode ser a memória RAM, não o armazenamento.
+      if (
+        capacidades.length > 1 &&
+        /\bRAM\b/i.test(memoria) &&
+        !/RAM\s*:/i.test(memoria)
+      ) {
+        const valoresOriginais = this.lerCapacidadesGbNaOrdem(antesDaRam);
+        valoresOriginais.pop();
+
+        return valoresOriginais.length
+          ? Math.min(...valoresOriginais)
+          : null;
+      }
+
+      return capacidades.length ? Math.min(...capacidades) : null;
+    }
+
+    private lerCapacidadesGb(texto: string): number[] {
+      return [...new Set(this.lerCapacidadesGbNaOrdem(texto))]
+        .sort((a, b) => a - b);
+    }
+
+    private lerCapacidadesGbNaOrdem(texto: string): number[] {
+      const capacidades: number[] = [];
+      const regex = /(\d+(?:[.,]\d+)?)\s*(TB|GB|MB)/gi;
+
+      for (const resultado of texto.matchAll(regex)) {
+        let valor = Number(resultado[1].replace(',', '.'));
+        const unidade = resultado[2].toUpperCase();
+
+        if (unidade === 'TB') valor *= 1024;
+        if (unidade === 'MB') valor /= 1024;
+
+        if (Number.isFinite(valor) && valor > 0) {
+          capacidades.push(Number(valor.toFixed(2)));
+        }
+      }
+
+      return capacidades;
+    }
+
+  
+  celularEstaEmpatado(celularId: number): boolean {
+    return this.celularesEmpatados.some(
+      celular => celular.id === celularId
+    );
+  }
+  
+  
+  private calcularNotaTela(tela: string): {
+    nota: number;
+    parcial: boolean;
+    semDados: boolean;
+  } {
+    const texto = tela?.toLowerCase() || '';
+    const notas: number[] = [];
+
+    // 1. Tecnologia da tela: máximo de 3 pontos.
+    if (/amoled|oled/i.test(texto)) {
+      notas.push(3);
+    } else if (/ips|pls/i.test(texto)) {
+      notas.push(2);
+    } else if (/\blcd\b|\btft\b|\bltps\b/i.test(texto)) {
+      notas.push(1);
+    }
+
+    // 2. Resolução: máximo de 3 pontos.
+    const dimensoes = texto.match(
+      /(\d{3,4})\s*[x×]\s*(\d{3,4})/
+    );
+
+    if (/4k|2160p|qhd|wqhd|2k|1\.5k|1440p/i.test(texto)) {
+      notas.push(3);
+    } else if (/fhd\+?|full\s*hd|1080p/i.test(texto)) {
+      notas.push(2);
+    } else if (/hd\+?|720p/i.test(texto)) {
+      notas.push(1);
+    } else if (dimensoes) {
+      const menorDimensao = Math.min(
+        Number(dimensoes[1]),
+        Number(dimensoes[2])
+      );
+
+      if (menorDimensao >= 1440) {
+        notas.push(3);
+      } else if (menorDimensao >= 1080) {
+        notas.push(2);
+      } else if (menorDimensao >= 720) {
+        notas.push(1);
+      }
+    }
+
+    // 3. Taxa de atualização: máximo de 3 pontos.
+    const resultadoHz = texto.match(/(\d{2,3})\s*hz/i);
+
+    if (resultadoHz) {
+      const hz = Number(resultadoHz[1]);
+
+      if (hz >= 120) {
+        notas.push(3);
+      } else if (hz >= 90) {
+        notas.push(2);
+      } else if (hz >= 60) {
+        notas.push(1);
+      } else {
+        notas.push(0.5);
+      }
+    }
+
+    // Nenhum critério foi identificado.
+    if (notas.length === 0) {
+      return {
+        nota: 0,
+        parcial: true,
+        semDados: true
+      };
+    }
+
+    // Se faltar qualquer critério, não existe nota final.
+    if (notas.length < 3) {
+      return {
+        nota: 0,
+        parcial: true,
+        semDados: false
+      };
+    }
+
+    // Só os três critérios completos geram nota de 0 a 10.
+    const soma = notas.reduce((total, nota) => total + nota, 0);
+    const nota = Math.round((soma / 9) * 10);
+
+    return {
+      nota,
+      parcial: false,
+      semDados: false
+    };
+  }
+
+
+
+  recalcularNotas(celular: Celular): void {
+    const ramNum = this.extrairNumero(celular.specs.ram);
+    const armNum = this.extrairNumero(celular.specs.armazenamento);
+    const batNum = this.extrairNumero(celular.specs.bateria);
+
+    
+    const resultadoTela = this.calcularNotaTela(
+      celular.specs.qualidadeImagem
+    );
+
+    celular.qualidadeImagemParcial = resultadoTela.parcial;
+    celular.qualidadeImagemSemDados = resultadoTela.semDados;
+
+    
+    const gpuInformada = this.temInformacao(celular.specs.gpu);
+
+    const registroGpu = gpuInformada
+      ? this.encontrarGpu(celular.specs.gpu)
+      : undefined;
+
+    const notaGpu =
+      registroGpu &&
+      registroGpu.benchmark !== null &&
+      Number.isFinite(registroGpu.benchmark) &&
+      registroGpu.benchmark >= 1 &&
+      registroGpu.benchmark <= 10
+        ? registroGpu.benchmark
+        : null;
+
+    celular.gpuSemDados = !gpuInformada;
+
+    celular.gpuParcial =
+      gpuInformada && notaGpu === null;
+
+
+    const registroProcessador = this.temInformacao(
+      celular.specs.processador
+    )
+      ? this.encontrarProcessador(celular.specs.processador)
+      : undefined;
+
+    const notaProcessador = registroProcessador
+      ? this.calcularNotaProcessador(registroProcessador.benchmark)
+      : null;
+    celular.processadorSemDados = !this.temInformacao(
+      celular.specs.processador
+    );
+
+  celular.processadorParcial =
+    celular.processadorSemDados !== true &&
+    notaProcessador === null;
+
+    
+  const registroCamera = this.encontrarCamera(celular.nome);
+
+  const notaCamera =
+    registroCamera?.nota != null &&
+    Number.isFinite(registroCamera.nota) &&
+    registroCamera.nota >= 1 &&
+    registroCamera.nota <= 10
+      ? registroCamera.nota
+      : null;
+
+  celular.cameraSemDados = notaCamera === null;
+
+
+
+    celular.pontosFortes = {
+      
+      naoTravar: ramNum > 0
+        ? ramNum < 2 ? 1
+        : ramNum < 3 ? 2
+        : ramNum < 4 ? 3
+        : ramNum < 6 ? 4
+        : ramNum < 8 ? 5
+        : ramNum < 10 ? 6
+        : ramNum < 12 ? 7
+        : ramNum < 16 ? 8
+        : ramNum < 24 ? 9
+        : 10
+        : 0,
+
+
+      
+      muitoEspaco: armNum > 0
+        ? armNum < 16 ? 1
+        : armNum < 32 ? 2
+        : armNum < 64 ? 3
+        : armNum < 128 ? 4
+        : armNum < 192 ? 5
+        : armNum < 256 ? 6
+        : armNum < 384 ? 7
+        : armNum < 512 ? 8
+        : armNum < 1024 ? 9
+        : 10
+        : 0,
+
+
+      
+      boaBateria: batNum > 0
+        ? batNum < 2000 ? 1
+        : batNum < 2500 ? 2
+        : batNum < 3000 ? 3
+        : batNum < 3500 ? 4
+        : batNum < 4000 ? 5
+        : batNum < 4500 ? 6
+        : batNum < 5000 ? 7
+        : batNum < 5500 ? 8
+        : batNum < 6000 ? 9
+        : 10
+        : 0,
+
+
+      
+      precoBaixo: celular.precoLoja != null &&
+                  Number.isFinite(celular.precoLoja) &&
+                  celular.precoLoja > 0
+        ? celular.precoLoja <= 800 ? 10
+        : celular.precoLoja <= 1200 ? 8
+        : celular.precoLoja <= 2000 ? 6
+        : celular.precoLoja <= 4000 ? 4
+        : 2
+        : 0,
+
+      
+      qualidadeImagem: resultadoTela.nota,  
+
+      placaVideo: notaGpu,
+
+      processadorCPU: notaProcessador,
+
+      melhorCamera: notaCamera
+    };
+  }
+
+  private temInformacao(valor?: string): boolean {
+    return Boolean(
+      valor?.trim() &&
+      !valor.toLowerCase().includes('não informado')
+    );
+  }
+
+    private calcularNotaProcessador(benchmark: number | null): number | null {
+    if (
+      benchmark === null ||
+      !Number.isFinite(benchmark) ||
+      benchmark <= 0
+    ) {
+      return null;
+    }
+
+    if (benchmark < 1000) return 1;
+    if (benchmark < 1500) return 2;
+    if (benchmark < 2000) return 3;
+    if (benchmark < 2500) return 4;
+    if (benchmark < 3000) return 5;
+    if (benchmark < 3500) return 6;
+    if (benchmark < 4000) return 7;
+    if (benchmark < 5000) return 8;
+    if (benchmark < 7000) return 9;
+
+    return 10;
+  }
+  
+  private extrairNumero(valor: string | number): number {
+    if (typeof valor === 'number') return valor;
+
+    const texto = String(valor).trim().replace(',', '.');
+
+    const match = texto.match(/(\d+(?:\.\d+)?)\s*(TB|GB|MB)?/i);
+
+    if (!match) return 0;
+
+    const numero = Number(match[1]);
+    const unidade = (match[2] || '').toUpperCase();
+
+    if (unidade === 'TB') return numero * 1024;
+    if (unidade === 'MB') return numero / 1024;
+
+    return numero;
+  }
+
+
+  atualizarSpec(celular: Celular, chave: keyof Specs, novoValor: string | number): void {
+    celular.specs[chave] = String(novoValor);
+    this.recalcularNotas(celular);
+  }
+
+  
+  atualizarPrecoLoja(
+    celular: Celular,
+    valor: number | null
+  ): void {
+    celular.precoLoja =
+      valor !== null && Number.isFinite(valor) && valor > 0
+        ? valor
+        : null;
+
+    this.recalcularNotas(celular);
+  }
+
+
+  get sugestoesBusca(): Celular[] {
+    if (!this.termoBusca.trim()) return [];
+    return this.listaCelulares.filter(c => 
+      c.nome.toLowerCase().includes(this.termoBusca.toLowerCase())
+    );
+  }
+
+  
+  selecionarSugestao(celular: Celular): void {
+    this.termoBusca = celular.nome;
+    this.celularSelecionado = structuredClone(celular);
+    this.resultadosApi = [];
+    this.erroBuscaApi = '';
+    this.mensagemBuscaApi =
+    'Celular selecionado. Clique em Adicionar para incluí-lo na comparação.';
+    this.buscaApiRealizada = false;
+  }
+
+
+  adicionarAComparacao(): void {
+    if (!this.celularSelecionado) {
+      alert('Por favor, selecione um celular da lista de sugestões.');
+      return;
+    }
+
+    if (this.listaComparacao.length >= 3) {
+      alert('Você já atingiu o limite de 3 celulares para comparar.');
+      return;
+    }
+
+    const jaExiste = this.listaComparacao.some(c => c.id === this.celularSelecionado?.id);
+    if (jaExiste) {
+      alert('Este celular já está na sua lista de comparação.');
+      return;
+    }
+
+    this.listaComparacao.push(structuredClone(this.celularSelecionado));
+    this.termoBusca = '';
+    this.celularSelecionado = null;
+    this.mensagemBuscaApi = '';
+    this.erroBuscaApi = '';
+    this.resultadosApi = [];
+    this.buscaApiRealizada = false;
+  }
+
+  removerDaComparacao(index: number): void {
+    this.listaComparacao.splice(index, 1);
+  }
+
+  irParaCelular(index: number): void {
+    if (!this.listaComparacao[index]) {
+      alert(`O slot ${index + 1} ainda está vazio! Adicione um celular primeiro.`);
+      return;
+    }
+
+    const elemento = document.getElementById(`card-celular-${index}`);
+    if (elemento) {
+      elemento.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    }
+  }
+
+  toggleFiltro(key: string): void {
+    const index = this.filtrosSelecionados.indexOf(key);
+    if (index > -1) {
+      this.filtrosSelecionados.splice(index, 1); 
+    } else {
+      this.filtrosSelecionados.push(key); 
+    }
+  }
+
+  filtroAtivo(key: string): boolean {
+    return this.filtrosSelecionados.includes(key);
+  }
+
+  get gpuIndisponivel(): boolean {
+    return (
+      this.filtrosSelecionados.includes('placaVideo') &&
+      this.listaComparacao.some(
+        celular => celular.pontosFortes.placaVideo == null
+      )
+    );
+  }
+
+  get cameraIndisponivel(): boolean {
+    return (
+      this.filtrosSelecionados.includes('melhorCamera') &&
+      this.listaComparacao.some(
+        celular => celular.pontosFortes.melhorCamera == null
+      )
+    );
+  }
+
+  
+  calcularPontuacao(celular: Celular): number {
+    if (this.filtrosSelecionados.length === 0) return 0;
+
+    let total = 0;
+
+    const algumPrecoAusente = this.listaComparacao.some(
+      c => c.precoLoja == null || c.precoLoja <= 0
+    );
+
+    const algumaGpuSemNota = this.listaComparacao.some(
+      c => c.pontosFortes.placaVideo == null
+    );
+
+    const algumaCameraSemNota = this.listaComparacao.some(
+      c => c.pontosFortes.melhorCamera == null
+    );
+
+    const algumProcessadorSemNota = this.listaComparacao.some(
+      c => c.pontosFortes.processadorCPU == null
+    );
+
+    // Se qualquer celular tiver dados incompletos da tela,
+    // não usamos esse critério para comparar nenhum deles.
+    const algumaTelaIncompleta = this.listaComparacao.some(
+      c => c.qualidadeImagemParcial
+    );
+
+    for (const key of this.filtrosSelecionados) {
+      // O preço só participa se todos os celulares tiverem preço.
+      if (key === 'precoBaixo' && algumPrecoAusente) {
+        continue;
+      }
+
+      if (key === 'melhorCamera' && algumaCameraSemNota) {
+        continue;
+      }
+
+      if (key === 'placaVideo' && algumaGpuSemNota) {
+        continue;
+      }
+
+      if (key === 'processadorCPU' && algumProcessadorSemNota) {
+        continue;
+      }
+
+      // A qualidade da tela só participa se todos os celulares
+      // tiverem os três critérios identificados.
+      if (key === 'qualidadeImagem' && algumaTelaIncompleta) {
+        continue;
+      }
+
+      const pontos = celular.pontosFortes[
+        key as keyof PontosFortes
+      ];
+
+      if (typeof pontos === 'number') {
+        total += pontos;
+      }
+    }
+
+    return total;
+  }
+
+
+get filtrosComparaveis(): string[] {
+  const algumPrecoAusente = this.listaComparacao.some(
+    celular => celular.precoLoja == null || celular.precoLoja <= 0
+  );
+
+  const algumProcessadorSemNota = this.listaComparacao.some(
+  celular => celular.pontosFortes.processadorCPU == null
+  );
+
+  const algumaGpuSemNota = this.listaComparacao.some(
+    celular => celular.pontosFortes.placaVideo == null
+  );
+
+  const algumaCameraSemNota = this.listaComparacao.some(
+    celular => celular.pontosFortes.melhorCamera == null
+  );
+
+  const algumaTelaIncompleta = this.listaComparacao.some(
+    celular => celular.qualidadeImagemParcial
+  );
+
+  return this.filtrosSelecionados.filter(key => {
+    if (key === 'precoBaixo' && algumPrecoAusente) {
+      return false;
+    }
+
+    if (key === 'melhorCamera' && algumaCameraSemNota) {
+      return false;
+    }
+
+    if (key === 'placaVideo' && algumaGpuSemNota) {
+      return false;
+    }
+
+    if (key === 'qualidadeImagem' && algumaTelaIncompleta) {
+      return false;
+    }
+
+    if (key === 'processadorCPU' && algumProcessadorSemNota) {
+  return false;
+}
+
+    return true;
+  });
+}
+
+get qualidadeImagemIndisponivel(): boolean {
+  return (
+    this.filtrosSelecionados.includes('qualidadeImagem') &&
+    this.listaComparacao.some(
+      celular => celular.qualidadeImagemParcial
+    )
+  );
+}
+
+get processadorIndisponivel(): boolean {
+  return (
+    this.filtrosSelecionados.includes('processadorCPU') &&
+    this.listaComparacao.some(
+      celular => celular.pontosFortes.processadorCPU == null
+    )
+  );
+}
+
+
+get celularesEmpatados(): Celular[] {
+  if (
+    this.filtrosComparaveis.length === 0 ||
+    this.listaComparacao.length < 2
+  ) {
+    return [];
+  }
+
+  const pontuacoes = this.listaComparacao.map(celular => ({
+    celular,
+    pontos: this.calcularPontuacao(celular)
+  }));
+
+  const maiorPontuacao = Math.max(
+    ...pontuacoes.map(item => item.pontos)
+  );
+
+  return pontuacoes
+    .filter(item => item.pontos === maiorPontuacao)
+    .map(item => item.celular)
+    .filter((celular, _, lista) => lista.length > 1);
+}
+  
+  
+get celularVencedor(): {
+    celular: Celular;
+    pontos: number;
+    motivos: string[];
+  } | null {
+    // Sem filtros, não existe campeão.
+    if (this.filtrosComparaveis.length === 0) {
+      return null;
+    }
+
+    // Com menos de dois celulares, não existe comparação.
+    if (this.listaComparacao.length < 2) {
+      return null;
+    }
+
+    let melhorCelular: Celular | null = null;
+    let maiorPontuacao = -1;
+
+    for (const celular of this.listaComparacao) {
+      const pontuacao = this.calcularPontuacao(celular);
+
+      if (pontuacao > maiorPontuacao) {
+        maiorPontuacao = pontuacao;
+        melhorCelular = celular;
+      } 
+    }
+
+    if (!melhorCelular) return null;
+    if (this.celularesEmpatados.length > 1) {
+      return null;
+    }
+
+    const algumPrecoAusente = this.listaComparacao.some(
+      c => c.precoLoja == null || c.precoLoja <= 0
+    );
+
+    const motivos = this.filtros
+      .filter(f =>
+        this.filtrosComparaveis.includes(f.key) &&
+        !(f.key === 'precoBaixo' && algumPrecoAusente)
+      )
+      .map(f => f.label);
+
+    return {
+      celular: melhorCelular,
+      pontos: maiorPontuacao,
+      motivos
+    };
+  }
+
+
+
+  salvarComparacao(): void {
+    if (this.listaComparacao.length < 2) {
+      alert('Adicione pelo menos 2 celulares para salvar uma comparação!');
+      return;
+    }
+
+    if (this.filtrosSelecionados.length === 0) {
+      alert('Selecione pelo menos um filtro de preferência para definir o vencedor antes de salvar!');
+      return;
+    }
+
+    if (this.filtrosComparaveis.length === 0) {
+      alert(
+        'Não há informações suficientes para comparar os filtros selecionados.'
+      );
+      return;
+    }
+
+    if (this.authService.usuarioLogado()) {
+      const usuario = this.authService.getUsuario();
+
+      if (usuario) {
+        const chave = `salvos_${usuario.id}`;
+        const salvosAnteriores = JSON.parse(localStorage.getItem(chave) || '[]');
+        const vencedorObj = this.celularVencedor;
+
+        
+        const novaComparacao = {
+          id: Date.now(),
+          data: new Date().toLocaleDateString('pt-BR'),
+          celulares: [...this.listaComparacao],
+          filtros: this.filtros
+            .filter(f => this.filtrosComparaveis.includes(f.key))
+            .map(f => f.label),
+
+          vencedor: vencedorObj ? {
+            nome: vencedorObj.celular.nome,
+            imagem: vencedorObj.celular.imagem,
+            pontos: vencedorObj.pontos,
+            motivos: vencedorObj.motivos
+          } : null,
+
+          empatados: this.celularesEmpatados.map(celular => ({
+            nome: celular.nome,
+            imagem: celular.imagem,
+            pontos: this.calcularPontuacao(celular),
+            motivos: []
+          }))
+        };
+
+
+        salvosAnteriores.push(novaComparacao);
+        localStorage.setItem(chave, JSON.stringify(salvosAnteriores));
+
+        alert('Comparação com vencedor salva com sucesso!');
+      }
+    } else {
+      this.exibirAvisoModal = true;
+    }
+  }
+
+  fecharModal(): void {
+    this.exibirAvisoModal = false;
+  }
+
+  abrirDicionario(termoKey: string): void {
+    if (this.dicionarioTermos[termoKey]) {
+      this.termoExibido = this.dicionarioTermos[termoKey];
+      
+      const elemento = document.getElementById('infoFacil');
+      if (elemento) {
+        elemento.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+  }
+
+  fecharDicionario(): void {
+    this.termoExibido = null;
+  }
+}

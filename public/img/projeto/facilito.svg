@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Fundo verde -->
+  <rect width="200" height="200" fill="#059669" />
+  
+  <!-- Cartão branco arredondado -->
+  <rect x="18" y="18" width="164" height="164" rx="40" fill="#FFFFFF" />
+  
+  <!-- Mascote Android -->
+  <g fill="#059669">
+    <!-- Antena Esquerda -->
+    <rect x="72" y="40" width="8" height="22" rx="4" transform="rotate(-15 76 51)" />
+    <!-- Antena Direita -->
+    <rect x="120" y="40" width="8" height="22" rx="4" transform="rotate(15 124 51)" />
+    
+    <!-- Corpo -->
+    <rect x="60" y="55" width="80" height="102" rx="38" />
+    
+    <!-- Braço a acenar -->
+    <rect x="135" y="102" width="14" height="42" rx="7" transform="rotate(-40 142 123)" />
+    
+    <!-- Olho Esquerdo -->
+    <circle cx="83" cy="88" r="7.5" fill="#FFFFFF" />
+    <!-- Olho Direito -->
+    <circle cx="117" cy="88" r="7.5" fill="#FFFFFF" />
+    
+    <!-- Bocado do Sorriso -->
+    <path d="M 81 103 C 81 122, 119 122, 119 103 Z" fill="#FFFFFF" />
+  </g>
+</svg>

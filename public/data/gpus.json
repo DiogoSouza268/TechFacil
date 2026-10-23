@@ -1,0 +1,56 @@
+[
+  {
+    "nome": "Mali-G52 MP2",
+    "aliases": [],
+    "fonteUrl": "",
+    "benchmark": 3
+  },
+  {
+    "nome": "Adreno 610",
+    "aliases": [],
+    "fonteUrl": "",
+    "benchmark": 4
+  },
+  {
+    "nome": "Mali-G615 MC6",
+    "aliases": [],
+    "fonteUrl": "",
+    "benchmark": 8
+  },
+  {
+    "nome": "Mali-G52 MC2",
+    "aliases": [],
+    "fonteUrl": "",
+    "benchmark": 3
+  },
+  {
+    "nome": "Mali-G57 MC2",
+    "aliases": [],
+    "fonteUrl": "",
+    "benchmark": 4
+  },
+  {
+    "nome": "Apple GPU 5-Core",
+    "aliases": [],
+    "fonteUrl": "",
+    "benchmark": 9
+  },
+  {
+    "nome": "Apple GPU 6-Core",
+    "aliases": [],
+    "fonteUrl": "",
+    "benchmark": 10
+  },
+  {
+    "nome": "Mali-G57 MP1",
+    "aliases": [],
+    "fonteUrl": "",
+    "benchmark": 2
+  },
+  {
+    "nome": "Mali-G57",
+    "aliases": [],
+    "fonteUrl": "",
+    "benchmark": 3
+  }
+]

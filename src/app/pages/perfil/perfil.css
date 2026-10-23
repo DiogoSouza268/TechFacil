@@ -1,0 +1,275 @@
+main{
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--fundo-cor);
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background-color: white;
+  padding: 20px;
+  font-size: 14px;
+}
+
+/*Section formilario*/
+
+#formulario{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 20px;
+}
+
+#formulario form {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  gap: 20px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: black;
+  display: block;
+}
+
+.inputes {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  min-height: 44px;
+
+  gap: 10px;
+  padding: 0px 12px;
+
+  background-color: white;
+
+  border: 1px solid var(--cor-borda-inputs);
+  border-radius: 8px;
+  
+}
+
+.inputes span {
+  font-size: 1.1rem;
+}
+
+.inputes input {
+
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+
+  border: none;
+  outline: none;
+  
+  font-size: 0.95rem;
+  background: transparent;
+}
+
+.inputes:focus-within {
+  box-shadow: 0 0 0 2px var(--verde-primario);
+}
+
+.acoes-conta{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+#btSubmit {
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  background-color: var(--verde-secundario);
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#btSubmit:hover {
+  background-color: var(--verde-primario);
+}
+
+#btLogout {
+  padding: 13px;
+  border-radius: 10px;
+  border: 1px solid var(--cor-borda-inputs);
+  background-color: white;
+  color: black;
+  font-weight: bold;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#btLogout:hover {
+  background-color: #f3f4f6;
+}
+
+#btExcluir {
+  padding: 13px;
+  border-radius: 10px;
+  border: none;
+  background-color: #dc2626;
+  color: white;
+  font-weight: bold;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#btExcluir:hover {
+  background-color: #b91c1c;
+}
+
+
+/* Section esquerda*/
+
+#colunaEsquerda{
+  display: none;
+  background-color: var(--verde-suave);
+  padding: 30px;
+  border-radius: 20px 0px 0px 20px;
+}
+
+#colunaEsquerda > #div1{
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 12px;
+  padding: 10px 0px 30px 10px;
+}
+
+#colunaEsquerda > #div1 > #div1-1{
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  flex-direction: column;
+}
+
+#paragrafoPrin{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.caracteristicas{
+  border: 1px solid var(--cor-borda-inputs);
+  border-radius: 10px;
+  padding: 13px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background-color: white;
+  font-size: 12px;
+}
+
+.caracteristicas > span{
+  background-color: var(--verde-primario);
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.lista-caracteristicas {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+
+@media (min-width: 900px){
+  header{
+    display: none;
+  }
+
+  main{
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+
+    padding: clamp(20px, 5vw, 60px);
+  }
+
+  #colunaEsquerda{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    flex: 1 1 0;
+    width: 100%;
+    max-width: 520px;
+
+    padding: 35px 30px;
+
+    background-color: var(--verde-suave);
+
+    border-radius: 20px 0 0 20px;
+
+  }
+
+  #formulario{
+    justify-content: center;
+
+    flex: 1 1 0;
+    width: 100%;
+    max-width: 520px;
+
+    padding: 35px 30px;
+
+    background-color: white;
+
+    border-radius: 0 20px 20px 0;
+  }
+}
+
+@media (min-width: 900px) and (max-height: 700px) {
+
+  main {
+    padding: 20px 30px;
+  }
+
+  #colunaEsquerda {
+    padding: 20px 25px;
+  }
+
+  #colunaEsquerda > #div1 {
+    padding: 5px 0 15px;
+  }
+
+  #paragrafoPrin {
+    gap: 6px;
+  }
+
+  #paragrafoPrin h1 {
+    font-size: 26px;
+  }
+
+  .caracteristicas {
+    margin-top: 10px;
+    padding: 10px;
+    gap: 12px;
+  }
+
+  #formulario {
+    padding: 25px 30px;
+  }
+
+  #formulario form {
+    gap: 5px;
+  }
+}
