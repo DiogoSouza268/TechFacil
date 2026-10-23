@@ -11,6 +11,13 @@ import {
   DispositivoApi,
   DispositivoDetalhado
 } from '../../services/celulares-api.service';
+import { firstValueFrom } from 'rxjs';
+
+import {
+  FacilitoService,
+  type PedidoFacilito,
+  type ResultadoFacilito
+} from '../../services/facilito.service';
 
 export interface Specs {
   armazenamento: string;
@@ -51,6 +58,24 @@ export interface Celular {
   cameraSemDados?: boolean;
 }
 
+export interface FonteFacilito {
+  titulo: string;
+  url: string;
+}
+
+export interface PosicaoFacilito {
+  celularId: number;
+  posicao: 1 | 2 | 3;
+  justificativa: string;
+}
+
+export interface ResultadoFacilito {
+  resumo: string;
+  classificacao: PosicaoFacilito[];
+  observacoes: string[];
+  fontes: FonteFacilito[];
+}
+
 export interface ProcessadorCatalogo {
   nome: string;
   aliases: string[];
@@ -89,6 +114,7 @@ export class Home implements OnInit {
 
   // Serviço que consulta o backend
   private celularesApi = inject(CelularesApiService);
+  private facilitoService = inject(FacilitoService);
 
   exibirAvisoModal: boolean = false;
 
@@ -99,6 +125,16 @@ export class Home implements OnInit {
   catalogoCameras: CameraCatalogo[] = [];
   termoBusca: string = '';
   celularSelecionado: Celular | null = null;
+
+  // Resultado produzido pelo Facilito.AI
+  resultadoFacilito: ResultadoFacilito | null = null;
+
+  // Estado da solicitação ao Gemini
+  facilitoCarregando = false;
+  erroFacilito = '';
+
+  // Identifica se a comparação mudou durante uma solicitação
+  private versaoComparacao = 0;
 
   // Controle da busca externa
   resultadosApi: DispositivoApi[] = [];
@@ -169,6 +205,34 @@ export class Home implements OnInit {
       title: 'Venha aprender sobre as peças de um celular'
     }
   ];
+
+    get precosDaComparacaoValidos(): boolean {
+    return (
+      this.listaComparacao.length > 0 &&
+      this.listaComparacao.every(celular =>
+        typeof celular.precoLoja === 'number' &&
+        Number.isFinite(celular.precoLoja) &&
+        celular.precoLoja > 0
+      )
+    );
+  }
+
+  get podeSolicitarComparacaoFacilito(): boolean {
+    return (
+      !this.facilitoCarregando &&
+      this.filtrosSelecionados.length > 0 &&
+      this.listaComparacao.length >= 2 &&
+      this.precosDaComparacaoValidos
+    );
+  }
+
+  invalidarResultadoFacilito(): void {
+    this.versaoComparacao++;
+    this.resultadoFacilito = null;
+    this.erroFacilito = '';
+    this.facilitoCarregando = false;
+
+  }
 
   ngOnInit(): void {
     this.carregarCelulares();
@@ -936,15 +1000,19 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
 
 
   atualizarSpec(celular: Celular, chave: keyof Specs, novoValor: string | number): void {
+    this.invalidarResultadoFacilito();
     celular.specs[chave] = String(novoValor);
     this.recalcularNotas(celular);
   }
+
+  
 
   
   atualizarPrecoLoja(
     celular: Celular,
     valor: number | null
   ): void {
+    this.invalidarResultadoFacilito();
     celular.precoLoja =
       valor !== null && Number.isFinite(valor) && valor > 0
         ? valor
@@ -991,6 +1059,7 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
     }
 
     this.listaComparacao.push(structuredClone(this.celularSelecionado));
+    this.invalidarResultadoFacilito();
     this.termoBusca = '';
     this.celularSelecionado = null;
     this.mensagemBuscaApi = '';
@@ -1001,6 +1070,8 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
 
   removerDaComparacao(index: number): void {
     this.listaComparacao.splice(index, 1);
+    this.invalidarResultadoFacilito();
+
   }
 
   irParaCelular(index: number): void {
@@ -1022,6 +1093,8 @@ selecionarResultadoApi(dispositivo: DispositivoApi): void {
     } else {
       this.filtrosSelecionados.push(key); 
     }
+    this.invalidarResultadoFacilito();
+
   }
 
   filtroAtivo(key: string): boolean {
@@ -1248,6 +1321,168 @@ get celularVencedor(): {
       pontos: maiorPontuacao,
       motivos
     };
+  }
+
+
+  async analisarComFacilito(): Promise<void> {
+    if (this.facilitoCarregando) {
+      return;
+    }
+
+    if (this.filtrosSelecionados.length === 0) {
+      this.erroFacilito =
+        'Escolha pelo menos uma preferência para continuar.';
+      return;
+    }
+
+    if (this.listaComparacao.length < 2) {
+      this.erroFacilito =
+        'Adicione pelo menos dois celulares para comparar.';
+      return;
+    }
+
+    if (!this.precosDaComparacaoValidos) {
+      this.erroFacilito =
+        'Informe um preço válido para todos os celulares.';
+      return;
+    }
+
+    // Prepara uma nova avaliação e invalida o resultado anterior.
+    this.invalidarResultadoFacilito();
+
+    const versaoSolicitacao = this.versaoComparacao;
+
+    this.facilitoCarregando = true;
+    this.erroFacilito = '';
+
+    const pedido: PedidoFacilito = {
+      filtros: this.filtros
+        .filter(filtro =>
+          this.filtrosSelecionados.includes(filtro.key)
+        )
+        .map(filtro => ({
+          key: filtro.key,
+          label: filtro.label
+        })),
+
+      celulares: this.listaComparacao.map(celular => ({
+        id: celular.id,
+        nome: celular.nome,
+        origem: celular.origem ?? 'local',
+        precoLoja: Number(celular.precoLoja),
+
+        especificacoes: {
+          ram: celular.specs.ram,
+          armazenamento: celular.specs.armazenamento,
+          bateria: celular.specs.bateria,
+          processador: celular.specs.processador,
+          gpu: celular.specs.gpu,
+          qualidadeImagem: celular.specs.qualidadeImagem,
+          camera: celular.specs.camera ?? ''
+        }
+      }))
+    };
+
+    try {
+      const resultado = await firstValueFrom(
+        this.facilitoService.comparar(pedido)
+      );
+
+      // Ignora uma resposta antiga caso a comparação tenha mudado.
+      if (versaoSolicitacao !== this.versaoComparacao) {
+        return;
+      }
+
+      if (
+        !resultado ||
+        typeof resultado.resumo !== 'string' ||
+        !Array.isArray(resultado.classificacao) ||
+        !Array.isArray(resultado.observacoes) ||
+        !Array.isArray(resultado.fontes)
+      ) {
+        throw new Error(
+          'O resultado recebido não possui o formato esperado.'
+        );
+      }
+
+      // A IA pode informar que os dados não permitem
+      // uma classificação confiável.
+      if (resultado.status === 'inconclusiva') {
+        this.resultadoFacilito = resultado;
+        return;
+      }
+
+      if (resultado.status !== 'concluida') {
+        throw new Error(
+          'Não foi possível confirmar a conclusão da avaliação.'
+        );
+      }
+
+      const idsSelecionados =
+        this.listaComparacao.map(celular => celular.id);
+
+      const classificacao = resultado.classificacao;
+
+      const idsRecebidos = classificacao.map(
+        item => item.celularId
+      );
+
+      const idsUnicos =
+        new Set(idsRecebidos).size === idsRecebidos.length;
+
+      const todosOsAparelhosIncluidos =
+        idsSelecionados.length === classificacao.length &&
+        idsSelecionados.every(id => idsRecebidos.includes(id));
+
+      const posicoesValidas = classificacao.every(item =>
+        idsSelecionados.includes(item.celularId) &&
+        Number.isInteger(item.posicao) &&
+        item.posicao >= 1 &&
+        item.posicao <= this.listaComparacao.length &&
+        typeof item.justificativa === 'string' &&
+        item.justificativa.trim().length > 0
+      );
+
+      if (
+        !idsUnicos ||
+        !todosOsAparelhosIncluidos ||
+        !posicoesValidas
+      ) {
+        throw new Error(
+          'Não foi possível validar a classificação recebida.'
+        );
+      }
+
+      this.resultadoFacilito = resultado;
+
+    } catch (erro: unknown) {
+      if (versaoSolicitacao !== this.versaoComparacao) {
+        return;
+      }
+
+      const erroHttp = erro as {
+        error?: {
+          error?: unknown;
+          message?: unknown;
+        };
+        message?: unknown;
+      };
+
+      const mensagemServidor =
+        typeof erroHttp.error?.error === 'string'
+          ? erroHttp.error.error
+          : typeof erroHttp.error?.message === 'string'
+            ? erroHttp.error.message
+            : '';
+
+      this.erroFacilito =
+        mensagemServidor ||
+        'Não consegui concluir a comparação. Tente novamente.';
+    } finally {
+      if (versaoSolicitacao === this.versaoComparacao) {
+        this.facilitoCarregando = false;
+      }
+    }
   }
 
 

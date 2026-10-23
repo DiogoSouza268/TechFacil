@@ -2,10 +2,15 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
+import { GoogleGenAI } from '@google/genai';
+import { registrarRotaFacilito } from './facilito.js';
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
 const apiKey = process.env.MOBILEAPI_API_KEY;
+const geminiApiKey = process.env.GEMINI_API_KEY;
+const geminiModel = process.env.GEMINI_MODEL;
+const genAI = geminiApiKey ? new GoogleGenAI({ apiKey: geminiApiKey }) : null;
 const frontendOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:4200';
 const mobileApiBaseUrl = 'https://api.mobileapi.dev';
 
@@ -207,6 +212,9 @@ app.get('/api/devices/:id', async (req, res, next) => {
   }
 });
 
+// Registra a rota do Facilito.AI sem alterar as rotas existentes da MobileAPI.
+registrarRotaFacilito(app, { genAI, modelo: geminiModel });
+
 app.use((error, _req, res, _next) => {
   console.error('[backend]', error.message);
   const statusCode = Number.isInteger(error.statusCode) ? error.statusCode : 502;
@@ -221,5 +229,8 @@ app.listen(port, () => {
   console.log(`Origem Angular permitida: ${frontendOrigin}`);
   if (!apiKey) {
     console.warn('ATENÇÃO: configure MOBILEAPI_API_KEY no arquivo .env.');
+  }
+  if (!geminiApiKey) {
+    console.warn('ATENÇÃO: configure GEMINI_API_KEY no arquivo .env para ativar o Facilito.AI.');
   }
 });

@@ -1,0 +1,6 @@
+# Crie um arquivo .env a partir deste exemplo e preencha as chaves localmente.
+MOBILEAPI_API_KEY=COLOQUE_SUA_CHAVE_AQUI
+GEMINI_API_KEY=COLOQUE_SUA_CHAVE_AQUI
+GEMINI_MODEL=gemini-3.8-flash
+PORT=3000
+FRONTEND_ORIGIN=http://localhost:4200
