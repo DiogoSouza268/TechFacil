@@ -35,7 +35,7 @@
     <section class="section-block">
       <div class="filtros-header">
         <h3>O que você busca no seu celular?</h3>
-        <p class="sub-instrucao">Toque nas opções para ajustarmos o vencedor para você.</p>
+        <p class="sub-instrucao">Toque nas opções para mostrar ao Facilito o que é mais importante para você.</p>
       </div>
 
       <div class="grid-filtros">
@@ -197,17 +197,15 @@
           <article 
             [id]="'card-celular-' + i" 
             class="card-comparativo"
-            [class.is-vencedor-card]="celularVencedor?.celular?.id === celular.id">
+            [class.is-vencedor-card]="obterPosicaoFacilito(celular.id) === 1">
 
-            @if (celularEstaEmpatado(celular.id)) {
-              <div class="badge-empate">
-                🤝 Empate técnico
-              </div>
-            }
-            @else if (celularVencedor?.celular?.id === celular.id) {
-              <div class="badge-campeao">
-                🏆 Campeão TechFácil
-              </div>
+            @if (resultadoFacilito?.status === 'concluida') {
+              @if (celularEstaEmpatado(celular.id)) {
+                <span class="badge-empate">Empate técnico</span>
+              }
+              @else if (obterPosicaoFacilito(celular.id) === 1) {
+                <span class="badge-vencedor">1º lugar</span>
+              }
             }
 
 
@@ -457,145 +455,118 @@
       }
     </section>
 
-    <section id="melhorOpcao" class="banner-campeao">
-      <div class="vencedor-info-wrapper">
-        
-          @if (celularesEmpatados.length > 1 && filtrosSelecionados.length > 0) {
-            <div class="trofeu-badge icone-empate">
-              &#129309;
-            </div>
+    <section id="melhorOpcao" class="secao-facilito">
+
+      <!-- LADO ESQUERDO: FACILITO -->
+      <div class="facilito-apresentacao">
+        <img
+          src="/img/projeto/facilito.svg"
+          alt="Facilito Mascote"
+          class="facilito-mascote"
+        >
+
+        <h2>Oi! Eu sou o Facilito!</h2>
+
+        <p>
+          Vou analisar os celulares que você escolheu
+          e explicar qual atende melhor às suas preferências.
+        </p>
+
+        <button
+          type="button"
+          class="btn-analisar-facilito"
+          (click)="analisarComFacilito()"
+          [disabled]="!podeSolicitarComparacaoFacilito"
+        >
+          @if (facilitoCarregando) {
+            Analisando...
           } @else {
-            <div class="trofeu-badge">&#127942;</div>
+            Analisar com Facilito.AI
           }
+        </button>
 
-        <div class="vencedor-textos">
-          
-          <h4>Melhor Opção para Você</h4>
-
-          
-          @if (listaComparacao.length >= 2 && filtrosSelecionados.length > 0) {
-            @if (qualidadeImagemIndisponivel) {
-              <div class="aviso-comparacao-incompleta" role="alert">
-                <span class="aviso-icone" aria-hidden="true">⚠️</span>
-                <div class="aviso-conteudo">
-                  <h3>Qualidade de imagem indisponível</h3>
-                  <p>
-                    Faltam informações sobre a tela de um ou mais celulares.
-                    Esse critério não será considerado no resultado.
-                  </p>
-                </div>
-              </div>
-            }
-
-            @if (gpuIndisponivel) {
-              <div class="aviso-comparacao-incompleta" role="alert">
-                <span class="aviso-icone" aria-hidden="true">⚠️</span>
-                <div class="aviso-conteudo">
-                  <h3>Placa de vídeo indisponível</h3>
-                  <p>
-                    Faltam informações para comparar a placa de vídeo de todos
-                    os celulares. Esse critério não será considerado no resultado.
-                  </p>
-                </div>
-              </div>
-            }
-
-            @if (processadorIndisponivel) {
-              <div class="aviso-comparacao-incompleta" role="alert">
-                <span class="aviso-icone" aria-hidden="true">⚠️</span>
-                <div class="aviso-conteudo">
-                  <h3>Processador indisponível</h3>
-                  <p>
-                    Faltam informações para avaliar o processador de todos
-                    os celulares. Esse critério não será considerado no resultado.
-                  </p>
-                </div>
-              </div>
-            }
-
-            @if (cameraIndisponivel) {
-              <div class="aviso-comparacao-incompleta" role="alert">
-                <span class="aviso-icone" aria-hidden="true">⚠️</span>
-                <div class="aviso-conteudo">
-                  <h3>Qualidade das câmeras indisponível</h3>
-                  <p>
-                    Ainda não temos avaliações confiáveis para todos os celulares
-                    selecionados. Esse critério não será considerado no resultado.
-                  </p>
-                </div>
-              </div>
-            }
-          }
-
-
-          @if (listaComparacao.length < 2) {
-            <p>Adicione pelo menos 2 celulares à comparação para ver o resultado!</p>
-          }
-          @else if (filtrosSelecionados.length === 0) {
-            <p>Selecione acima o que você mais valoriza para calcularmos o resultado.</p>
-          }
-
-          
-          @else if (filtrosComparaveis.length === 0) {
-            @if (
-              !qualidadeImagemIndisponivel &&
-              !gpuIndisponivel &&
-              !processadorIndisponivel &&
-              !cameraIndisponivel
-            ) {
-              <div class="aviso-comparacao-incompleta" role="alert">
-                <span class="aviso-icone" aria-hidden="true">⚠️</span>
-
-                <div class="aviso-conteudo">
-                  <h3>Não foi possível realizar a comparação</h3>
-                  <p>
-                    Não há informações suficientes para comparar os critérios
-                    selecionados. Escolha outros critérios para continuar.
-                  </p>
-                </div>
-              </div>
-            }
-          }
-
-
-
-          @else if (celularesEmpatados.length > 1) {
-            <section class="empate-tecnico">
-              <h2>🤝 Empate técnico!</h2>
-
-              <p>Estes celulares tiveram o mesmo resultado:</p>
-
-              <ul>
-                @for (celular of celularesEmpatados; track celular.id) {
-                  <li>
-                    <strong>{{ celular.nome }}</strong>
-                  </li>
-                }
-              </ul>
-
-              <p>
-                Compare os preços e as características para decidir
-                qual faz mais sentido para você.
-              </p>
-            </section>
-          }
-          @else if (celularVencedor) {
-            <p>
-              <strong>{{ celularVencedor.celular.nome }} VENCEU!</strong>
-
-              @if (celularVencedor.motivos.length > 0) {
-                <span>
-                  Ele se destaca em:
-                  {{ celularVencedor.motivos.join(', ') }}.
-                </span>
-              }
-            </p>
-          }
-
-        </div>
+        @if (erroFacilito) {
+          <p class="erro-facilito" role="alert">
+            {{ erroFacilito }}
+          </p>
+        }
       </div>
 
-      <button id="salvarCompa" [disabled]="listaComparacao.length === 0" (click)="salvarComparacao()">
+      <!-- LADO DIREITO: RESULTADO -->
+      <div class="facilito-resultado">
+
+        @if (!resultadoFacilito && !facilitoCarregando) {
+          <div class="resultado-inicial">
+            <h3>Seu resultado aparecerá aqui!</h3>
+            <p>
+              Adicione seus celulares, escolha suas preferências
+              e deixe o Facilito ajudar você.
+            </p>
+          </div>
+        }
+
+        @if (facilitoCarregando) {
+          <div class="resultado-carregando" role="status">
+            <h3>Estou analisando suas opções...</h3>
+            <p>Isso pode levar alguns instantes. Já volto com o resultado!</p>
+          </div>
+        }
+
+        @if (resultadoFacilito; as resultado) {
+
+          <h3>Resultado da comparação</h3>
+
+          @if (resultado.status === 'inconclusiva') {
+            <div class="resultado-inconclusivo">
+              <h4>Não consegui chegar a uma conclusão.</h4>
+              <p>{{ resultado.resumo }}</p>
+            </div>
+          } @else {
+
+            <p class="resumo-facilito">
+              {{ resultado.resumo }}
+            </p>
+
+            @for (posicao of resultado.classificacao; track posicao.celularId) {
+              <article class="resultado-celular">
+                <span class="posicao-celular">
+                  {{ posicao.posicao }}º lugar
+                </span>
+
+                <h4>
+                  {{ obterNomeCelular(posicao.celularId) }}
+                </h4>
+
+                <p>{{ posicao.justificativa }}</p>
+
+                @if (celularEstaEmpatado(posicao.celularId)) {
+                  <span class="aviso-empate">
+                    🤝 Empate nesta posição
+                  </span>
+                }
+              </article>
+            }
+
+            @if (resultado.observacoes.length > 0) {
+              <div class="observacoes-facilito">
+                <h4>Uma observação importante</h4>
+
+                @for (observacao of resultado.observacoes; track $index) {
+                  <p>{{ observacao }}</p>
+                }
+              </div>
+            }
+
+          }
+        }
+
+      </div>
+
+      <button
+        id="salvarCompa"
+        [disabled]="resultadoFacilito?.status !== 'concluida'"
+        (click)="salvarComparacao()"
+      >
         Salvar Comparação
       </button>
 
@@ -607,7 +578,9 @@
           </div>
         </div>
       }
+
     </section>
+    
   </main>
 
   <footer>
