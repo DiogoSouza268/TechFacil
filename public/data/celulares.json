@@ -1,3 +1,4 @@
+
 [
   {
     "id": 1,
@@ -11,12 +12,6 @@
       "gpu": "Mali-G52 MP2",
       "qualidadeImagem": "6.88 pol IPS LCD (HD+ / 90Hz)",
       "camera": "50 MP + 2 MP"
-    },
-    "pontosFortes": {
-      "melhorCamera": 5,
-      "placaVideo": 4,
-      "qualidadeImagem": 5,
-      "processadorCPU": 4
     }
   },
   {
@@ -31,12 +26,6 @@
       "gpu": "Mali-G52 MP2",
       "qualidadeImagem": "6.72 pol IPS LCD (FHD+ / 90Hz)",
       "camera": "50 MP + 2 MP"
-    },
-    "pontosFortes": {
-      "melhorCamera": 5,
-      "placaVideo": 4,
-      "qualidadeImagem": 6,
-      "processadorCPU": 4
     }
   },
   {
@@ -51,12 +40,6 @@
       "gpu": "Adreno 610",
       "qualidadeImagem": "6.9 pol IPS LCD (FHD+ / 120Hz)",
       "camera": "50 MP + 2 MP"
-    },
-    "pontosFortes": {
-      "melhorCamera": 6,
-      "placaVideo": 5,
-      "qualidadeImagem": 6,
-      "processadorCPU": 5
     }
   },
   {
@@ -71,12 +54,6 @@
       "gpu": "Mali-G615 MC6",
       "qualidadeImagem": "6.59 pol AMOLED (1.5K / 120Hz)",
       "camera": "64 MP (OIS) + 8 MP + 2 MP"
-    },
-    "pontosFortes": {
-      "melhorCamera": 7,
-      "placaVideo": 9,
-      "qualidadeImagem": 9,
-      "processadorCPU": 9
     }
   },
   {
@@ -91,12 +68,6 @@
       "gpu": "Mali-G52 MC2",
       "qualidadeImagem": "6.7 pol PLS LCD (HD+ / 60Hz)",
       "camera": "50 MP + 2 MP"
-    },
-    "pontosFortes": {
-      "melhorCamera": 5,
-      "placaVideo": 3,
-      "qualidadeImagem": 4,
-      "processadorCPU": 4
     }
   },
   {
@@ -111,12 +82,6 @@
       "gpu": "Mali-G57 MC2",
       "qualidadeImagem": "6.7 pol PLS LCD (HD+ / 90Hz)",
       "camera": "50 MP + 2 MP"
-    },
-    "pontosFortes": {
-      "melhorCamera": 5,
-      "placaVideo": 5,
-      "qualidadeImagem": 5,
-      "processadorCPU": 5
     }
   },
   {
@@ -131,12 +96,6 @@
       "gpu": "Apple GPU 5-Core",
       "qualidadeImagem": "6.1 pol Super Retina XDR OLED",
       "camera": "48 MP (OIS) + 12 MP Ultrawide"
-    },
-    "pontosFortes": {
-      "melhorCamera": 9,
-      "placaVideo": 9,
-      "qualidadeImagem": 9,
-      "processadorCPU": 10
     }
   },
   {
@@ -151,12 +110,6 @@
       "gpu": "Apple GPU 6-Core",
       "qualidadeImagem": "6.3 pol Super Retina XDR OLED (120Hz)",
       "camera": "48 MP (OIS) + 48 MP Ultrawide"
-    },
-    "pontosFortes": {
-      "melhorCamera": 10,
-      "placaVideo": 10,
-      "qualidadeImagem": 10,
-      "processadorCPU": 10
     }
   },
   {
@@ -171,12 +124,6 @@
       "gpu": "Mali-G57 MP1",
       "qualidadeImagem": "6.6 pol IPS LCD (HD+ / 90Hz)",
       "camera": "50 MP"
-    },
-    "pontosFortes": {
-      "melhorCamera": 5,
-      "placaVideo": 3,
-      "qualidadeImagem": 4,
-      "processadorCPU": 4
     }
   },
   {
@@ -191,12 +138,6 @@
       "gpu": "Mali-G57 MC2",
       "qualidadeImagem": "6.78 pol AMOLED (FHD+ / 120Hz)",
       "camera": "50 MP + 2 MP"
-    },
-    "pontosFortes": {
-      "melhorCamera": 6,
-      "placaVideo": 5,
-      "qualidadeImagem": 8,
-      "processadorCPU": 6
     }
   },
   {
@@ -211,12 +152,6 @@
       "gpu": "Adreno 610",
       "qualidadeImagem": "6.75 pol LCD (HD+ / 120 Hz)",
       "camera": "50 MP + 2 MP"
-    },
-    "pontosFortes": {
-      "melhorCamera": 5,
-      "placaVideo": 4,
-      "qualidadeImagem": 5,
-      "processadorCPU": 5
     }
   },
   {
@@ -231,12 +166,6 @@
       "gpu": "Adreno 610",
       "qualidadeImagem": "6.75 pol LCD (HD+ / 120 Hz)",
       "camera": "50 MP + 2 MP"
-    },
-    "pontosFortes": {
-      "melhorCamera": 5,
-      "placaVideo": 4,
-      "qualidadeImagem": 5,
-      "processadorCPU": 5
     }
   },
   {
@@ -251,12 +180,6 @@
       "gpu": "Mali-G57",
       "qualidadeImagem": "6.67 pol LCD (FHD+ / 120 Hz)",
       "camera": "50 MP"
-    },
-    "pontosFortes": {
-      "melhorCamera": 5,
-      "placaVideo": 4,
-      "qualidadeImagem": 6,
-      "processadorCPU": 5
     }
   },
   {
@@ -271,12 +194,6 @@
       "gpu": "Mali-G57",
       "qualidadeImagem": "6.74 pol LCD (HD+ / 90 Hz)",
       "camera": "32 MP"
-    },
-    "pontosFortes": {
-      "melhorCamera": 4,
-      "placaVideo": 3,
-      "qualidadeImagem": 4,
-      "processadorCPU": 3
     }
   }
 ]
