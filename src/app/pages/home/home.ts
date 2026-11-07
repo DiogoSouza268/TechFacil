@@ -23,9 +23,10 @@ import {
   FacilitoService,
   type PedidoFacilito,
   type ResultadoFacilito,
-  type EspecificacaoFacilito
+  type EspecificacaoFacilito,
+  type OrigemEspecificacaoFacilito,
+  type DadoEspecificacaoFacilito
 } from '../../services/facilito.service';
-
 
 export interface Specs {
   armazenamento: string;
@@ -37,7 +38,6 @@ export interface Specs {
   camera: string;
   imagem?: string;
 }
-
 
 export interface Celular {
   id: number;
@@ -53,14 +53,18 @@ export interface Celular {
   processadorSemDados?: boolean;
   gpuParcial?: boolean;
   gpuSemDados?: boolean;
+  cameraParcial?: boolean;
   cameraSemDados?: boolean;
 
   informacoesIncompletas?: string[];
+
+  origemEspecificacoes?: Record<
+    CampoEspecificacao,
+    OrigemEspecificacaoFacilito
+  >;
 }
 
-
 type CampoEspecificacao = EspecificacaoFacilito;
-
 
 @Component({
   selector: 'app-home',
@@ -76,15 +80,12 @@ type CampoEspecificacao = EspecificacaoFacilito;
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-
-
 export class Home implements OnInit {
 
   authService = inject(Auth);
 
   private celularesApi = inject(CelularesApiService);
   private facilitoService = inject(FacilitoService);
-
 
   // Controle da interface.
   exibirAvisoModal = false;
@@ -95,16 +96,14 @@ export class Home implements OnInit {
   termoBusca = '';
   celularSelecionado: Celular | null = null;
 
-
   // Resultado do Facilito.AI.
   resultadoFacilito: ResultadoFacilito | null = null;
 
   facilitoCarregando = false;
   erroFacilito = '';
 
-  // Identifica alterações feitas durante uma solicitação.
+  // Impede que uma resposta antiga substitua uma comparação atualizada.
   private versaoComparacao = 0;
-
 
   // Controle da busca externa.
   resultadosApi: DispositivoApi[] = [];
@@ -117,61 +116,24 @@ export class Home implements OnInit {
   mensagemBuscaApi = '';
   buscaApiRealizada = false;
 
-
-  // Preferências disponíveis.
-  filtros = [
-    {
-      key: 'naoTravar',
-      label: 'Memória RAM',
-      icone: '/img/projeto/memoria.svg'
-    },
-    {
-      key: 'muitoEspaco',
-      label: 'Armazenamento',
-      icone: '/img/projeto/caixa.svg'
-    },
-    {
-      key: 'placaVideo',
-      label: 'Placa de vídeo (GPU)',
-      icone: '/img/projeto/monitor.svg'
-    },
-    {
-      key: 'qualidadeImagem',
-      label: 'Qualidade de imagem',
-      icone: '/img/projeto/imagem.svg'
-    },
-    {
-      key: 'boaBateria',
-      label: 'Bateria',
-      icone: '/img/projeto/bateria.svg'
-    },
-    {
-      key: 'processadorCPU',
-      label: 'Processador',
-      icone: '/img/projeto/raio.svg'
-    },
-    {
-      key: 'melhorCamera',
-      label: 'Qualidade das Câmeras',
-      icone: '/img/projeto/camera.svg'
-    },
-    {
-      key: 'precoBaixo',
-      label: 'Preço baixo',
-      icone: '/img/projeto/carteira.svg'
-    }
-  ];
-
+  /*
+   * Compatibilidade temporária com o home.html anterior.
+   * A comparação não utiliza filtros nem preço.
+   * Remova estes elementos quando atualizar o HTML.
+   */
+  filtros: {
+    key: string;
+    label: string;
+    icone: string;
+  }[] = [];
 
   filtrosSelecionados: string[] = [];
-
 
   // Dicionário de termos.
   dicionarioTermos: Record<
     string,
     { titulo: string; explicacao: string }
   > = {
-
     ram: {
       titulo: 'Memória RAM',
       explicacao:
@@ -199,7 +161,7 @@ export class Home implements OnInit {
     bateria: {
       titulo: 'Bateria',
       explicacao:
-        'Medida em mAh. Quanto maior a capacidade, maior pode ser o tempo de uso longe da tomada. A duração também depende de outros fatores.'
+        'A capacidade é medida em mAh. Esse número permite comparar a quantidade de carga que a bateria armazena, mas não garante sozinho quanto tempo o celular ficará ligado.'
     },
 
     processador: {
@@ -215,12 +177,10 @@ export class Home implements OnInit {
     }
   };
 
-
   termoExibido: {
     titulo: string;
     explicacao: string;
   } | null = null;
-
 
   // Carrossel da página.
   homeCarosel: CarouselSlide[] = [
@@ -238,20 +198,9 @@ export class Home implements OnInit {
     }
   ];
 
-
   // --------------------------------------------------
   // VALIDAÇÕES DA COMPARAÇÃO
   // --------------------------------------------------
-
-  get quantidadeFiltrosSelecionados(): number {
-    return this.filtrosSelecionados.length;
-  }
-
-
-  get possuiFiltrosSelecionados(): boolean {
-    return this.filtrosSelecionados.length > 0;
-  }
-
 
   get quantidadeCelularesValida(): boolean {
     return (
@@ -260,83 +209,41 @@ export class Home implements OnInit {
     );
   }
 
-
-  // O preço somente é obrigatório quando selecionado.
-  get precosDaComparacaoValidos(): boolean {
-
-    if (!this.filtroAtivo('precoBaixo')) {
-      return true;
-    }
-
-    return (
-      this.listaComparacao.length > 0 &&
-      this.listaComparacao.every(celular =>
-        this.precoValido(celular.precoLoja)
-      )
-    );
-  }
-
-
   get podeSolicitarComparacaoFacilito(): boolean {
-
     return (
       !this.facilitoCarregando &&
-      this.possuiFiltrosSelecionados &&
-      this.quantidadeCelularesValida &&
-      this.precosDaComparacaoValidos
+      this.quantidadeCelularesValida
     );
   }
 
+  /*
+   * Compatibilidade temporária com o HTML antigo.
+   * Não há seleção de filtros na comparação atual.
+   */
+  get quantidadeFiltrosSelecionados(): number {
+    return 0;
+  }
 
-  // Informações ausentes somente nos critérios escolhidos.
+  get possuiFiltrosSelecionados(): boolean {
+    return true;
+  }
+
+  get precosDaComparacaoValidos(): boolean {
+    return true;
+  }
+
   get informacoesSelecionadasIncompletas(): {
     celular: string;
     informacoes: string[];
   }[] {
-
-    return this.listaComparacao
-      .map(celular => {
-
-        const informacoes: string[] = [];
-
-        for (const filtro of this.filtrosSelecionados) {
-
-          if (filtro === 'precoBaixo') {
-
-            if (!this.precoValido(celular.precoLoja)) {
-              informacoes.push('Preço');
-            }
-
-            continue;
-          }
-
-          const campo = this.obterCampoDoFiltro(filtro);
-
-          if (
-            campo &&
-            !this.temInformacao(celular.specs[campo])
-          ) {
-            informacoes.push(
-              this.obterNomeDoFiltro(filtro)
-            );
-          }
-        }
-
-        return {
-          celular: celular.nome,
-          informacoes
-        };
-      })
-      .filter(item => item.informacoes.length > 0);
+    return [];
   }
-
 
   // --------------------------------------------------
   // CONTROLE DO RESULTADO
   // --------------------------------------------------
 
   invalidarResultadoFacilito(): void {
-
     this.versaoComparacao++;
 
     this.resultadoFacilito = null;
@@ -344,20 +251,16 @@ export class Home implements OnInit {
     this.facilitoCarregando = false;
   }
 
-
   ngOnInit(): void {
     this.carregarCelulares();
   }
-
 
   // --------------------------------------------------
   // CARREGAMENTO DO CATÁLOGO
   // --------------------------------------------------
 
   async carregarCelulares(): Promise<void> {
-
     try {
-
       const resposta = await fetch('/data/celulares.json');
 
       if (!resposta.ok) {
@@ -373,7 +276,6 @@ export class Home implements OnInit {
       );
 
     } catch (erro) {
-
       console.error(
         'Erro ao carregar a lista de celulares:',
         erro
@@ -383,9 +285,7 @@ export class Home implements OnInit {
     }
   }
 
-
   private prepararCelular(celular: Celular): Celular {
-
     const preparado: Celular = {
       ...celular,
 
@@ -407,18 +307,54 @@ export class Home implements OnInit {
       }
     };
 
+    const campos: CampoEspecificacao[] = [
+      'ram',
+      'armazenamento',
+      'gpu',
+      'qualidadeImagem',
+      'bateria',
+      'processador',
+      'camera'
+    ];
+
+    const origens = {} as Record<
+      CampoEspecificacao,
+      OrigemEspecificacaoFacilito
+    >;
+
+    for (const campo of campos) {
+      const origemAnterior =
+        celular.origemEspecificacoes?.[campo];
+
+      // Preserva a origem registrada, inclusive correções manuais.
+      if (origemAnterior) {
+        origens[campo] = origemAnterior;
+        continue;
+      }
+
+      if (!this.temInformacao(preparado.specs[campo])) {
+        origens[campo] = 'indisponivel';
+        continue;
+      }
+
+      origens[campo] =
+        preparado.origem === 'api'
+          ? 'mobileapi'
+          : 'catalogo';
+    }
+
+    preparado.origemEspecificacoes = origens;
+
     this.atualizarIndicadoresInformacao(preparado);
 
     return preparado;
   }
-
 
   // --------------------------------------------------
   // VERIFICAÇÃO DE INFORMAÇÕES
   // --------------------------------------------------
 
   private temInformacao(valor?: string | null): boolean {
-
     if (typeof valor !== 'string') {
       return false;
     }
@@ -452,11 +388,77 @@ export class Home implements OnInit {
     );
   }
 
+  /*
+   * Uma informação pode existir sem ser suficiente para uma
+   * avaliação completa. Estes métodos identificam alguns casos
+   * conhecidos sem atribuir qualidade ou nota ao aparelho.
+   */
+
+  private cameraTemApenasMegapixels(valor: string): boolean {
+    const texto = valor.trim();
+
+    if (!texto) {
+      return false;
+    }
+
+    const possuiMegapixels = /\b\d+(?:[.,]\d+)?\s*MP\b/i.test(texto);
+
+    if (!possuiMegapixels) {
+      return false;
+    }
+
+    const termosAdicionais = [
+      'OIS',
+      'EIS',
+      'estabilização',
+      'estabilizacao',
+      'abertura',
+      'sensor',
+      'ultrawide',
+      'ultra-wide',
+      'telefoto',
+      'macro',
+      'zoom',
+      'HDR',
+      'vídeo',
+      'video'
+    ];
+
+    const possuiInformacaoAdicional = termosAdicionais.some(
+      termo => texto.toLowerCase().includes(termo.toLowerCase())
+    );
+
+    return !possuiInformacaoAdicional;
+  }
+
+  private telaPossuiInformacaoParcial(valor: string): boolean {
+    const texto = valor.trim();
+
+    if (!texto) {
+      return false;
+    }
+
+    const possuiPainel =
+      /\b(amoled|oled|p-oled|ips|lcd|tft)\b/i.test(texto);
+
+    const possuiResolucao =
+      /\b(hd\+|hd|full\s*hd\+?|fhd\+?|qhd\+?|2k|4k|\d{3,4}\s*[x×]\s*\d{3,4})\b/i.test(texto);
+
+    const possuiFrequencia =
+      /\b\d{2,3}\s*hz\b/i.test(texto);
+
+    // Informação parcial quando existe dado, mas falta algum
+    // dos três elementos principais para caracterizar a tela.
+    return !(
+      possuiPainel &&
+      possuiResolucao &&
+      possuiFrequencia
+    );
+  }
 
   private atualizarIndicadoresInformacao(
     celular: Celular
   ): void {
-
     const specs = celular.specs;
     const informacoes: string[] = [];
 
@@ -488,16 +490,8 @@ export class Home implements OnInit {
       informacoes.push('Câmeras');
     }
 
-    if (
-      this.filtroAtivo('precoBaixo') &&
-      !this.precoValido(celular.precoLoja)
-    ) {
-      informacoes.push('Preço');
-    }
-
     celular.informacoesIncompletas = informacoes;
 
-    // Indicadores utilizados pelo HTML.
     celular.processadorSemDados =
       !this.temInformacao(specs.processador);
 
@@ -510,17 +504,23 @@ export class Home implements OnInit {
     celular.qualidadeImagemSemDados =
       !this.temInformacao(specs.qualidadeImagem);
 
-    // Não classificamos dados parciais como baixa qualidade.
+    celular.cameraParcial =
+      this.temInformacao(specs.camera) &&
+      this.cameraTemApenasMegapixels(specs.camera);
+
+    celular.qualidadeImagemParcial =
+      this.temInformacao(specs.qualidadeImagem) &&
+      this.telaPossuiInformacaoParcial(specs.qualidadeImagem);
+
+    // A presença do nome do processador ou da GPU não significa,
+    // por si só, que o dado seja incompleto.
     celular.processadorParcial = false;
     celular.gpuParcial = false;
-    celular.qualidadeImagemParcial = false;
   }
-
 
   private precoValido(
     valor: number | null | undefined
   ): boolean {
-
     return (
       typeof valor === 'number' &&
       Number.isFinite(valor) &&
@@ -528,23 +528,19 @@ export class Home implements OnInit {
     );
   }
 
-
   private normalizarPreco(
     valor: number | null | undefined
   ): number | null {
-
     return this.precoValido(valor)
       ? valor!
       : null;
   }
-
 
   // --------------------------------------------------
   // BUSCA DE CELULARES
   // --------------------------------------------------
 
   aoAlterarBusca(): void {
-
     const termoAtual = this.termoBusca.trim();
 
     if (
@@ -560,9 +556,7 @@ export class Home implements OnInit {
     this.buscaApiRealizada = false;
   }
 
-
   buscarNaApi(): void {
-
     const nome = this.termoBusca.trim();
 
     if (nome.length < 2) {
@@ -579,9 +573,7 @@ export class Home implements OnInit {
     this.buscandoApi = true;
 
     this.celularesApi.buscarPorNome(nome).subscribe({
-
       next: resposta => {
-
         const encontrados = resposta.devices.filter(
           dispositivo =>
             !dispositivo.device_type ||
@@ -589,7 +581,6 @@ export class Home implements OnInit {
         );
 
         this.resultadosApi = encontrados.filter(dispositivo => {
-
           const nomeApi = this.normalizarNome(
             this.nomeCompletoApi(dispositivo)
           );
@@ -604,19 +595,16 @@ export class Home implements OnInit {
         this.buscaApiRealizada = true;
 
         if (encontrados.length === 0) {
-
           this.mensagemBuscaApi =
             'Nenhum celular encontrado para essa pesquisa.';
 
         } else if (this.resultadosApi.length === 0) {
-
           this.mensagemBuscaApi =
             'Os modelos encontrados já estão no catálogo local.';
         }
       },
 
       error: erro => {
-
         console.error(
           'Erro ao pesquisar celulares na API:',
           erro
@@ -648,15 +636,11 @@ export class Home implements OnInit {
     });
   }
 
-
   iniciarContagemRegressiva(segundos: number): void {
-
     this.tempoEsperaApi = Math.max(0, segundos);
 
     const contar = () => {
-
       setTimeout(() => {
-
         if (this.tempoEsperaApi > 0) {
           this.tempoEsperaApi--;
         }
@@ -664,7 +648,6 @@ export class Home implements OnInit {
         if (this.tempoEsperaApi > 0) {
           contar();
         }
-
       }, 1000);
     };
 
@@ -673,9 +656,7 @@ export class Home implements OnInit {
     }
   }
 
-
   nomeCompletoApi(dispositivo: DispositivoApi): string {
-
     const marca = dispositivo.manufacturer_name?.trim() || '';
     const nome = dispositivo.name.trim();
 
@@ -694,16 +675,13 @@ export class Home implements OnInit {
     return `${marca} ${nome}`;
   }
 
-
   private normalizarNome(nome: string): string {
-
     return nome
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]/gi, '')
       .toLowerCase();
   }
-
 
   // --------------------------------------------------
   // SELEÇÃO DE RESULTADOS DA API
@@ -712,7 +690,6 @@ export class Home implements OnInit {
   selecionarResultadoApi(
     dispositivo: DispositivoApi
   ): void {
-
     if (this.listaComparacao.length >= 3) {
       alert(
         'Você já atingiu o limite de 3 celulares para comparar.'
@@ -738,9 +715,7 @@ export class Home implements OnInit {
     this.mensagemBuscaApi = '';
 
     this.celularesApi.buscarDetalhes(dispositivo.id).subscribe({
-
       next: detalhes => {
-
         const celular = this.converterDispositivoApi(detalhes);
 
         this.celularSelecionado = celular;
@@ -754,7 +729,6 @@ export class Home implements OnInit {
       },
 
       error: erro => {
-
         console.error(
           'Erro ao buscar detalhes do celular:',
           erro
@@ -769,11 +743,9 @@ export class Home implements OnInit {
     });
   }
 
-
   private converterDispositivoApi(
     d: DispositivoDetalhado
   ): Celular {
-
     const capacidadeRam = this.obterRamGb(d);
     const capacidadeArmazenamento =
       this.obterArmazenamentoGb(d);
@@ -795,12 +767,10 @@ export class Home implements OnInit {
 
       'Não informado pela API';
 
-
     const gpu =
       d.platform?.gpu?.trim() ||
       chipsetOriginal.match(/GPU:\s*(.+)$/i)?.[1]?.trim() ||
       'Não informado pela API';
-
 
     const tela = [
       d.display?.type,
@@ -815,7 +785,6 @@ export class Home implements OnInit {
       d.screen_resolution ||
       'Não informado pela API';
 
-
     const bateriaOriginal =
       d.battery?.type || d.battery_capacity || '';
 
@@ -823,7 +792,6 @@ export class Home implements OnInit {
       bateriaOriginal.match(/[\d.,]+\s*mAh/i)?.[0] ||
       bateriaOriginal ||
       'Não informado pela API';
-
 
     const cameras = [
       d.main_camera?.modules
@@ -839,9 +807,7 @@ export class Home implements OnInit {
 
       'Não informado pela API';
 
-
     const celular: Celular = {
-
       id: 1_000_000 + d.id,
       nome: this.nomeCompletoApi(d),
       precoLoja: null,
@@ -851,7 +817,6 @@ export class Home implements OnInit {
         d.image_url || '/img/projeto/celulares.jpg',
 
       specs: {
-
         armazenamento: capacidadeArmazenamento !== null
           ? `${capacidadeArmazenamento}GB`
           : 'Não informado pela API',
@@ -871,11 +836,9 @@ export class Home implements OnInit {
     return this.prepararCelular(celular);
   }
 
-
   private obterRamGb(
     d: DispositivoDetalhado
   ): number | null {
-
     const memoria = d.memory?.internal || '';
 
     const textoRam =
@@ -899,11 +862,9 @@ export class Home implements OnInit {
       : null;
   }
 
-
   private obterArmazenamentoGb(
     d: DispositivoDetalhado
   ): number | null {
-
     const opcoes =
       this.lerCapacidadesGb(d.storage || '');
 
@@ -922,7 +883,6 @@ export class Home implements OnInit {
       /\bRAM\b/i.test(memoria) &&
       !/RAM\s*:/i.test(memoria)
     ) {
-
       const valoresOriginais =
         this.lerCapacidadesGbNaOrdem(antesDaRam);
 
@@ -938,9 +898,7 @@ export class Home implements OnInit {
       : null;
   }
 
-
   private lerCapacidadesGb(texto: string): number[] {
-
     return [
       ...new Set(
         this.lerCapacidadesGbNaOrdem(texto)
@@ -948,17 +906,14 @@ export class Home implements OnInit {
     ].sort((a, b) => a - b);
   }
 
-
   private lerCapacidadesGbNaOrdem(
     texto: string
   ): number[] {
-
     const capacidades: number[] = [];
 
     const regex = /(\d+(?:[.,]\d+)?)\s*(TB|GB|MB)/gi;
 
     for (const resultado of texto.matchAll(regex)) {
-
       let valor = Number(
         resultado[1].replace(',', '.')
       );
@@ -983,7 +938,6 @@ export class Home implements OnInit {
     return capacidades;
   }
 
-
   // --------------------------------------------------
   // INFORMAÇÕES DA CLASSIFICAÇÃO
   // --------------------------------------------------
@@ -991,7 +945,6 @@ export class Home implements OnInit {
   obterPosicaoFacilito(
     celularId: number
   ): number | null {
-
     if (this.resultadoFacilito?.status !== 'concluida') {
       return null;
     }
@@ -1004,9 +957,7 @@ export class Home implements OnInit {
     return resultado?.posicao ?? null;
   }
 
-
   celularEstaEmpatado(celularId: number): boolean {
-
     if (this.resultadoFacilito?.status !== 'concluida') {
       return false;
     }
@@ -1025,11 +976,9 @@ export class Home implements OnInit {
     );
   }
 
-
   obterJustificativaFacilito(
     celularId: number
   ): string {
-
     if (this.resultadoFacilito?.status !== 'concluida') {
       return '';
     }
@@ -1041,16 +990,13 @@ export class Home implements OnInit {
     );
   }
 
-
   obterNomeCelular(celularId: number): string {
-
     const celular = this.listaComparacao.find(
       item => item.id === celularId
     );
 
     return celular?.nome ?? 'Celular não identificado';
   }
-
 
   // --------------------------------------------------
   // EDIÇÃO DE INFORMAÇÕES
@@ -1061,34 +1007,50 @@ export class Home implements OnInit {
     chave: keyof Specs,
     novoValor: string | number
   ): void {
-
     this.invalidarResultadoFacilito();
 
     celular.specs[chave] = String(novoValor);
 
+    const campos: CampoEspecificacao[] = [
+      'ram',
+      'armazenamento',
+      'gpu',
+      'qualidadeImagem',
+      'bateria',
+      'processador',
+      'camera'
+    ];
+
+    if (campos.includes(chave as CampoEspecificacao)) {
+      celular.origemEspecificacoes ??= {} as Record<
+        CampoEspecificacao,
+        OrigemEspecificacaoFacilito
+      >;
+
+      celular.origemEspecificacoes[
+        chave as CampoEspecificacao
+      ] = 'usuario';
+    }
+
     this.atualizarIndicadoresInformacao(celular);
   }
 
-
+  /*
+   * Compatibilidade temporária com o HTML anterior.
+   * O preço não participa do pedido enviado ao Facilito.
+   */
   atualizarPrecoLoja(
     celular: Celular,
     valor: number | null
   ): void {
-
-    this.invalidarResultadoFacilito();
-
     celular.precoLoja = this.normalizarPreco(valor);
-
-    this.atualizarIndicadoresInformacao(celular);
   }
-
 
   // --------------------------------------------------
   // SUGESTÕES E ADIÇÃO DE CELULARES
   // --------------------------------------------------
 
   get sugestoesBusca(): Celular[] {
-
     if (!this.termoBusca.trim()) {
       return [];
     }
@@ -1100,9 +1062,7 @@ export class Home implements OnInit {
     );
   }
 
-
   selecionarSugestao(celular: Celular): void {
-
     this.termoBusca = celular.nome;
 
     this.celularSelecionado =
@@ -1119,9 +1079,7 @@ export class Home implements OnInit {
     this.buscaApiRealizada = false;
   }
 
-
   adicionarAComparacao(): void {
-
     if (!this.celularSelecionado) {
       alert(
         'Por favor, selecione um celular da lista de sugestões.'
@@ -1164,9 +1122,7 @@ export class Home implements OnInit {
     this.buscaApiRealizada = false;
   }
 
-
   removerDaComparacao(index: number): void {
-
     if (
       index < 0 ||
       index >= this.listaComparacao.length
@@ -1183,9 +1139,7 @@ export class Home implements OnInit {
     );
   }
 
-
   irParaCelular(index: number): void {
-
     if (!this.listaComparacao[index]) {
       alert(
         `O slot ${index + 1} ainda está vazio! Adicione um celular primeiro.`
@@ -1204,147 +1158,91 @@ export class Home implements OnInit {
     });
   }
 
-
   // --------------------------------------------------
-  // FILTROS
+  // COMPATIBILIDADE COM O HTML ANTERIOR
   // --------------------------------------------------
 
-  toggleFiltro(key: string): void {
-
-    const filtroExiste = this.filtros.some(
-      filtro => filtro.key === key
-    );
-
-    if (!filtroExiste) {
-      return;
-    }
-
-    const index =
-      this.filtrosSelecionados.indexOf(key);
-
-    if (index > -1) {
-      this.filtrosSelecionados.splice(index, 1);
-    } else {
-      this.filtrosSelecionados.push(key);
-    }
-
-    this.invalidarResultadoFacilito();
-
-    this.listaComparacao.forEach(celular =>
-      this.atualizarIndicadoresInformacao(celular)
-    );
+  toggleFiltro(_key: string): void {
+    // A comparação atual não utiliza filtros.
   }
 
-
-  filtroAtivo(key: string): boolean {
-    return this.filtrosSelecionados.includes(key);
+  filtroAtivo(_key: string): boolean {
+    return false;
   }
-
 
   private obterCampoDoFiltro(
-    filtro: string
+    _filtro: string
   ): CampoEspecificacao | null {
-
-    const campos: Record<string, CampoEspecificacao> = {
-
-      naoTravar: 'ram',
-
-      muitoEspaco: 'armazenamento',
-
-      placaVideo: 'gpu',
-
-      qualidadeImagem: 'qualidadeImagem',
-
-      boaBateria: 'bateria',
-
-      processadorCPU: 'processador',
-
-      melhorCamera: 'camera'
-    };
-
-    return campos[filtro] ?? null;
+    return null;
   }
-
 
   private obterNomeDoFiltro(filtro: string): string {
-
-    return this.filtros.find(
-      item => item.key === filtro
-    )?.label ?? filtro;
+    return filtro;
   }
-
 
   // --------------------------------------------------
   // MONTAGEM DO PEDIDO PARA O FACILITO.AI
   // --------------------------------------------------
 
-  private montarEspecificacoesSelecionadas(
+  private montarEspecificacoesFacilito(
     celular: Celular
-  ): Partial<Record<CampoEspecificacao, string>> {
+  ): Record<CampoEspecificacao, DadoEspecificacaoFacilito> {
+    const campos: CampoEspecificacao[] = [
+      'ram',
+      'armazenamento',
+      'gpu',
+      'qualidadeImagem',
+      'bateria',
+      'processador',
+      'camera'
+    ];
 
-    const especificacoes:
-      Partial<Record<CampoEspecificacao, string>> = {};
+    const especificacoes = {} as Record<
+      CampoEspecificacao,
+      DadoEspecificacaoFacilito
+    >;
 
-    for (const filtro of this.filtrosSelecionados) {
+    for (const campo of campos) {
+      const valor = celular.specs[campo] ?? '';
 
-      const campo = this.obterCampoDoFiltro(filtro);
+      const origemRegistrada =
+        celular.origemEspecificacoes?.[campo];
 
-      if (!campo) {
-        continue;
-      }
+      const fonte: OrigemEspecificacaoFacilito =
+        origemRegistrada ??
+        (
+          !this.temInformacao(valor)
+            ? 'indisponivel'
+            : celular.origem === 'api'
+              ? 'mobileapi'
+              : 'catalogo'
+        );
 
-      especificacoes[campo] =
-        celular.specs[campo] ?? '';
+      especificacoes[campo] = {
+        valor,
+        fonte
+      };
     }
 
     return especificacoes;
   }
 
-
   private montarPedidoFacilito(): PedidoFacilito {
-
     return {
-
-      filtros: this.filtros
-        .filter(filtro =>
-          this.filtroAtivo(filtro.key)
-        )
-        .map(filtro => ({
-          key: filtro.key,
-          label: filtro.label
-        })),
-
       celulares: this.listaComparacao.map(celular => ({
-
         id: celular.id,
-        nome: celular.nome,
-        origem: celular.origem ?? 'local',
-
-        precoLoja: this.filtroAtivo('precoBaixo')
-          ? celular.precoLoja ?? null
-          : null,
-
         especificacoes:
-          this.montarEspecificacoesSelecionadas(celular)
-
+          this.montarEspecificacoesFacilito(celular)
       }))
     };
   }
-
 
   // --------------------------------------------------
   // COMPARAÇÃO COM O FACILITO.AI
   // --------------------------------------------------
 
   async analisarComFacilito(): Promise<void> {
-
     if (this.facilitoCarregando) {
-      return;
-    }
-
-    if (!this.possuiFiltrosSelecionados) {
-      this.erroFacilito =
-        'Selecione pelo menos uma preferência para continuar.';
       return;
     }
 
@@ -1360,15 +1258,6 @@ export class Home implements OnInit {
       return;
     }
 
-    // Preço é obrigatório somente quando selecionado.
-    if (!this.precosDaComparacaoValidos) {
-      this.erroFacilito =
-        'Informe um preço válido para todos os celulares, pois você selecionou a preferência Preço baixo.';
-      return;
-    }
-
-
-    // Invalida qualquer resultado anterior.
     this.invalidarResultadoFacilito();
 
     const versaoSolicitacao =
@@ -1377,24 +1266,19 @@ export class Home implements OnInit {
     this.facilitoCarregando = true;
     this.erroFacilito = '';
 
-
     const pedido = this.montarPedidoFacilito();
 
-
     try {
-
       const resultado = await firstValueFrom(
         this.facilitoService.comparar(pedido)
       );
 
-
-      // Não aceita uma resposta de uma comparação antiga.
+      // Ignora respostas de comparações que já foram alteradas.
       if (
         versaoSolicitacao !== this.versaoComparacao
       ) {
         return;
       }
-
 
       if (
         !resultado ||
@@ -1408,20 +1292,17 @@ export class Home implements OnInit {
         );
       }
 
-
       // Resultado inconclusivo não pode ser salvo.
       if (resultado.status === 'inconclusiva') {
         this.resultadoFacilito = resultado;
         return;
       }
 
-
       if (resultado.status !== 'concluida') {
         throw new Error(
           'Não foi possível confirmar a conclusão da avaliação.'
         );
       }
-
 
       const idsSelecionados =
         this.listaComparacao.map(
@@ -1445,24 +1326,16 @@ export class Home implements OnInit {
           id => idsRecebidos.includes(id)
         );
 
-
       // Posições iguais são permitidas para empates.
       const posicoesValidas =
         classificacao.every(item =>
-
           idsSelecionados.includes(item.celularId) &&
-
           Number.isInteger(item.posicao) &&
-
           item.posicao >= 1 &&
-
           item.posicao <= this.listaComparacao.length &&
-
           typeof item.justificativa === 'string' &&
-
           item.justificativa.trim().length > 0
         );
-
 
       if (
         !idsUnicos ||
@@ -1474,11 +1347,9 @@ export class Home implements OnInit {
         );
       }
 
-
       this.resultadoFacilito = resultado;
 
     } catch (erro: unknown) {
-
       if (
         versaoSolicitacao !== this.versaoComparacao
       ) {
@@ -1509,7 +1380,6 @@ export class Home implements OnInit {
         'Não consegui concluir a comparação. Tente novamente.';
 
     } finally {
-
       if (
         versaoSolicitacao === this.versaoComparacao
       ) {
@@ -1518,30 +1388,14 @@ export class Home implements OnInit {
     }
   }
 
-
   // --------------------------------------------------
   // SALVAMENTO DAS COMPARAÇÕES
   // --------------------------------------------------
 
   salvarComparacao(): void {
-
     if (!this.quantidadeCelularesValida) {
       alert(
         'Adicione dois ou três celulares antes de salvar.'
-      );
-      return;
-    }
-
-    if (!this.possuiFiltrosSelecionados) {
-      alert(
-        'Selecione pelo menos uma preferência antes de salvar.'
-      );
-      return;
-    }
-
-    if (!this.precosDaComparacaoValidos) {
-      alert(
-        'Informe um preço válido para todos os celulares antes de salvar, pois a preferência Preço baixo foi selecionada.'
       );
       return;
     }
@@ -1565,14 +1419,11 @@ export class Home implements OnInit {
       return;
     }
 
-
     const chave = `salvos_${usuario.id}`;
 
     let salvosAnteriores: any[] = [];
 
-
     try {
-
       const dadosSalvos =
         localStorage.getItem(chave);
 
@@ -1585,7 +1436,6 @@ export class Home implements OnInit {
       }
 
     } catch (erro) {
-
       console.error(
         'Erro ao ler as comparações salvas:',
         erro
@@ -1598,34 +1448,22 @@ export class Home implements OnInit {
       return;
     }
 
-
     const novaComparacao = {
-
       id: Date.now(),
-
       data: new Date().toISOString(),
 
       celulares: structuredClone(
         this.listaComparacao
       ),
 
-      filtros: this.filtros
-        .filter(filtro =>
-          this.filtroAtivo(filtro.key)
-        )
-        .map(filtro => filtro.label),
-
       resultadoFacilito: structuredClone(
         this.resultadoFacilito
       )
     };
 
-
     salvosAnteriores.push(novaComparacao);
 
-
     try {
-
       localStorage.setItem(
         chave,
         JSON.stringify(salvosAnteriores)
@@ -1634,7 +1472,6 @@ export class Home implements OnInit {
       alert('Comparação salva com sucesso!');
 
     } catch (erro) {
-
       console.error(
         'Erro ao salvar a comparação:',
         erro
@@ -1646,7 +1483,6 @@ export class Home implements OnInit {
     }
   }
 
-
   // --------------------------------------------------
   // MODAL E DICIONÁRIO
   // --------------------------------------------------
@@ -1655,9 +1491,7 @@ export class Home implements OnInit {
     this.exibirAvisoModal = false;
   }
 
-
   abrirDicionario(termoKey: string): void {
-
     if (!this.dicionarioTermos[termoKey]) {
       return;
     }
@@ -1674,9 +1508,7 @@ export class Home implements OnInit {
     });
   }
 
-
   fecharDicionario(): void {
     this.termoExibido = null;
   }
-
 }

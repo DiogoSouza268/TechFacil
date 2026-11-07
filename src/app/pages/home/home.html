@@ -37,33 +37,6 @@
       </div>
     </section>
 
-    <!-- FILTROS -->
-    <section class="section-block">
-      <div class="filtros-header">
-        <h3>O que você busca no seu celular?</h3>
-        <p class="sub-instrucao">
-          Toque nas opções para mostrar ao Facilito o que é mais importante para você.
-        </p>
-      </div>
-
-      <div class="grid-filtros">
-        @for (filtro of filtros; track filtro.key) {
-          <button
-            type="button"
-            class="opcoes"
-            [class.ativo]="filtroAtivo(filtro.key)"
-            (click)="toggleFiltro(filtro.key)">
-
-            <span class="btn-icon">
-              <img [src]="filtro.icone" [alt]="filtro.label" class="icone-filtro">
-            </span>
-
-            <span class="btn-text">{{ filtro.label }}</span>
-          </button>
-        }
-      </div>
-    </section>
-
     <!-- BUSCA DE CELULARES -->
     <section class="section-block">
       <div class="search-container">
@@ -266,39 +239,6 @@
               <h2 class="celular-nome">
                 {{ celular.nome }}
               </h2>
-
-              <!-- PREÇO -->
-              <div class="preco-container">
-                <label [for]="'preco-loja-' + i">
-                  Preço encontrado na loja (R$)
-                </label>
-
-                <input
-                  [id]="'preco-loja-' + i"
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  placeholder="Digite o preço"
-                  [ngModel]="celular.precoLoja ?? null"
-                  (ngModelChange)="atualizarPrecoLoja(celular, $event)"
-                  [attr.aria-label]="'Preço de ' + celular.nome">
-
-                @if (celular.precoLoja != null && celular.precoLoja > 0) {
-                  <h3 class="preco-loja">
-                    {{ celular.precoLoja | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
-                  </h3>
-                } @else {
-                  <h3 class="preco-loja">
-                    Valor não informado
-                  </h3>
-                }
-
-                @if (filtroAtivo('precoBaixo') && (!celular.precoLoja || celular.precoLoja <= 0)) {
-                  <small class="aviso-preco-obrigatorio" role="status">
-                    Informe o preço para comparar esta opção.
-                  </small>
-                }
-              </div>
             </div>
 
             <div class="info">
@@ -542,8 +482,9 @@
         <h2>Oi! Eu sou o Facilito!</h2>
 
         <p>
-          Vou analisar os celulares que você escolheu
-          e explicar qual atende melhor às suas preferências.
+          Vou analisar as características dos celulares que você escolheu
+          e explicar qual apresenta o melhor conjunto de informações
+          e características.
         </p>
 
         <button
@@ -567,14 +508,6 @@
           <small class="orientacao-facilito">
             Você pode comparar até três celulares por vez.
           </small>
-        } @else if (!possuiFiltrosSelecionados) {
-          <small class="orientacao-facilito">
-            Escolha pelo menos uma preferência para comparar.
-          </small>
-        } @else if (filtroAtivo('precoBaixo') && !precosDaComparacaoValidos) {
-          <small class="orientacao-facilito">
-            Informe o preço de todos os celulares para comparar os valores.
-          </small>
         }
 
         @if (erroFacilito) {
@@ -592,8 +525,8 @@
             <h3>Seu resultado aparecerá aqui!</h3>
 
             <p>
-              Adicione seus celulares, escolha suas preferências
-              e deixe o Facilito ajudar você.
+              Adicione pelo menos dois celulares e deixe o Facilito
+              analisar as características de cada aparelho.
             </p>
           </div>
         }
