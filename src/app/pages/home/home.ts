@@ -39,6 +39,11 @@ export interface Specs {
   imagem?: string;
 }
 
+interface LinkLojaPesquisa {
+  nome: string;
+  url: string;
+}
+
 export interface Celular {
   id: number;
   nome: string;
@@ -386,6 +391,69 @@ export class Home implements OnInit {
         texto === ausente ||
         texto.startsWith(`${ausente} pela api`)
     );
+  }
+
+  montarLinksLojas(celular: Celular): LinkLojaPesquisa[] {
+    // Obtém as informações do aparelho.
+    const nome = celular.nome?.trim() ?? '';
+    const armazenamento =
+      celular.specs?.armazenamento?.trim() ?? '';
+
+    const ramOriginal =
+      celular.specs?.ram?.trim() ?? '';
+
+    // Evita repetir a palavra RAM caso já esteja presente.
+    const ram = ramOriginal
+      ? /\bram\b/i.test(ramOriginal)
+        ? ramOriginal
+        : `${ramOriginal} RAM`
+      : '';
+
+    // Monta a pesquisa utilizando os dados disponíveis.
+    const termoPesquisa = [
+      nome,
+      armazenamento,
+      ram
+    ]
+      .filter(valor => valor.length > 0)
+      .join(' ')
+      .trim();
+
+    // Não gera links se não houver informações.
+    if (!termoPesquisa) {
+      return [];
+    }
+
+    // Prepara o termo para cada plataforma.
+    const pesquisaCodificada =
+      encodeURIComponent(termoPesquisa);
+
+    const pesquisaSlug = termoPesquisa
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+
+    // Retorna os links das lojas.
+    return [
+      {
+        nome: 'Mercado Livre',
+        url: `https://lista.mercadolivre.com.br/${pesquisaSlug}`
+      },
+      {
+        nome: 'Shopee',
+        url: `https://shopee.com.br/search?keyword=${pesquisaCodificada}`
+      },
+      {
+        nome: 'Amazon',
+        url: `https://www.amazon.com.br/s?k=${pesquisaCodificada}`
+      },
+      {
+        nome: 'Magazine Luiza',
+        url: `https://www.magazineluiza.com.br/busca/${pesquisaCodificada.replace(/%20/g, '+')}/`
+      }
+    ];
   }
 
   /*

@@ -172,8 +172,7 @@ DADOS:
 ${JSON.stringify(celularesParaIA)}
 
 REGRAS:
-- Compare RAM, armazenamento, CPU, GPU, tela, bateria e câmeras.
-- Avalie o conjunto, sem notas ou pesos fixos. Ignore preço e marca.
+- Compare RAM, armazenamento, CPU, GPU, tela, bateria e câmeras , Avalie o conjunto, sem notas ou pesos fixos. Ignore preço e marca.
 - Não invente dados. Informação ausente não significa inferioridade.
 - Dados marcados com "u": true foram corrigidos pelo usuário e são prioritários.
 - CPU/GPU: compare componentes identificáveis usando conhecimento técnico, sem inventar benchmarks.
@@ -181,13 +180,12 @@ REGRAS:
 - Tela: considere painel, resolução e Hz. Nunca presuma dados ausentes.
 - Câmeras: megapixels e quantidade de sensores não comprovam qualidade fotográfica.
 - RAM e armazenamento: compare capacidades sem presumir necessidades.
-- Permita empates quando não houver diferenças comprovadas.
-- Não force vencedores quando os dados forem insuficientes.
+- Permita empates quando não houver diferenças comprovadas e não force vencedores quando os dados forem insuficientes.
 - Inclua todos os celulares uma vez, usando suas referências originais.
 - Utilize posições competitivas: 1, 1, 3 ou 1, 2, 2.
-- Resumo: até 3 linhas.
-- Justificativa do primeiro colocado: até 3 linhas.
-- Justificativa dos demais: até 4 linhas.
+- Resumo: até 4 linhas.
+- Justificativa do primeiro colocado: até 2 linhas.
+- Justificativa dos demais: até 2 linhas.
 - Seja objetivo e evite repetir informações iguais.
 
 Retorne somente JSON válido:
