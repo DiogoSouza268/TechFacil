@@ -22,7 +22,6 @@ const MODELOS_GRATUITOS = new Set([
   'nvidia/nemotron-3-ultra-550b-a55b:free',
   'nvidia/nemotron-3.5-super-vl:free',
   'nvidia/nemotron-3.5-lightning:free',
-  'dots-studio/dots-3-note-preview:free'
 ]);
 
 function textoSeguro(valor, maximo = 300) {
@@ -172,8 +171,7 @@ DADOS:
 ${JSON.stringify(celularesParaIA)}
 
 REGRAS:
-- Compare RAM, armazenamento, CPU, GPU, tela, bateria e câmeras.
-- Avalie o conjunto, sem notas ou pesos fixos. Ignore preço e marca.
+- Compare RAM, armazenamento, CPU, GPU, tela, bateria e câmeras , Avalie o conjunto, sem notas ou pesos fixos. Ignore preço e marca.
 - Não invente dados. Informação ausente não significa inferioridade.
 - Dados marcados com "u": true foram corrigidos pelo usuário e são prioritários.
 - CPU/GPU: compare componentes identificáveis usando conhecimento técnico, sem inventar benchmarks.
@@ -181,13 +179,12 @@ REGRAS:
 - Tela: considere painel, resolução e Hz. Nunca presuma dados ausentes.
 - Câmeras: megapixels e quantidade de sensores não comprovam qualidade fotográfica.
 - RAM e armazenamento: compare capacidades sem presumir necessidades.
-- Permita empates quando não houver diferenças comprovadas.
-- Não force vencedores quando os dados forem insuficientes.
+- Permita empates quando não houver diferenças comprovadas e não force vencedores quando os dados forem insuficientes.
 - Inclua todos os celulares uma vez, usando suas referências originais.
 - Utilize posições competitivas: 1, 1, 3 ou 1, 2, 2.
-- Resumo: até 3 linhas.
-- Justificativa do primeiro colocado: até 3 linhas.
-- Justificativa dos demais: até 4 linhas.
+- Resumo: até 4 linhas.
+- Justificativa do primeiro colocado: até 2 linhas.
+- Justificativa dos demais: até 2 linhas.
 - Seja objetivo e evite repetir informações iguais.
 
 Retorne somente JSON válido:
@@ -237,15 +234,51 @@ export function registrarRotaFacilito(app, { apiKey, modelos }) {
           });
         }
 
-        if (!Array.isArray(modelos) || modelos.length === 0) {
-          return res.status(500).json({
-            error: 'Nenhum modelo gratuito foi configurado para o Facilito.'
-          });
-        }
+  if (!Array.isArray(modelos) || modelos.length === 0) {
+    return res.status(500).json({
+      error: 'Nenhum modelo gratuito foi configurado para o Facilito.'
+    });
+  }
 
-        const possuiModeloNaoPermitido = modelos.some(
-          modelo => !MODELOS_GRATUITOS.has(modelo)
-        );
+  // Normaliza os nomes dos modelos.
+  const modelosNormalizados = modelos.map(modelo =>
+    typeof modelo === 'string'
+      ? modelo.trim()
+      : ''
+  );
+
+  // Rejeita configurações inválidas.
+  if (modelosNormalizados.some(modelo => !modelo)) {
+    return res.status(500).json({
+      error: 'A configuração dos modelos gratuitos é inválida.'
+    });
+  }
+
+  // Verifica se todos pertencem à lista permitida.
+  const possuiModeloNaoPermitido = modelosNormalizados.some(
+    modelo => !MODELOS_GRATUITOS.has(modelo)
+  );
+
+  if (possuiModeloNaoPermitido) {
+    console.error(
+      '[Facilito.AI] A lista contém um modelo não permitido.'
+    );
+
+    return res.status(500).json({
+      error: 'A configuração dos modelos gratuitos é inválida.'
+    });
+  }
+
+  // Remove repetições e preserva a ordem configurada.
+  // O limite do OpenRouter é de três modelos.
+  const modelosParaEnviar = [
+    ...new Set(modelosNormalizados)
+  ].slice(0, 3);
+
+  console.log(
+    '[Facilito.AI] Modelos enviados ao OpenRouter:',
+    modelosParaEnviar
+  );        
 
         if (possuiModeloNaoPermitido) {
           console.error(
@@ -355,7 +388,7 @@ export function registrarRotaFacilito(app, { apiKey, modelos }) {
               'X-Title': 'TechFacil'
             },
             body: JSON.stringify({
-              models: modelos,
+              models: modelosParaEnviar,
               input: prompt
             }),
             signal: AbortSignal.timeout(180000)

@@ -593,6 +593,117 @@ main.main-content {
   box-sizing: border-box;
 }
 
+/* =====================================
+   SEÇÃO DE COMPRAS
+===================================== */
+
+.secao-compras {
+  width: 100%;
+  margin: 24px 0;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #dbe4ec;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+/* Cabeçalho */
+
+.cabecalho-compras {
+  margin-bottom: 18px;
+}
+
+.cabecalho-compras h3 {
+  margin: 0 0 8px;
+  color: #047857;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.cabecalho-compras p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Lista de lojas */
+
+.lista-lojas {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+/* Links */
+
+.link-loja {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  padding: 13px 16px;
+
+  color: #047857;
+  background: #f0fdf4;
+
+  border: 1px solid #a7f3d0;
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.link-loja:hover {
+  background: #d1fae5;
+  border-color: #059669;
+  transform: translateY(-2px);
+}
+
+.link-loja:focus-visible {
+  outline: 2px solid #047857;
+  outline-offset: 3px;
+}
+
+.icone-link {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* Aviso */
+
+.aviso-compras {
+  display: block;
+  margin-top: 14px;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Responsividade */
+
+@media (max-width: 576px) {
+  .secao-compras {
+    padding: 15px;
+  }
+
+  .lista-lojas {
+    grid-template-columns: 1fr;
+  }
+
+  .cabecalho-compras h3 {
+    font-size: 17px;
+  }
+}
+
 /* LADO ESQUERDO: MASCOTE */
 
 .facilito-apresentacao {
@@ -606,6 +717,53 @@ main.main-content {
   background: #ecfdf5;
   border: 1px solid #d1fae5;
   border-radius: 16px;
+}
+
+.facilito-apresentacao .facilito-fala {
+  position: relative;
+  width: min(100%, 320px);
+  margin: 2px 0 0;
+  padding: 12px 16px;
+  color: #065f46;
+  background: #ffffff;
+  border: 1px solid #a7f3d0;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.10);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.45;
+  box-sizing: border-box;
+  animation: entrada-fala-facilito 0.25s ease-out;
+}
+
+.facilito-apresentacao .facilito-fala::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: calc(50% - 7px);
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-top: 1px solid #a7f3d0;
+  border-left: 1px solid #a7f3d0;
+  transform: rotate(45deg);
+}
+
+@keyframes entrada-fala-facilito {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .facilito-apresentacao .facilito-fala {
+    animation: none;
+  }
 }
 
 .facilito-mascote {

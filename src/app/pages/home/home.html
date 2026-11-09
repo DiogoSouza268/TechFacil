@@ -41,6 +41,8 @@
     <section class="section-block">
       <div class="search-container">
 
+        <h2 style="text-align: center; margin: 20px 0px;">Digite o celular abaixo!</h2>
+
         <div class="search-bar">
           <input
             type="text"
@@ -426,6 +428,46 @@
                 }
               </div>
 
+              <!-- Seção de compras do celular atual -->
+              <section class="secao-compras">
+
+                <div class="cabecalho-compras">
+                  <h3>Onde comprar?</h3>
+
+                  <p>
+                    Pesquise ofertas do {{ celular.nome }}
+                    utilizando a versão de
+                    {{ celular.specs.armazenamento }}
+                    e {{ celular.specs.ram }} de RAM.
+                  </p>
+                </div>
+
+                <div class="lista-lojas">
+
+                  <a
+                    *ngFor="let loja of montarLinksLojas(celular)"
+                    [href]="loja.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="link-loja"
+                  >
+                    <span>{{ loja.nome }}</span>
+
+                    <span class="icone-link" aria-hidden="true">
+                      ↗
+                    </span>
+                  </a>
+
+                </div>
+
+                <small class="aviso-compras">
+                  Você será direcionado para a loja.
+                  Os preços e a disponibilidade são definidos
+                  pelas próprias plataformas.
+                </small>
+
+              </section>
+
             </div>
           </article>
         }
@@ -474,10 +516,20 @@
     <section id="melhorOpcao" class="secao-facilito">
 
       <div class="facilito-apresentacao">
+
         <img
-          src="/img/projeto/facilito.svg"
-          alt="Facilito Mascote"
-          class="facilito-mascote">
+          [src]="facilitoCarregando
+            ? '/img/projeto/facilito-animado.svg'
+            : '/img/projeto/facilito.svg'"
+          [alt]="facilitoCarregando ? 'Facilito falando' : 'Facilito Mascote'"
+          class="facilito-mascote"
+        >
+
+        @if (facilitoCarregando) {
+          <p class="facilito-fala" aria-live="polite">
+            {{ mensagemFacilitoAtual }}
+          </p>
+        }
 
         <h2>Oi! Eu sou o Facilito!</h2>
 

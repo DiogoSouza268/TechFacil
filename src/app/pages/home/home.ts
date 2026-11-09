@@ -1,5 +1,5 @@
 
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Menu } from '../../componentes/menu/menu';
 import { FormsModule } from '@angular/forms';
 import {
@@ -37,6 +37,11 @@ export interface Specs {
   qualidadeImagem: string;
   camera: string;
   imagem?: string;
+}
+
+interface LinkLojaPesquisa {
+  nome: string;
+  url: string;
 }
 
 export interface Celular {
@@ -80,7 +85,7 @@ type CampoEspecificacao = EspecificacaoFacilito;
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home implements OnInit {
+export class Home implements OnInit, OnDestroy{
 
   authService = inject(Auth);
 
@@ -101,6 +106,18 @@ export class Home implements OnInit {
 
   facilitoCarregando = false;
   erroFacilito = '';
+  mensagemFacilitoAtual = '';
+  private intervaloMensagensFacilito: ReturnType<typeof setInterval> | null = null;
+  private indiceMensagemFacilito = 0;
+
+  private readonly mensagensFacilito: string[] = [
+    'Gostei das suas escolhas! 😊',
+    'Você é nota 10 por pesquisar antes de escolher!',
+    'Vamos analisar cada detalhe juntos!',
+    'Estou comparando os aparelhos com atenção!',
+    'Cada detalhe conta para fazer uma boa escolha!',
+    'Já estou organizando as informações para você!'
+  ];
 
   // Impede que uma resposta antiga substitua uma comparação atualizada.
   private versaoComparacao = 0;
@@ -243,12 +260,44 @@ export class Home implements OnInit {
   // CONTROLE DO RESULTADO
   // --------------------------------------------------
 
-  invalidarResultadoFacilito(): void {
-    this.versaoComparacao++;
 
+  
+  invalidarResultadoFacilito(): void {
+    this.pararMensagensFacilito();
+    this.versaoComparacao++;
     this.resultadoFacilito = null;
     this.erroFacilito = '';
     this.facilitoCarregando = false;
+  }
+
+  private iniciarMensagensFacilito(): void {
+    this.pararMensagensFacilito();
+
+    this.indiceMensagemFacilito = 0;
+    this.mensagemFacilitoAtual = this.mensagensFacilito[0];
+
+    this.intervaloMensagensFacilito = setInterval(() => {
+      this.indiceMensagemFacilito =
+        (this.indiceMensagemFacilito + 1) % this.mensagensFacilito.length;
+
+      this.mensagemFacilitoAtual =
+        this.mensagensFacilito[this.indiceMensagemFacilito];
+    }, 3000);
+  }
+
+  private pararMensagensFacilito(): void {
+    if (this.intervaloMensagensFacilito !== null) {
+      clearInterval(this.intervaloMensagensFacilito);
+      this.intervaloMensagensFacilito = null;
+    }
+
+    this.mensagemFacilitoAtual = '';
+    this.indiceMensagemFacilito = 0;
+  }
+
+  ngOnDestroy(): void {
+    this.versaoComparacao++;
+    this.pararMensagensFacilito();
   }
 
   ngOnInit(): void {
@@ -386,6 +435,69 @@ export class Home implements OnInit {
         texto === ausente ||
         texto.startsWith(`${ausente} pela api`)
     );
+  }
+
+  montarLinksLojas(celular: Celular): LinkLojaPesquisa[] {
+    // Obtém as informações do aparelho.
+    const nome = celular.nome?.trim() ?? '';
+    const armazenamento =
+      celular.specs?.armazenamento?.trim() ?? '';
+
+    const ramOriginal =
+      celular.specs?.ram?.trim() ?? '';
+
+    // Evita repetir a palavra RAM caso já esteja presente.
+    const ram = ramOriginal
+      ? /\bram\b/i.test(ramOriginal)
+        ? ramOriginal
+        : `${ramOriginal} RAM`
+      : '';
+
+    // Monta a pesquisa utilizando os dados disponíveis.
+    const termoPesquisa = [
+      nome,
+      armazenamento,
+      ram
+    ]
+      .filter(valor => valor.length > 0)
+      .join(' ')
+      .trim();
+
+    // Não gera links se não houver informações.
+    if (!termoPesquisa) {
+      return [];
+    }
+
+    // Prepara o termo para cada plataforma.
+    const pesquisaCodificada =
+      encodeURIComponent(termoPesquisa);
+
+    const pesquisaSlug = termoPesquisa
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+
+    // Retorna os links das lojas.
+    return [
+      {
+        nome: 'Mercado Livre',
+        url: `https://lista.mercadolivre.com.br/${pesquisaSlug}`
+      },
+      {
+        nome: 'Shopee',
+        url: `https://shopee.com.br/search?keyword=${pesquisaCodificada}`
+      },
+      {
+        nome: 'Amazon',
+        url: `https://www.amazon.com.br/s?k=${pesquisaCodificada}`
+      },
+      {
+        nome: 'Magazine Luiza',
+        url: `https://www.magazineluiza.com.br/busca/${pesquisaCodificada.replace(/%20/g, '+')}/`
+      }
+    ];
   }
 
   /*
@@ -1265,6 +1377,8 @@ export class Home implements OnInit {
 
     this.facilitoCarregando = true;
     this.erroFacilito = '';
+    this.iniciarMensagensFacilito();
+
 
     const pedido = this.montarPedidoFacilito();
 
@@ -1380,10 +1494,9 @@ export class Home implements OnInit {
         'Não consegui concluir a comparação. Tente novamente.';
 
     } finally {
-      if (
-        versaoSolicitacao === this.versaoComparacao
-      ) {
+      if (versaoSolicitacao === this.versaoComparacao) {
         this.facilitoCarregando = false;
+        this.pararMensagensFacilito();
       }
     }
   }
