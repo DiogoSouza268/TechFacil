@@ -1,5 +1,5 @@
 
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Menu } from '../../componentes/menu/menu';
 import { FormsModule } from '@angular/forms';
 import {
@@ -85,7 +85,7 @@ type CampoEspecificacao = EspecificacaoFacilito;
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home implements OnInit {
+export class Home implements OnInit, OnDestroy{
 
   authService = inject(Auth);
 
@@ -106,6 +106,18 @@ export class Home implements OnInit {
 
   facilitoCarregando = false;
   erroFacilito = '';
+  mensagemFacilitoAtual = '';
+  private intervaloMensagensFacilito: ReturnType<typeof setInterval> | null = null;
+  private indiceMensagemFacilito = 0;
+
+  private readonly mensagensFacilito: string[] = [
+    'Gostei das suas escolhas! 😊',
+    'Você é nota 10 por pesquisar antes de escolher!',
+    'Vamos analisar cada detalhe juntos!',
+    'Estou comparando os aparelhos com atenção!',
+    'Cada detalhe conta para fazer uma boa escolha!',
+    'Já estou organizando as informações para você!'
+  ];
 
   // Impede que uma resposta antiga substitua uma comparação atualizada.
   private versaoComparacao = 0;
@@ -248,12 +260,44 @@ export class Home implements OnInit {
   // CONTROLE DO RESULTADO
   // --------------------------------------------------
 
-  invalidarResultadoFacilito(): void {
-    this.versaoComparacao++;
 
+  
+  invalidarResultadoFacilito(): void {
+    this.pararMensagensFacilito();
+    this.versaoComparacao++;
     this.resultadoFacilito = null;
     this.erroFacilito = '';
     this.facilitoCarregando = false;
+  }
+
+  private iniciarMensagensFacilito(): void {
+    this.pararMensagensFacilito();
+
+    this.indiceMensagemFacilito = 0;
+    this.mensagemFacilitoAtual = this.mensagensFacilito[0];
+
+    this.intervaloMensagensFacilito = setInterval(() => {
+      this.indiceMensagemFacilito =
+        (this.indiceMensagemFacilito + 1) % this.mensagensFacilito.length;
+
+      this.mensagemFacilitoAtual =
+        this.mensagensFacilito[this.indiceMensagemFacilito];
+    }, 3000);
+  }
+
+  private pararMensagensFacilito(): void {
+    if (this.intervaloMensagensFacilito !== null) {
+      clearInterval(this.intervaloMensagensFacilito);
+      this.intervaloMensagensFacilito = null;
+    }
+
+    this.mensagemFacilitoAtual = '';
+    this.indiceMensagemFacilito = 0;
+  }
+
+  ngOnDestroy(): void {
+    this.versaoComparacao++;
+    this.pararMensagensFacilito();
   }
 
   ngOnInit(): void {
@@ -1333,6 +1377,8 @@ export class Home implements OnInit {
 
     this.facilitoCarregando = true;
     this.erroFacilito = '';
+    this.iniciarMensagensFacilito();
+
 
     const pedido = this.montarPedidoFacilito();
 
@@ -1448,10 +1494,9 @@ export class Home implements OnInit {
         'Não consegui concluir a comparação. Tente novamente.';
 
     } finally {
-      if (
-        versaoSolicitacao === this.versaoComparacao
-      ) {
+      if (versaoSolicitacao === this.versaoComparacao) {
         this.facilitoCarregando = false;
+        this.pararMensagensFacilito();
       }
     }
   }

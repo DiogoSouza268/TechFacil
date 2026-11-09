@@ -516,10 +516,20 @@
     <section id="melhorOpcao" class="secao-facilito">
 
       <div class="facilito-apresentacao">
+
         <img
-          src="/img/projeto/facilito.svg"
-          alt="Facilito Mascote"
-          class="facilito-mascote">
+          [src]="facilitoCarregando
+            ? '/img/projeto/facilito-animado.svg'
+            : '/img/projeto/facilito.svg'"
+          [alt]="facilitoCarregando ? 'Facilito falando' : 'Facilito Mascote'"
+          class="facilito-mascote"
+        >
+
+        @if (facilitoCarregando) {
+          <p class="facilito-fala" aria-live="polite">
+            {{ mensagemFacilitoAtual }}
+          </p>
+        }
 
         <h2>Oi! Eu sou o Facilito!</h2>
 
