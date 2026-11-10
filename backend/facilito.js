@@ -165,30 +165,28 @@ function respostaInconclusiva(resumo, observacoes = []) {
 
 function criarPrompt(celularesParaIA) {
   return `
-Você é o Facilito do TechFácil. Compare os celulares e responda em português brasileiro, com linguagem simples.
+Você é o Facilito do TechFácil. Compare os celulares em português brasileiro, usando linguagem simples.
 
 DADOS:
 ${JSON.stringify(celularesParaIA)}
 
 REGRAS:
-- Compare RAM, armazenamento, CPU, GPU, tela, bateria e câmeras , Avalie o conjunto, sem notas ou pesos fixos. Ignore preço e marca.
-- Não invente dados. Informação ausente não significa inferioridade.
-- Dados marcados com "u": true foram corrigidos pelo usuário e são prioritários.
-- CPU/GPU: compare componentes identificáveis usando conhecimento técnico, sem inventar benchmarks.
-- Bateria: compare mAh, sem presumir autonomia.
-- Tela: considere painel, resolução e Hz. Nunca presuma dados ausentes.
+- Compare RAM, armazenamento, CPU, GPU, tela, bateria e câmeras. Avalie o conjunto, sem notas ou pesos fixos. Ignore preço e marca.
+- Não invente, deduza ou complete informações ausentes. Dados incompletos não significam inferioridade.
+- "u": true indica informação corrigida pelo usuário e deve prevalecer.
+- CPU/GPU: use conhecimento técnico apenas para componentes identificáveis. Não invente benchmarks.
+- Bateria: compare capacidade em mAh, sem presumir autonomia.
+- Tela: considere painel, resolução e Hz, sem presumir dados ausentes.
 - Câmeras: megapixels e quantidade de sensores não comprovam qualidade fotográfica.
-- RAM e armazenamento: compare capacidades sem presumir necessidades.
-- Permita empates quando não houver diferenças comprovadas e não force vencedores quando os dados forem insuficientes.
-- Inclua todos os celulares uma vez, usando suas referências originais.
-- Utilize posições competitivas: 1, 1, 3 ou 1, 2, 2.
-- Resumo: até 4 linhas.
-- Justificativa do primeiro colocado: até 2 linhas.
-- Justificativa dos demais: até 2 linhas.
-- Seja objetivo e evite repetir informações iguais.
+- Se houver informações suficientes, classifique os aparelhos. Se não houver evidências suficientes para uma comparação justa, retorne inconclusiva.
+- Permita empates e utilize posições competitivas.
+- Inclua cada referência exatamente uma vez nas classificações concluídas.
+- Resumo: até 3 linhas. Justificativas: até 2 linhas cada.
+- Seja objetivo e não repita informações.
 
-Retorne somente JSON válido:
+Retorne somente JSON válido, sem Markdown.
 
+Formato concluído:
 {
   "status": "concluida",
   "resumo": "Resumo da comparação.",
@@ -202,7 +200,7 @@ Retorne somente JSON válido:
   "observacoes": []
 }
 
-Se insuficientes os dados:
+Formato inconclusivo:
 {
   "status": "inconclusiva",
   "resumo": "Informações insuficientes.",

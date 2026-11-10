@@ -10,15 +10,12 @@ import { CommonModule } from '@angular/common';
 import { AlterarInfoComponent } from '../../componentes/alterar-info/alterar-info';
 import { AvisoLogin } from '../../componentes/aviso-login/aviso-login';
 import { Auth } from '../../services/auth';
-
 import {
   CelularesApiService,
   DispositivoApi,
   DispositivoDetalhado
 } from '../../services/celulares-api.service';
-
 import { firstValueFrom } from 'rxjs';
-
 import {
   FacilitoService,
   type PedidoFacilito,
@@ -51,7 +48,6 @@ export interface Celular {
   origem?: 'local' | 'api';
   imagem: string;
   specs: Specs;
-
   qualidadeImagemParcial?: boolean;
   qualidadeImagemSemDados?: boolean;
   processadorParcial?: boolean;
@@ -60,9 +56,7 @@ export interface Celular {
   gpuSemDados?: boolean;
   cameraParcial?: boolean;
   cameraSemDados?: boolean;
-
   informacoesIncompletas?: string[];
-
   origemEspecificacoes?: Record<
     CampoEspecificacao,
     OrigemEspecificacaoFacilito
@@ -85,8 +79,7 @@ type CampoEspecificacao = EspecificacaoFacilito;
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home implements OnInit, OnDestroy{
-
+export class Home implements OnInit, OnDestroy {
   authService = inject(Auth);
 
   private celularesApi = inject(CelularesApiService);
@@ -107,6 +100,7 @@ export class Home implements OnInit, OnDestroy{
   facilitoCarregando = false;
   erroFacilito = '';
   mensagemFacilitoAtual = '';
+
   private intervaloMensagensFacilito: ReturnType<typeof setInterval> | null = null;
   private indiceMensagemFacilito = 0;
 
@@ -121,6 +115,10 @@ export class Home implements OnInit, OnDestroy{
 
   // Impede que uma resposta antiga substitua uma comparação atualizada.
   private versaoComparacao = 0;
+
+  // Guarda a última combinação de celulares que recebeu uma resposta válida.
+  // Alterações nas especificações não liberam uma nova análise.
+  private assinaturaUltimaComparacao: string | null = null;
 
   // Controle da busca externa.
   resultadosApi: DispositivoApi[] = [];
@@ -226,11 +224,27 @@ export class Home implements OnInit, OnDestroy{
     );
   }
 
+  get comparacaoJaAnalisada(): boolean {
+    return (
+      this.assinaturaUltimaComparacao !== null &&
+      this.assinaturaUltimaComparacao === this.obterAssinaturaComparacao()
+    );
+  }
+
   get podeSolicitarComparacaoFacilito(): boolean {
     return (
       !this.facilitoCarregando &&
-      this.quantidadeCelularesValida
+      this.quantidadeCelularesValida &&
+      !this.comparacaoJaAnalisada
     );
+  }
+
+  // A ordem não importa: a comparação é identificada pelo conjunto de IDs.
+  private obterAssinaturaComparacao(): string {
+    return this.listaComparacao
+      .map(celular => celular.id)
+      .sort((a, b) => a - b)
+      .join('|');
   }
 
   /*
@@ -260,8 +274,6 @@ export class Home implements OnInit, OnDestroy{
   // CONTROLE DO RESULTADO
   // --------------------------------------------------
 
-
-  
   invalidarResultadoFacilito(): void {
     this.pararMensagensFacilito();
     this.versaoComparacao++;
@@ -440,6 +452,7 @@ export class Home implements OnInit, OnDestroy{
   montarLinksLojas(celular: Celular): LinkLojaPesquisa[] {
     // Obtém as informações do aparelho.
     const nome = celular.nome?.trim() ?? '';
+
     const armazenamento =
       celular.specs?.armazenamento?.trim() ?? '';
 
@@ -859,6 +872,7 @@ export class Home implements OnInit, OnDestroy{
     d: DispositivoDetalhado
   ): Celular {
     const capacidadeRam = this.obterRamGb(d);
+
     const capacidadeArmazenamento =
       this.obterArmazenamentoGb(d);
 
@@ -1370,6 +1384,14 @@ export class Home implements OnInit, OnDestroy{
       return;
     }
 
+    const assinaturaSolicitacao = this.obterAssinaturaComparacao();
+
+    if (assinaturaSolicitacao === this.assinaturaUltimaComparacao) {
+      this.erroFacilito =
+        'Você já analisou esses aparelhos. Adicione ou remova um celular para fazer uma nova comparação.';
+      return;
+    }
+
     this.invalidarResultadoFacilito();
 
     const versaoSolicitacao =
@@ -1378,7 +1400,6 @@ export class Home implements OnInit, OnDestroy{
     this.facilitoCarregando = true;
     this.erroFacilito = '';
     this.iniciarMensagensFacilito();
-
 
     const pedido = this.montarPedidoFacilito();
 
@@ -1406,8 +1427,10 @@ export class Home implements OnInit, OnDestroy{
         );
       }
 
-      // Resultado inconclusivo não pode ser salvo.
+      // Mesmo uma resposta inconclusiva conta como análise realizada.
+      // Para tentar novamente, será necessário alterar os celulares escolhidos.
       if (resultado.status === 'inconclusiva') {
+        this.assinaturaUltimaComparacao = assinaturaSolicitacao;
         this.resultadoFacilito = resultado;
         return;
       }
@@ -1462,6 +1485,7 @@ export class Home implements OnInit, OnDestroy{
       }
 
       this.resultadoFacilito = resultado;
+      this.assinaturaUltimaComparacao = assinaturaSolicitacao;
 
     } catch (erro: unknown) {
       if (
