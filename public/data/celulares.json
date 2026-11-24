@@ -1,21 +1,25 @@
 [
   {
     "id": 1,
-    "nome": "Motorola G06",
-    "imagem": "https://brmotorolanew.vtexassets.com/arquivos/ids/177261-1200-auto?v=639032390535600000&width=1200&height=auto&aspect=true",
+    "nome": "Samsung Galaxy S26 Ultra",
+    "imagem": "https://images.samsung.com/is/image/samsung/p6pim/br/s2602/gallery/br-galaxy-s26-ultra-s948-sm-s948bzvkzto-thumb-550817601?$216_216_PNG$",
     "specs": {
-      "armazenamento": "64GB",
-      "ram": "4GB",
-      "bateria": "5200 mAh",
-      "processador": "Helio G81 Extreme MediaTek",
-      "gpu": "Mali-G52 MP2",
+      "armazenamento": "256GB",
+      "ram": "12GB",
+      "bateria": "5000 mAh | 60W Carregando",
+      "processador": "Snapdragon 8 Elite Gen 5 (3 nm)",
+      "gpu": "Adreno 840 (1.3GHz)",
       "qualidadeImagem": "6.88 pol IPS LCD (HD+ / 90Hz)",
       "camera": "50 MP + 2 MP"
     },
     "versoes": [
       {
-        "armazenamento": "128GB",
-        "ram": "6GB"
+        "armazenamento": "512GB",
+        "ram": "12GB"
+      },
+      {
+        "armazenamento": "1000GB",
+        "ram": "16GB"
       }
     ]
   }
