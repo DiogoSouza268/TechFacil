@@ -432,6 +432,138 @@ main.main-content {
   padding: 2px 8px;
 }
 
+
+/* SELETORES DE ARMAZENAMENTO E RAM */
+
+.seletor-especificacao {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  width: 100%;
+  padding: 8px 0;
+  box-sizing: border-box;
+}
+
+.cabecalho-seletor-especificacao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cabecalho-seletor-especificacao label {
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.botao-info-especificacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 23px;
+  height: 23px;
+  flex-shrink: 0;
+
+  background-color: #e0f2fe;
+  color: #0284c7;
+
+  border: none;
+  border-radius: 50%;
+
+  font-size: 0.8rem;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.botao-info-especificacao:hover {
+  background-color: #bae6fd;
+}
+
+.select-especificacao {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 12px;
+
+  background-color: #ffffff;
+  color: #1e293b;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.88rem;
+
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.select-especificacao:hover {
+  border-color: #059669;
+}
+
+.select-especificacao:focus-visible {
+  outline: 2px solid #00875a;
+  outline-offset: 2px;
+}
+
+
+
+/* SELETOR DE VERSÕES DO CELULAR */
+
+.seletor-versao {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 0;
+  box-sizing: border-box;
+}
+
+.seletor-versao label {
+  color: #334155;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.seletor-versao select {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+
+  background-color: #ffffff;
+  color: #1e293b;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.88rem;
+
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.seletor-versao select:hover {
+  border-color: #059669;
+}
+
+.seletor-versao select:focus-visible {
+  outline: 2px solid #00875a;
+  outline-offset: 2px;
+}
+
+.seletor-versao small {
+  color: #64748b;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+
 .btn-card-salvar {
   width: 100%;
   padding: 10px;

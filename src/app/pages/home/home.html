@@ -244,19 +244,70 @@
             </div>
 
             <div class="info">
-
+              
               <!-- ARMAZENAMENTO -->
               <div class="todas-infos">
-                @if (!celular.specs.armazenamento.trim() || celular.specs.armazenamento === 'Não informado pela API') {
+
+                @if (
+                  !celular.specs.armazenamento.trim() ||
+                  celular.specs.armazenamento === 'Não informado pela API'
+                ) {
+
                   <div class="qualidade-imagem-status">
+
                     <strong>Armazenamento</strong>
 
                     <span class="qualidade-imagem-aviso" role="status">
                       <span class="icone-info" aria-hidden="true">ⓘ</span>
                       Informação incompleta
                     </span>
+
                   </div>
+
+                } @else if (celular.versoes?.length) {
+
+                  <div class="seletor-especificacao">
+
+                    <div class="cabecalho-seletor-especificacao">
+
+                      <label [for]="'armazenamento-' + celular.id">
+                        Armazenamento
+                      </label>
+
+                      <button
+                        type="button"
+                        class="botao-info-especificacao"
+                        aria-label="Entenda o armazenamento"
+                        (click)="abrirDicionario('armazenamento')">
+                        ℹ️
+                      </button>
+
+                    </div>
+
+                    <select
+                      class="select-especificacao"
+                      [id]="'armazenamento-' + celular.id"
+                      [ngModel]="celular.specs.armazenamento"
+                      (ngModelChange)="selecionarArmazenamento(celular, $event)"
+                      [ngModelOptions]="{ standalone: true }">
+
+                      @for (
+                        opcao of opcoesArmazenamento(celular);
+                        track opcao
+                      ) {
+
+                        <option [value]="opcao">
+                          {{ opcao }}
+                        </option>
+
+                      }
+
+                    </select>
+
+                  </div>
+
                 } @else {
+
                   <app-alterar-info
                     label="Armazenamento"
                     [valor]="celular.specs.armazenamento"
@@ -265,21 +316,75 @@
                     (valorChange)="atualizarSpec(celular, 'armazenamento', $event)"
                     (infoClick)="abrirDicionario('armazenamento')">
                   </app-alterar-info>
+
                 }
+
               </div>
+
 
               <!-- MEMÓRIA RAM -->
               <div class="todas-infos">
-                @if (!celular.specs.ram.trim() || celular.specs.ram === 'Não informado pela API') {
+
+                @if (
+                  !celular.specs.ram.trim() ||
+                  celular.specs.ram === 'Não informado pela API'
+                ) {
+
                   <div class="qualidade-imagem-status">
+
                     <strong>Memória RAM</strong>
 
                     <span class="qualidade-imagem-aviso" role="status">
                       <span class="icone-info" aria-hidden="true">ⓘ</span>
                       Informação incompleta
                     </span>
+
                   </div>
+
+                } @else if (celular.versoes?.length) {
+
+                  <div class="seletor-especificacao">
+
+                    <div class="cabecalho-seletor-especificacao">
+
+                      <label [for]="'ram-' + celular.id">
+                        Memória RAM
+                      </label>
+
+                      <button
+                        type="button"
+                        class="botao-info-especificacao"
+                        aria-label="Entenda a memória RAM"
+                        (click)="abrirDicionario('ram')">
+                        ℹ️
+                      </button>
+
+                    </div>
+
+                    <select
+                      class="select-especificacao"
+                      [id]="'ram-' + celular.id"
+                      [ngModel]="celular.specs.ram"
+                      (ngModelChange)="selecionarRam(celular, $event)"
+                      [ngModelOptions]="{ standalone: true }">
+
+                      @for (
+                        opcao of opcoesRam(celular);
+                        track opcao
+                      ) {
+
+                        <option [value]="opcao">
+                          {{ opcao }}
+                        </option>
+
+                      }
+
+                    </select>
+
+                  </div>
+
                 } @else {
+
                   <app-alterar-info
                     label="Memória RAM"
                     [valor]="celular.specs.ram"
@@ -288,8 +393,12 @@
                     (valorChange)="atualizarSpec(celular, 'ram', $event)"
                     (infoClick)="abrirDicionario('ram')">
                   </app-alterar-info>
+
                 }
+
               </div>
+
+
 
               <!-- GPU -->
               <div class="todas-infos">

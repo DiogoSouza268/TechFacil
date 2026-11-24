@@ -41,9 +41,15 @@ interface LinkLojaPesquisa {
   url: string;
 }
 
+export interface VersaoCelular {
+  armazenamento: string;
+  ram: string;
+}
+
 export interface Celular {
   id: number;
   nome: string;
+  versoes?: VersaoCelular[];
   precoLoja?: number | null;
   origem?: 'local' | 'api';
   imagem: string;
@@ -213,6 +219,205 @@ export class Home implements OnInit, OnDestroy {
     }
   ];
 
+  versaoSelecionada(celular: Celular): VersaoCelular | null {
+
+    return celular.versoes?.find(versao =>
+      versao.armazenamento === celular.specs.armazenamento &&
+      versao.ram === celular.specs.ram
+    ) ?? null;
+
+  }
+
+
+
+  selecionarVersao(
+    celular: Celular,
+    versao: VersaoCelular | null
+  ): void {
+
+    if (!versao) {
+      return;
+    }
+
+    const versaoValida = celular.versoes?.some(item =>
+      item.armazenamento === versao.armazenamento &&
+      item.ram === versao.ram
+    );
+
+    if (!versaoValida) {
+      return;
+    }
+
+    this.atualizarSpec(
+      celular,
+      'armazenamento',
+      versao.armazenamento
+    );
+
+    this.atualizarSpec(
+      celular,
+      'ram',
+      versao.ram
+    );
+
+  }
+
+  // Opções disponíveis de armazenamento
+    opcoesArmazenamento(celular: Celular): string[] {
+
+      return [...new Set(
+        (celular.versoes ?? []).map(
+          versao => versao.armazenamento
+        )
+      )];
+
+    }
+
+
+    // Opções disponíveis de RAM
+    opcoesRam(celular: Celular): string[] {
+
+      return [...new Set(
+        (celular.versoes ?? []).map(
+          versao => versao.ram
+        )
+      )];
+
+    }
+
+
+    // Seleciona uma configuração e atualiza os dois campos
+    private aplicarVersaoCelular(
+      celular: Celular,
+      versao: VersaoCelular
+    ): void {
+
+      if (
+        celular.specs.armazenamento !== versao.armazenamento
+      ) {
+
+        this.atualizarSpec(
+          celular,
+          'armazenamento',
+          versao.armazenamento
+        );
+
+      }
+
+      if (celular.specs.ram !== versao.ram) {
+
+        this.atualizarSpec(
+          celular,
+          'ram',
+          versao.ram
+        );
+
+      }
+
+    }
+
+
+    // Quando o usuário altera o armazenamento
+    selecionarArmazenamento(
+      celular: Celular,
+      armazenamento: string
+    ): void {
+
+      const versoes = celular.versoes ?? [];
+
+      const versao =
+
+        // Primeiro tenta manter a RAM atual
+        versoes.find(item =>
+          item.armazenamento === armazenamento &&
+          item.ram === celular.specs.ram
+        )
+
+        // Se não existir, procura outra combinação válida
+        ?? versoes.find(item =>
+          item.armazenamento === armazenamento
+        );
+
+      if (!versao) {
+        return;
+      }
+
+      this.aplicarVersaoCelular(celular, versao);
+
+    }
+
+
+    // Quando o usuário altera a RAM
+    selecionarRam(
+      celular: Celular,
+      ram: string
+    ): void {
+
+      const versoes = celular.versoes ?? [];
+
+      const versao =
+
+        // Primeiro tenta manter o armazenamento atual
+        versoes.find(item =>
+          item.ram === ram &&
+          item.armazenamento === celular.specs.armazenamento
+        )
+
+        // Se não existir, procura outra combinação válida
+        ?? versoes.find(item =>
+          item.ram === ram
+        );
+
+      if (!versao) {
+        return;
+      }
+
+      this.aplicarVersaoCelular(celular, versao);
+
+    }
+
+    private incluirVersaoInicial(celular: Celular): VersaoCelular[] {
+
+      // Copia as versões cadastradas no JSON.
+      const versoes = (celular.versoes ?? []).map(versao => ({
+        armazenamento: versao.armazenamento.trim(),
+        ram: versao.ram.trim()
+      }));
+
+      // Obtém a configuração inicial de specs.
+      const armazenamento = celular.specs?.armazenamento?.trim() ?? '';
+      const ram = celular.specs?.ram?.trim() ?? '';
+
+      // Não adiciona configurações incompletas.
+      if (
+        !armazenamento ||
+        !ram ||
+        armazenamento === 'Não informado pela API' ||
+        ram === 'Não informado pela API'
+      ) {
+        return versoes;
+      }
+
+      // Verifica se a configuração inicial já está cadastrada.
+      const jaExiste = versoes.some(versao =>
+        versao.armazenamento === armazenamento &&
+        versao.ram === ram
+      );
+
+      // Adiciona a configuração inicial somente se estiver faltando.
+      if (!jaExiste) {
+
+        versoes.unshift({
+          armazenamento,
+          ram
+        });
+
+      }
+
+      return versoes;
+
+  }
+
   // --------------------------------------------------
   // VALIDAÇÕES DA COMPARAÇÃO
   // --------------------------------------------------
@@ -355,6 +560,9 @@ export class Home implements OnInit, OnDestroy {
       precoLoja: this.normalizarPreco(
         celular.precoLoja
       ),
+
+      versoes: this.incluirVersaoInicial(celular),
+
 
       specs: {
         armazenamento: celular.specs?.armazenamento ?? '',
