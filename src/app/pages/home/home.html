@@ -398,7 +398,87 @@
 
               </div>
 
+              <!-- PROCESSADOR -->
+              <div class="todas-infos">
 
+                @if (celular.detalhesTecnicos?.processador?.length) {
+
+                  <section class="grupo-detalhes-tecnicos">
+
+                    <div class="cabecalho-detalhes-tecnicos">
+
+                      <strong>Processador</strong>
+
+                      <button
+                        type="button"
+                        class="botao-info-especificacao"
+                        aria-label="Entenda o processador"
+                        (click)="abrirDicionario('processador')">
+                        ℹ️
+                      </button>
+
+                    </div>
+
+                    <div class="lista-detalhes-tecnicos">
+
+                      @for (
+                        detalhe of celular.detalhesTecnicos.processador;
+                        track detalhe.rotulo
+                      ) {
+
+                        <div class="linha-detalhe-tecnico">
+
+                          <span>{{ detalhe.rotulo }}</span>
+
+                          <strong>{{ detalhe.valor }}</strong>
+
+                        </div>
+
+                      }
+
+                    </div>
+
+                  </section>
+
+                } @else if (celular.processadorSemDados) {
+
+                  <div class="qualidade-imagem-status">
+
+                    <strong>Processador</strong>
+
+                    <span class="qualidade-imagem-aviso" role="status">
+                      <span class="icone-info" aria-hidden="true">ⓘ</span>
+                      Dados insuficientes
+                    </span>
+
+                  </div>
+
+                } @else if (celular.processadorParcial) {
+
+                  <div class="qualidade-imagem-status">
+
+                    <strong>Processador</strong>
+
+                    <span class="qualidade-imagem-aviso" role="status">
+                      <span class="icone-info" aria-hidden="true">ⓘ</span>
+                      Informação incompleta
+                    </span>
+
+                  </div>
+
+                } @else {
+
+                  <app-alterar-info
+                    label="Processador"
+                    [valor]="celular.specs.processador"
+                    [editavel]="false"
+                    tipoInput="texto"
+                    (infoClick)="abrirDicionario('processador')">
+                  </app-alterar-info>
+
+                }
+
+              </div>
 
               <!-- GPU -->
               <div class="todas-infos">
@@ -431,49 +511,67 @@
                 }
               </div>
 
-              <!-- QUALIDADE DE IMAGEM -->
-              <div class="todas-infos">
-                @if (celular.qualidadeImagemSemDados) {
-                  <div class="qualidade-imagem-status">
-                    <strong>Qualidade de imagem</strong>
-
-                    <span class="qualidade-imagem-aviso" role="status">
-                      <span class="icone-info" aria-hidden="true">ⓘ</span>
-                      Dados insuficientes
-                    </span>
-                  </div>
-                } @else if (celular.qualidadeImagemParcial) {
-                  <div class="qualidade-imagem-status">
-                    <strong>Qualidade de imagem</strong>
-
-                    <span class="qualidade-imagem-aviso" role="status">
-                      <span class="icone-info" aria-hidden="true">ⓘ</span>
-                      Informação incompleta
-                    </span>
-                  </div>
-                } @else {
-                  <app-alterar-info
-                    label="Qualidade de imagem"
-                    [valor]="celular.specs.qualidadeImagem"
-                    [editavel]="false"
-                    tipoInput="texto"
-                    (infoClick)="abrirDicionario('qualidadeImagem')">
-                  </app-alterar-info>
-                }
-              </div>
 
               <!-- BATERIA -->
               <div class="todas-infos">
-                @if (!celular.specs.bateria.trim() || celular.specs.bateria === 'Não informado pela API') {
+
+                @if (celular.detalhesTecnicos?.bateria?.length) {
+
+                  <section class="grupo-detalhes-tecnicos">
+
+                    <div class="cabecalho-detalhes-tecnicos">
+
+                      <strong>Bateria</strong>
+
+                      <button
+                        type="button"
+                        class="botao-info-especificacao"
+                        aria-label="Entenda a bateria"
+                        (click)="abrirDicionario('bateria')">
+                        ℹ️
+                      </button>
+
+                    </div>
+
+                    <div class="lista-detalhes-tecnicos">
+
+                      @for (
+                        detalhe of celular.detalhesTecnicos?.bateria ?? [];
+                        track detalhe.rotulo
+                      ) {
+
+                        <div class="linha-detalhe-tecnico">
+
+                          <span>{{ detalhe.rotulo }}</span>
+
+                          <strong>{{ detalhe.valor }}</strong>
+
+                        </div>
+
+                      }
+
+                    </div>
+
+                  </section>
+
+                } @else if (
+                  !celular.specs.bateria.trim() ||
+                  celular.specs.bateria === 'Não informado pela API'
+                ) {
+
                   <div class="qualidade-imagem-status">
+
                     <strong>Bateria</strong>
 
                     <span class="qualidade-imagem-aviso" role="status">
                       <span class="icone-info" aria-hidden="true">ⓘ</span>
                       Informação incompleta
                     </span>
+
                   </div>
+
                 } @else {
+
                   <app-alterar-info
                     label="Bateria"
                     [valor]="celular.specs.bateria"
@@ -481,52 +579,169 @@
                     tipoInput="texto"
                     (infoClick)="abrirDicionario('bateria')">
                   </app-alterar-info>
+
                 }
+
               </div>
 
-              <!-- PROCESSADOR -->
+
+              <!-- QUALIDADE DE IMAGEM -->
               <div class="todas-infos">
-                @if (celular.processadorSemDados) {
+
+                @if (celular.detalhesTecnicos?.qualidadeImagem?.length) {
+
+                  <section class="grupo-detalhes-tecnicos">
+
+                    <div class="cabecalho-detalhes-tecnicos">
+
+                      <strong>Qualidade de imagem</strong>
+
+                      <button
+                        type="button"
+                        class="botao-info-especificacao"
+                        aria-label="Entenda a qualidade de imagem"
+                        (click)="abrirDicionario('qualidadeImagem')">
+                        ℹ️
+                      </button>
+
+                    </div>
+
+                    <div class="lista-detalhes-tecnicos">
+
+                      @for (
+                        detalhe of celular.detalhesTecnicos?.qualidadeImagem ?? [];
+                        track detalhe.rotulo
+                      ) {
+
+                        <div class="linha-detalhe-tecnico">
+
+                          <span>{{ detalhe.rotulo }}</span>
+
+                          <strong>{{ detalhe.valor }}</strong>
+
+                        </div>
+
+                      }
+
+                    </div>
+
+                  </section>
+
+                } @else if (celular.qualidadeImagemSemDados) {
+
                   <div class="qualidade-imagem-status">
-                    <strong>Processador</strong>
+
+                    <strong>Qualidade de imagem</strong>
 
                     <span class="qualidade-imagem-aviso" role="status">
                       <span class="icone-info" aria-hidden="true">ⓘ</span>
                       Dados insuficientes
                     </span>
+
                   </div>
-                } @else if (celular.processadorParcial) {
+
+                } @else if (celular.qualidadeImagemParcial) {
+
                   <div class="qualidade-imagem-status">
-                    <strong>Processador</strong>
+
+                    <strong>Qualidade de imagem</strong>
 
                     <span class="qualidade-imagem-aviso" role="status">
                       <span class="icone-info" aria-hidden="true">ⓘ</span>
                       Informação incompleta
                     </span>
+
                   </div>
+
                 } @else {
+
                   <app-alterar-info
-                    label="Processador"
-                    [valor]="celular.specs.processador"
+                    label="Qualidade de imagem"
+                    [valor]="celular.specs.qualidadeImagem"
                     [editavel]="false"
                     tipoInput="texto"
-                    (infoClick)="abrirDicionario('processador')">
+                    (infoClick)="abrirDicionario('qualidadeImagem')">
                   </app-alterar-info>
+
                 }
+
               </div>
 
+            
               <!-- CÂMERAS -->
               <div class="todas-infos">
-                @if (celular.cameraSemDados || !celular.specs.camera.trim() || celular.specs.camera === 'Não informado pela API') {
+
+                @if (celular.detalhesTecnicos?.camera?.length) {
+
+                  <section class="grupo-detalhes-tecnicos">
+
+                    <div class="cabecalho-detalhes-tecnicos">
+
+                      <strong>Câmeras</strong>
+
+                      <button
+                        type="button"
+                        class="botao-info-especificacao"
+                        aria-label="Entenda as câmeras"
+                        (click)="abrirDicionario('camera')">
+                        ℹ️
+                      </button>
+
+                    </div>
+
+                    <div class="lista-detalhes-tecnicos">
+
+                    @for (
+                      detalhe of celular.detalhesTecnicos?.camera ?? [];
+                      track detalhe.rotulo
+                    ) {
+
+                      <div class="linha-detalhe-tecnico">
+
+                        <span>{{ detalhe.rotulo }}</span>
+
+                        <strong>{{ detalhe.valor }}</strong>
+
+                      </div>
+
+                    }
+
+                  </div>
+
+                  </section>
+
+                } @else if (
+                  celular.cameraSemDados ||
+                  !celular.specs.camera.trim() ||
+                  celular.specs.camera === 'Não informado pela API'
+                ) {
+
                   <div class="qualidade-imagem-status">
+
                     <strong>Câmeras</strong>
 
                     <span class="qualidade-imagem-aviso" role="status">
                       <span class="icone-info" aria-hidden="true">ⓘ</span>
-                      Informação incompleta
+                      Dados Insuficientes
                     </span>
+
                   </div>
+
+                } @else if (celular.cameraParcial) {
+
+                  <div class="qualidade-imagem-status">
+
+                    <strong>Câmeras</strong>
+
+                    <span class="qualidade-imagem-aviso" role="status">
+                      <span class="icone-info" aria-hidden="true">ⓘ</span>
+                      Dados Insuficientes
+                    </span>
+
+                  </div>
+
                 } @else {
+
                   <app-alterar-info
                     label="Câmeras"
                     [valor]="celular.specs.camera"
@@ -534,7 +749,9 @@
                     tipoInput="texto"
                     (infoClick)="abrirDicionario('camera')">
                   </app-alterar-info>
+
                 }
+
               </div>
 
               <!-- Seção de compras do celular atual -->

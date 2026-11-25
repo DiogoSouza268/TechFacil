@@ -3,22 +3,83 @@
     "id": 1,
     "nome": "Samsung Galaxy S26 Ultra",
     "imagem": "https://images.samsung.com/is/image/samsung/p6pim/br/s2602/gallery/br-galaxy-s26-ultra-s948-sm-s948bzvkzto-thumb-550817601?$216_216_PNG$",
+
     "specs": {
       "armazenamento": "256GB",
       "ram": "12GB",
-      "bateria": "5000 mAh | 60W Carregando",
-      "processador": "Snapdragon 8 Elite Gen 5 (3 nm)",
-      "gpu": "Adreno 840 (1.3GHz)",
-      "qualidadeImagem": "6.88 pol IPS LCD (HD+ / 90Hz)",
-      "camera": "50 MP + 2 MP"
+      "bateria": "5000 mAh",
+      "processador": "Snapdragon 8 Elite Gen 5 for Galaxy",
+      "gpu": "Adreno 840 (1,3 GHz)",
+      "qualidadeImagem": "6,9 pol Dynamic AMOLED 2X / Quad HD+ / 120 Hz",
+      "camera": "200 MP + 50 MP + 50 MP + 10 MP (traseiras) | 12 MP (frontal)"
     },
+
+    "detalhesTecnicos": {
+      "camera": [
+        {
+          "rotulo": "Câmeras traseiras",
+          "valor": "200 MP + 50 MP + 50 MP + 10 MP"
+        },
+        {
+          "rotulo": "Principal",
+          "valor": "f/1.4 | Sensor 1/1.3 pol | OIS"
+        },
+        {
+          "rotulo": "Ultrawide",
+          "valor": "f/1.9 | Sensor 1/2.5 pol"
+        },
+        {
+          "rotulo": "Teleobjetiva",
+          "valor": "f/2.4 | OIS"
+        },
+        {
+          "rotulo": "Periscópica",
+          "valor": "f/2.9 | OIS"
+        },
+        {
+          "rotulo": "Frontal",
+          "valor": "12 MP | f/2.2"
+        }
+      ],
+
+      "processador": [
+        {
+          "rotulo": "Chipset",
+          "valor": "Snapdragon 8 Elite Gen 5 for Galaxy (3 nm)"
+        },
+        {
+          "rotulo": "CPU",
+          "valor": "Octa-core"
+        }
+      ],
+
+      "bateria": [
+        {
+          "rotulo": "Tipo",
+          "valor": "Li-Ion"
+        },
+        {
+          "rotulo": "Capacidade",
+          "valor": "5000 mAh"
+        },
+        {
+          "rotulo": "Carregamento com fio",
+          "valor": "60W"
+        },
+        {
+          "rotulo": "Carregamento sem fio",
+          "valor": "25W"
+        }
+      ]
+    },
+
     "versoes": [
       {
         "armazenamento": "512GB",
         "ram": "12GB"
       },
       {
-        "armazenamento": "1000GB",
+        "armazenamento": "1TB",
         "ram": "16GB"
       }
     ]

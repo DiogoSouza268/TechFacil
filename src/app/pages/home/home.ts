@@ -36,6 +36,23 @@ export interface Specs {
   imagem?: string;
 }
 
+// Uma característica individual do componente.
+export interface DetalheTecnico {
+  rotulo: string;
+  valor: string;
+}
+
+// Uma câmera e suas características.
+
+
+// Conjunto de informações técnicas do celular.
+export interface DetalhesTecnicos {
+  qualidadeImagem?: DetalheTecnico[];
+  camera?: DetalheTecnico[];
+  processador?: DetalheTecnico[];
+  bateria?: DetalheTecnico[];
+}
+
 interface LinkLojaPesquisa {
   nome: string;
   url: string;
@@ -54,6 +71,7 @@ export interface Celular {
   origem?: 'local' | 'api';
   imagem: string;
   specs: Specs;
+  detalhesTecnicos?: DetalhesTecnicos;
   qualidadeImagemParcial?: boolean;
   qualidadeImagemSemDados?: boolean;
   processadorParcial?: boolean;
@@ -172,29 +190,27 @@ export class Home implements OnInit, OnDestroy {
       explicacao:
         'É responsável pelos gráficos dos jogos e pelas animações. Uma boa GPU ajuda a executar jogos e aplicativos com gráficos exigentes.'
     },
-
     qualidadeImagem: {
-      titulo: 'Qualidade de Imagem',
+      titulo: 'Qualidade de imagem',
       explicacao:
-        'Está relacionada à nitidez, ao brilho, às cores e à definição da tela do celular.'
+        'Aqui você encontra informações sobre a tela do celular: tamanho, tipo de painel, resolução, frequência de atualização, brilho máximo, proteção e recursos adicionais. Esses detalhes ajudam a entender a nitidez, a fluidez e a visibilidade da tela.'
     },
-
     bateria: {
       titulo: 'Bateria',
       explicacao:
-        'A capacidade é medida em mAh. Esse número permite comparar a quantidade de carga que a bateria armazena, mas não garante sozinho quanto tempo o celular ficará ligado.'
+        'Aqui você encontra informações sobre o tipo de bateria, sua capacidade em mAh e as formas de carregamento disponíveis. A potência em watts (W) indica a potência de carregamento, mas não determina sozinha o tempo necessário para recarregar.'
     },
 
     processador: {
       titulo: 'Processador',
       explicacao:
-        'É responsável por executar as tarefas do celular, desde abrir aplicativos até realizar atividades mais exigentes.'
+        'O processador executa as tarefas do celular. Aqui você encontra o chipset e as características da CPU, como quantidade de núcleos, frequências e tecnologia de fabricação.'
     },
 
     camera: {
       titulo: 'Qualidade das Câmeras',
       explicacao:
-        'A qualidade das fotos e dos vídeos depende de diversos fatores, não apenas da quantidade de megapixels.'
+        'Cada câmera possui características próprias. Aqui você pode consultar os módulos principal, ultrawide, teleobjetiva, macro e frontal, quando disponíveis, além de informações como resolução, abertura, tamanho do sensor e estabilização.'
     }
   };
 
@@ -562,7 +578,7 @@ export class Home implements OnInit, OnDestroy {
       ),
 
       versoes: this.incluirVersaoInicial(celular),
-
+      detalhesTecnicos: celular.detalhesTecnicos ?? {},
 
       specs: {
         armazenamento: celular.specs?.armazenamento ?? '',
@@ -595,16 +611,23 @@ export class Home implements OnInit, OnDestroy {
       const origemAnterior =
         celular.origemEspecificacoes?.[campo];
 
-      // Preserva a origem registrada, inclusive correções manuais.
-      if (origemAnterior) {
-        origens[campo] = origemAnterior;
-        continue;
-      }
+    // Preserva origens já identificadas, como correções do usuário.
+    if (
+      origemAnterior &&
+      origemAnterior !== 'indisponivel'
+    ) {
+      origens[campo] = origemAnterior;
+      continue;
+    }
 
-      if (!this.temInformacao(preparado.specs[campo])) {
-        origens[campo] = 'indisponivel';
-        continue;
-      }
+    // Verifica tanto o resumo quanto os detalhes técnicos.
+    if (
+      !this.temInformacao(preparado.specs[campo]) &&
+      !this.possuiDetalhesTecnicos(preparado, campo)
+    ) {
+      origens[campo] = 'indisponivel';
+      continue;
+    }
 
       origens[campo] =
         preparado.origem === 'api'
@@ -655,6 +678,58 @@ export class Home implements OnInit, OnDestroy {
         texto === ausente ||
         texto.startsWith(`${ausente} pela api`)
     );
+  }
+
+  // Verifica se uma lista possui pelo menos um valor informado.
+  private detalhesPossuemValor(
+    detalhes?: DetalheTecnico[]
+  ): boolean {
+
+    return (detalhes ?? []).some(detalhe =>
+      this.temInformacao(detalhe.valor)
+    );
+
+  }
+
+
+  // Verifica se o componente possui informações técnicas cadastradas.
+  private possuiDetalhesTecnicos(
+    celular: Celular,
+    campo: CampoEspecificacao
+  ): boolean {
+
+    switch (campo) {
+
+      case 'qualidadeImagem':
+
+        return this.detalhesPossuemValor(
+          celular.detalhesTecnicos?.qualidadeImagem
+        );
+
+      case 'processador':
+
+        return this.detalhesPossuemValor(
+          celular.detalhesTecnicos?.processador
+        );
+
+      case 'bateria':
+
+        return this.detalhesPossuemValor(
+          celular.detalhesTecnicos?.bateria
+        );
+      
+        case 'camera':
+
+          return this.detalhesPossuemValor(
+            celular.detalhesTecnicos?.camera
+          );
+
+      default:
+
+        return false;
+
+    }
+
   }
 
   montarLinksLojas(celular: Celular): LinkLojaPesquisa[] {
@@ -792,63 +867,83 @@ export class Home implements OnInit, OnDestroy {
   private atualizarIndicadoresInformacao(
     celular: Celular
   ): void {
+
     const specs = celular.specs;
+
     const informacoes: string[] = [];
 
-    if (!this.temInformacao(specs.ram)) {
+    // Verifica se existe informação no resumo ou nos detalhes.
+    const possuiInformacao = (
+      campo: CampoEspecificacao,
+      valor: string
+    ): boolean => {
+
+      return (
+        this.temInformacao(valor) ||
+        this.possuiDetalhesTecnicos(celular, campo)
+      );
+
+    };
+
+    if (!possuiInformacao('ram', specs.ram)) {
       informacoes.push('Memória RAM');
     }
 
-    if (!this.temInformacao(specs.armazenamento)) {
+    if (!possuiInformacao('armazenamento', specs.armazenamento)) {
       informacoes.push('Armazenamento');
     }
 
-    if (!this.temInformacao(specs.bateria)) {
+    if (!possuiInformacao('bateria', specs.bateria)) {
       informacoes.push('Bateria');
     }
 
-    if (!this.temInformacao(specs.processador)) {
+    if (!possuiInformacao('processador', specs.processador)) {
       informacoes.push('Processador');
     }
 
-    if (!this.temInformacao(specs.gpu)) {
+    if (!possuiInformacao('gpu', specs.gpu)) {
       informacoes.push('Placa de vídeo');
     }
 
-    if (!this.temInformacao(specs.qualidadeImagem)) {
+    if (!possuiInformacao('qualidadeImagem', specs.qualidadeImagem)) {
       informacoes.push('Qualidade de imagem');
     }
 
-    if (!this.temInformacao(specs.camera)) {
+    if (!possuiInformacao('camera', specs.camera)) {
       informacoes.push('Câmeras');
     }
 
     celular.informacoesIncompletas = informacoes;
 
     celular.processadorSemDados =
-      !this.temInformacao(specs.processador);
+      !possuiInformacao('processador', specs.processador);
 
     celular.gpuSemDados =
       !this.temInformacao(specs.gpu);
 
     celular.cameraSemDados =
-      !this.temInformacao(specs.camera);
+      !possuiInformacao('camera', specs.camera);
 
     celular.qualidadeImagemSemDados =
-      !this.temInformacao(specs.qualidadeImagem);
+      !possuiInformacao('qualidadeImagem', specs.qualidadeImagem);
 
+    // Se já existem detalhes das câmeras, não utiliza a
+    // antiga verificação baseada somente em megapixels.
     celular.cameraParcial =
+      !this.possuiDetalhesTecnicos(celular, 'camera') &&
       this.temInformacao(specs.camera) &&
       this.cameraTemApenasMegapixels(specs.camera);
 
+    // Se já existem detalhes da tela, não utiliza a
+    // antiga verificação baseada somente no resumo da tela.
     celular.qualidadeImagemParcial =
+      !this.possuiDetalhesTecnicos(celular, 'qualidadeImagem') &&
       this.temInformacao(specs.qualidadeImagem) &&
       this.telaPossuiInformacaoParcial(specs.qualidadeImagem);
 
-    // A presença do nome do processador ou da GPU não significa,
-    // por si só, que o dado seja incompleto.
     celular.processadorParcial = false;
     celular.gpuParcial = false;
+
   }
 
   private precoValido(
@@ -1518,9 +1613,93 @@ export class Home implements OnInit, OnDestroy {
   // MONTAGEM DO PEDIDO PARA O FACILITO.AI
   // --------------------------------------------------
 
+  // --------------------------------------------------
+// DETALHES TÉCNICOS ENVIADOS AO FACILITO
+// --------------------------------------------------
+
+private montarTextoDetalhesFacilito(
+  celular: Celular,
+  campo: CampoEspecificacao
+): string {
+
+  switch (campo) {
+
+    case 'qualidadeImagem':
+
+      return (celular.detalhesTecnicos?.qualidadeImagem ?? [])
+        .map(detalhe =>
+          `${detalhe.rotulo}: ${detalhe.valor}`
+        )
+        .join('; ');
+
+
+    case 'processador':
+
+      return (celular.detalhesTecnicos?.processador ?? [])
+        .map(detalhe =>
+          `${detalhe.rotulo}: ${detalhe.valor}`
+        )
+        .join('; ');
+
+
+    case 'bateria':
+
+      return (celular.detalhesTecnicos?.bateria ?? [])
+        .map(detalhe =>
+          `${detalhe.rotulo}: ${detalhe.valor}`
+        )
+        .join('; ');
+
+
+    case 'camera':
+
+      return (celular.detalhesTecnicos?.camera ?? [])
+        .map(detalhe =>
+          `${detalhe.rotulo}: ${detalhe.valor}`
+        )
+        .join('; ');
+
+
+    default:
+
+      return '';
+
+  }
+
+}
+
+
+  // Junta o valor resumido com os detalhes técnicos.
+  private montarValorCompletoFacilito(
+    celular: Celular,
+    campo: CampoEspecificacao,
+    valorOriginal: string
+  ): string {
+
+    const detalhes = this.montarTextoDetalhesFacilito(
+      celular,
+      campo
+    );
+
+    if (!detalhes) {
+      return valorOriginal;
+    }
+
+    const partes = [
+      valorOriginal.trim(),
+      `Detalhes técnicos: ${detalhes}`
+    ];
+
+    return partes
+      .filter(parte => parte.length > 0)
+      .join('. ');
+
+  }
+
   private montarEspecificacoesFacilito(
     celular: Celular
   ): Record<CampoEspecificacao, DadoEspecificacaoFacilito> {
+
     const campos: CampoEspecificacao[] = [
       'ram',
       'armazenamento',
@@ -1537,28 +1716,45 @@ export class Home implements OnInit, OnDestroy {
     >;
 
     for (const campo of campos) {
-      const valor = celular.specs[campo] ?? '';
+
+      // Valor resumido já existente no celular.
+      const valorOriginal = celular.specs[campo] ?? '';
+
+      // Acrescenta as informações detalhadas, quando disponíveis.
+      const valor = this.montarValorCompletoFacilito(
+        celular,
+        campo,
+        valorOriginal
+      );
 
       const origemRegistrada =
         celular.origemEspecificacoes?.[campo];
 
+      // Preserva a origem anterior, exceto quando estava marcada
+      // como indisponível, mas agora existem detalhes cadastrados.
       const fonte: OrigemEspecificacaoFacilito =
-        origemRegistrada ??
-        (
-          !this.temInformacao(valor)
+        origemRegistrada &&
+        origemRegistrada !== 'indisponivel'
+
+          ? origemRegistrada
+
+          : !this.temInformacao(valor)
+
             ? 'indisponivel'
+
             : celular.origem === 'api'
               ? 'mobileapi'
-              : 'catalogo'
-        );
+              : 'catalogo';
 
       especificacoes[campo] = {
         valor,
         fonte
       };
+
     }
 
     return especificacoes;
+
   }
 
   private montarPedidoFacilito(): PedidoFacilito {

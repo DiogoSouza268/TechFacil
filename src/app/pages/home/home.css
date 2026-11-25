@@ -1536,3 +1536,102 @@ main.main-content {
     padding: 12px 28px;
   }
 }
+
+/* ==========================================
+   TABELAS DE DETALHES TÉCNICOS
+========================================== */
+
+/* Estrutura geral de cada componente */
+
+.grupo-detalhes-tecnicos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 0;
+  box-sizing: border-box;
+}
+
+/* Cabeçalho com título e botão de informação */
+
+.cabecalho-detalhes-tecnicos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 2px 8px;
+}
+
+.cabecalho-detalhes-tecnicos strong {
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* Lista de características */
+
+.lista-detalhes-tecnicos {
+  width: 100%;
+  border-top: 1px solid #e2e8f0;
+  box-sizing: border-box;
+}
+
+/* Cada linha da tabela */
+
+.linha-detalhe-tecnico {
+  display: grid;
+  grid-template-columns: minmax(95px, 0.85fr) minmax(0, 1.15fr);
+  align-items: start;
+  gap: 10px;
+
+  width: 100%;
+  padding: 10px 8px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  font-size: 0.82rem;
+  line-height: 1.5;
+
+  box-sizing: border-box;
+}
+
+/* Alternância suave entre as linhas */
+
+.linha-detalhe-tecnico:nth-child(odd) {
+  background-color: #f8fafc;
+}
+
+/* Nome da característica */
+
+.linha-detalhe-tecnico span {
+  min-width: 0;
+  color: #64748b;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+/* Valor da característica */
+
+.linha-detalhe-tecnico strong {
+  min-width: 0;
+  color: #1e293b;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================
+   RESPONSIVIDADE DAS TABELAS
+========================================== */
+
+@media (max-width: 480px) {
+
+  .linha-detalhe-tecnico {
+    grid-template-columns: minmax(85px, 0.8fr) minmax(0, 1.2fr);
+    gap: 8px;
+    padding: 9px 6px;
+    font-size: 0.78rem;
+  }
+
+  
+}
