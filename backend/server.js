@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import { registrarRotaFacilito } from './facilito.js';
+import pool from './db.js';
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -43,6 +44,28 @@ app.get('/health', (_req, res) => {
     status: 'ok',
     service: 'techfacil-backend'
   });
+});
+
+// Busca os celulares cadastrados no PostgreSQL.
+app.get('/api/celulares', async (_req, res) => {
+  try {
+    const resultado = await pool.query(`
+      SELECT
+        id,
+        nome,
+        imagem,
+        specs,
+        detalhes_tecnicos AS "detalhesTecnicos",
+        versoes
+      FROM celulares
+      ORDER BY id ASC
+    `);
+
+    res.json(resultado.rows);
+  } catch (erro) {
+    console.error('Erro ao buscar celulares:', erro);
+    res.status(500).json({ erro: 'Não foi possível carregar o catálogo.' });
+  }
 });
 
 // Registra a rota do Facilito.AI com OpenRouter.

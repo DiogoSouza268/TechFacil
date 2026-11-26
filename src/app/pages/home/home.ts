@@ -11,6 +11,7 @@ import { AlterarInfoComponent } from '../../componentes/alterar-info/alterar-inf
 import { AvisoLogin } from '../../componentes/aviso-login/aviso-login';
 import { Auth } from '../../services/auth';
 import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import {
   FacilitoService,
   type PedidoFacilito,
@@ -355,7 +356,7 @@ export class Home implements OnInit, OnDestroy {
 
   async carregarCelulares(): Promise<void> {
     try {
-      const resposta = await fetch('/data/celulares.json');
+      const resposta = await fetch(`${environment.apiUrl}/celulares`);
 
       if (!resposta.ok) {
         throw new Error('Não foi possível carregar o catálogo de celulares.');
