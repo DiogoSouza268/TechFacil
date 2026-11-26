@@ -191,7 +191,7 @@ export class Home implements OnInit, OnDestroy {
         'É responsável pelos gráficos dos jogos e pelas animações. Uma boa GPU ajuda a executar jogos e aplicativos com gráficos exigentes.'
     },
     qualidadeImagem: {
-      titulo: 'Qualidade de imagem',
+      titulo: 'Tela',
       explicacao:
         'Aqui você encontra informações sobre a tela do celular: tamanho, tipo de painel, resolução, frequência de atualização, brilho máximo, proteção e recursos adicionais. Esses detalhes ajudam a entender a nitidez, a fluidez e a visibilidade da tela.'
     },
@@ -906,7 +906,7 @@ export class Home implements OnInit, OnDestroy {
     }
 
     if (!possuiInformacao('qualidadeImagem', specs.qualidadeImagem)) {
-      informacoes.push('Qualidade de imagem');
+      informacoes.push('Tela');
     }
 
     if (!possuiInformacao('camera', specs.camera)) {
