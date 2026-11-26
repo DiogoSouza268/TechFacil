@@ -1,0 +1,59 @@
+Para adicionar celulares no supabase faça assim:
+No painel do Supabase, clique em SQL Editor → New query.
+
+Cole o modelo abaixo, preenchendo os dados do(s) celular(es) dentro dos colchetes [ ... ] (se quiser colocar mais de um de uma vez, basta separar cada { ... } por vírgula): 
+segue prompt:
+
+
+
+
+INSERT INTO celulares (nome, imagem, specs, detalhes_tecnicos, versoes)
+SELECT
+  item->>'nome',
+  item->>'imagem',
+  COALESCE(item->'specs', '{}'::jsonb),
+  COALESCE(item->'detalhesTecnicos', '{}'::jsonb),
+  COALESCE(item->'versoes', '[]'::jsonb)
+FROM jsonb_array_elements(
+  $json$
+  [
+    {
+      "nome": "Apple iPhone 16 Pro",
+      "imagem": "https://link-da-imagem-aqui.png",
+      "specs": {
+        "armazenamento": "128GB",
+        "ram": "8GB",
+        "bateria": "3582 mAh",
+        "processador": "Apple A18 Pro (3 nm)",
+        "gpu": "Apple GPU (6-core)",
+        "tela": "6,3 pol LTPO Super Retina XDR OLED / 120 Hz",
+        "camera": "48 MP + 48 MP + 12 MP (traseiras) | 12 MP (frontal)"
+      },
+      "detalhesTecnicos": {
+        "camera": [
+          { "rotulo": "Wide", "valor": "48 MP | f/1.8 | OIS" },
+          { "rotulo": "Ultrawide", "valor": "48 MP | f/2.2" },
+          { "rotulo": "Telephoto", "valor": "12 MP | 5x zoom óptico" },
+          { "rotulo": "Selfie", "valor": "12 MP | f/1.9" }
+        ],
+        "tela": [
+          { "rotulo": "Tamanho", "valor": "6,3 polegadas" },
+          { "rotulo": "Tipo e fluidez", "valor": "LTPO OLED | 120 Hz" }
+        ],
+        "processador": [
+          { "rotulo": "Chipset", "valor": "Apple A18 Pro (3 nm)" }
+        ],
+        "bateria": [
+          { "rotulo": "Capacidade", "valor": "3582 mAh" },
+          { "rotulo": "Carregamento", "valor": "25W MagSafe / USB-C" }
+        ]
+      },
+      "versoes": [
+        { "armazenamento": "128GB", "ram": "8GB" },
+        { "armazenamento": "256GB", "ram": "8GB" },
+        { "armazenamento": "512GB", "ram": "8GB" }
+      ]
+    }
+  ]
+  $json$::jsonb
+) AS item;
