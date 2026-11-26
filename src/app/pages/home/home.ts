@@ -1,5 +1,5 @@
-
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Menu } from '../../componentes/menu/menu';
 import { FormsModule } from '@angular/forms';
 import {
@@ -10,11 +10,6 @@ import { CommonModule } from '@angular/common';
 import { AlterarInfoComponent } from '../../componentes/alterar-info/alterar-info';
 import { AvisoLogin } from '../../componentes/aviso-login/aviso-login';
 import { Auth } from '../../services/auth';
-import {
-  CelularesApiService,
-  DispositivoApi,
-  DispositivoDetalhado
-} from '../../services/celulares-api.service';
 import { firstValueFrom } from 'rxjs';
 import {
   FacilitoService,
@@ -31,23 +26,18 @@ export interface Specs {
   bateria: string;
   processador: string;
   gpu: string;
-  qualidadeImagem: string;
+  tela: string;
   camera: string;
   imagem?: string;
 }
 
-// Uma característica individual do componente.
 export interface DetalheTecnico {
   rotulo: string;
   valor: string;
 }
 
-// Uma câmera e suas características.
-
-
-// Conjunto de informações técnicas do celular.
 export interface DetalhesTecnicos {
-  qualidadeImagem?: DetalheTecnico[];
+  tela?: DetalheTecnico[];
   camera?: DetalheTecnico[];
   processador?: DetalheTecnico[];
   bateria?: DetalheTecnico[];
@@ -68,19 +58,9 @@ export interface Celular {
   nome: string;
   versoes?: VersaoCelular[];
   precoLoja?: number | null;
-  origem?: 'local' | 'api';
   imagem: string;
   specs: Specs;
   detalhesTecnicos?: DetalhesTecnicos;
-  qualidadeImagemParcial?: boolean;
-  qualidadeImagemSemDados?: boolean;
-  processadorParcial?: boolean;
-  processadorSemDados?: boolean;
-  gpuParcial?: boolean;
-  gpuSemDados?: boolean;
-  cameraParcial?: boolean;
-  cameraSemDados?: boolean;
-  informacoesIncompletas?: string[];
   origemEspecificacoes?: Record<
     CampoEspecificacao,
     OrigemEspecificacaoFacilito
@@ -93,6 +73,7 @@ type CampoEspecificacao = EspecificacaoFacilito;
   selector: 'app-home',
   standalone: true,
   imports: [
+    RouterLink,
     Menu,
     Carrosel,
     CommonModule,
@@ -105,8 +86,6 @@ type CampoEspecificacao = EspecificacaoFacilito;
 })
 export class Home implements OnInit, OnDestroy {
   authService = inject(Auth);
-
-  private celularesApi = inject(CelularesApiService);
   private facilitoService = inject(FacilitoService);
 
   // Controle da interface.
@@ -117,6 +96,7 @@ export class Home implements OnInit, OnDestroy {
 
   termoBusca = '';
   celularSelecionado: Celular | null = null;
+  mensagemBusca = '';
 
   // Resultado do Facilito.AI.
   resultadoFacilito: ResultadoFacilito | null = null;
@@ -141,32 +121,7 @@ export class Home implements OnInit, OnDestroy {
   private versaoComparacao = 0;
 
   // Guarda a última combinação de celulares que recebeu uma resposta válida.
-  // Alterações nas especificações não liberam uma nova análise.
   private assinaturaUltimaComparacao: string | null = null;
-
-  // Controle da busca externa.
-  resultadosApi: DispositivoApi[] = [];
-
-  buscandoApi = false;
-  buscandoDetalhesApi = false;
-
-  erroBuscaApi = '';
-  tempoEsperaApi = 0;
-  mensagemBuscaApi = '';
-  buscaApiRealizada = false;
-
-  /*
-   * Compatibilidade temporária com o home.html anterior.
-   * A comparação não utiliza filtros nem preço.
-   * Remova estes elementos quando atualizar o HTML.
-   */
-  filtros: {
-    key: string;
-    label: string;
-    icone: string;
-  }[] = [];
-
-  filtrosSelecionados: string[] = [];
 
   // Dicionário de termos.
   dicionarioTermos: Record<
@@ -178,39 +133,35 @@ export class Home implements OnInit, OnDestroy {
       explicacao:
         'É a memória de trabalho. Quanto maior a RAM (4GB, 8GB, 12GB), mais aplicativos você consegue abrir ao mesmo tempo sem o celular travar ou fechar sozinho.'
     },
-
     armazenamento: {
       titulo: 'Armazenamento',
       explicacao:
         'Pense como uma grande gaveta: quanto maior (128GB, 256GB), mais fotos, vídeos e aplicativos cabem sem precisar apagar nada.'
     },
-
     gpu: {
       titulo: 'Placa de Vídeo (GPU)',
       explicacao:
         'É responsável pelos gráficos dos jogos e pelas animações. Uma boa GPU ajuda a executar jogos e aplicativos com gráficos exigentes.'
     },
-    qualidadeImagem: {
+    tela: {
       titulo: 'Tela',
       explicacao:
-        'Aqui você encontra informações sobre a tela do celular: tamanho, tipo de painel, resolução, frequência de atualização, brilho máximo, proteção e recursos adicionais. Esses detalhes ajudam a entender a nitidez, a fluidez e a visibilidade da tela.'
+        'Aqui você encontra informações sobre a tela do celular: tamanho, tipo de painel, resolução, frequência de atualização, brilho máximo e proteção. Esses detalhes ajudam a entender a nitidez, a fluidez e a visibilidade no sol.'
     },
     bateria: {
       titulo: 'Bateria',
       explicacao:
-        'Aqui você encontra informações sobre o tipo de bateria, sua capacidade em mAh e as formas de carregamento disponíveis. A potência em watts (W) indica a potência de carregamento, mas não determina sozinha o tempo necessário para recarregar.'
+        'Indica a capacidade de energia em mAh e a velocidade de carregamento em watts (W). Quanto maior a capacidade e a potência de recarga, mais prático tende a ser o uso no dia a dia.'
     },
-
     processador: {
       titulo: 'Processador',
       explicacao:
-        'O processador executa as tarefas do celular. Aqui você encontra o chipset e as características da CPU, como quantidade de núcleos, frequências e tecnologia de fabricação.'
+        'É o cérebro do celular. Ele executa os aplicativos, jogos e tarefas do sistema com maior ou menor rapidez.'
     },
-
     camera: {
-      titulo: 'Qualidade das Câmeras',
+      titulo: 'Câmeras',
       explicacao:
-        'Cada câmera possui características próprias. Aqui você pode consultar os módulos principal, ultrawide, teleobjetiva, macro e frontal, quando disponíveis, além de informações como resolução, abertura, tamanho do sensor e estabilização.'
+        'Mostra as lentes traseiras e frontal do aparelho. Recursos como estabilização (OIS) e abertura maior ajudam a tirar fotos mais nítidas, inclusive à noite.'
     }
   };
 
@@ -235,203 +186,88 @@ export class Home implements OnInit, OnDestroy {
     }
   ];
 
-  versaoSelecionada(celular: Celular): VersaoCelular | null {
+  // --------------------------------------------------
+  // VERSÕES DE ARMAZENAMENTO E RAM
+  // --------------------------------------------------
 
-    return celular.versoes?.find(versao =>
-      versao.armazenamento === celular.specs.armazenamento &&
-      versao.ram === celular.specs.ram
-    ) ?? null;
-
+  opcoesArmazenamento(celular: Celular): string[] {
+    return [
+      ...new Set((celular.versoes ?? []).map(versao => versao.armazenamento))
+    ];
   }
 
+  opcoesRam(celular: Celular): string[] {
+    return [
+      ...new Set((celular.versoes ?? []).map(versao => versao.ram))
+    ];
+  }
 
-
-  selecionarVersao(
+  private aplicarVersaoCelular(
     celular: Celular,
-    versao: VersaoCelular | null
+    versao: VersaoCelular
   ): void {
-
-    if (!versao) {
-      return;
+    if (celular.specs.armazenamento !== versao.armazenamento) {
+      this.atualizarSpec(celular, 'armazenamento', versao.armazenamento);
     }
 
-    const versaoValida = celular.versoes?.some(item =>
-      item.armazenamento === versao.armazenamento &&
-      item.ram === versao.ram
-    );
-
-    if (!versaoValida) {
-      return;
+    if (celular.specs.ram !== versao.ram) {
+      this.atualizarSpec(celular, 'ram', versao.ram);
     }
-
-    this.atualizarSpec(
-      celular,
-      'armazenamento',
-      versao.armazenamento
-    );
-
-    this.atualizarSpec(
-      celular,
-      'ram',
-      versao.ram
-    );
-
   }
 
-  // Opções disponíveis de armazenamento
-    opcoesArmazenamento(celular: Celular): string[] {
+  selecionarArmazenamento(celular: Celular, armazenamento: string): void {
+    const versoes = celular.versoes ?? [];
 
-      return [...new Set(
-        (celular.versoes ?? []).map(
-          versao => versao.armazenamento
-        )
-      )];
-
-    }
-
-
-    // Opções disponíveis de RAM
-    opcoesRam(celular: Celular): string[] {
-
-      return [...new Set(
-        (celular.versoes ?? []).map(
-          versao => versao.ram
-        )
-      )];
-
-    }
-
-
-    // Seleciona uma configuração e atualiza os dois campos
-    private aplicarVersaoCelular(
-      celular: Celular,
-      versao: VersaoCelular
-    ): void {
-
-      if (
-        celular.specs.armazenamento !== versao.armazenamento
-      ) {
-
-        this.atualizarSpec(
-          celular,
-          'armazenamento',
-          versao.armazenamento
-        );
-
-      }
-
-      if (celular.specs.ram !== versao.ram) {
-
-        this.atualizarSpec(
-          celular,
-          'ram',
-          versao.ram
-        );
-
-      }
-
-    }
-
-
-    // Quando o usuário altera o armazenamento
-    selecionarArmazenamento(
-      celular: Celular,
-      armazenamento: string
-    ): void {
-
-      const versoes = celular.versoes ?? [];
-
-      const versao =
-
-        // Primeiro tenta manter a RAM atual
-        versoes.find(item =>
+    const versao =
+      versoes.find(
+        item =>
           item.armazenamento === armazenamento &&
           item.ram === celular.specs.ram
-        )
+      ) ?? versoes.find(item => item.armazenamento === armazenamento);
 
-        // Se não existir, procura outra combinação válida
-        ?? versoes.find(item =>
-          item.armazenamento === armazenamento
-        );
+    if (!versao) return;
 
-      if (!versao) {
-        return;
-      }
+    this.aplicarVersaoCelular(celular, versao);
+  }
 
-      this.aplicarVersaoCelular(celular, versao);
+  selecionarRam(celular: Celular, ram: string): void {
+    const versoes = celular.versoes ?? [];
 
-    }
-
-
-    // Quando o usuário altera a RAM
-    selecionarRam(
-      celular: Celular,
-      ram: string
-    ): void {
-
-      const versoes = celular.versoes ?? [];
-
-      const versao =
-
-        // Primeiro tenta manter o armazenamento atual
-        versoes.find(item =>
+    const versao =
+      versoes.find(
+        item =>
           item.ram === ram &&
           item.armazenamento === celular.specs.armazenamento
-        )
+      ) ?? versoes.find(item => item.ram === ram);
 
-        // Se não existir, procura outra combinação válida
-        ?? versoes.find(item =>
-          item.ram === ram
-        );
+    if (!versao) return;
 
-      if (!versao) {
-        return;
-      }
+    this.aplicarVersaoCelular(celular, versao);
+  }
 
-      this.aplicarVersaoCelular(celular, versao);
+  private incluirVersaoInicial(celular: Celular): VersaoCelular[] {
+    const versoes = (celular.versoes ?? []).map(versao => ({
+      armazenamento: versao.armazenamento.trim(),
+      ram: versao.ram.trim()
+    }));
 
+    const armazenamento = celular.specs?.armazenamento?.trim() ?? '';
+    const ram = celular.specs?.ram?.trim() ?? '';
+
+    if (!armazenamento || !ram) {
+      return versoes;
     }
 
-    private incluirVersaoInicial(celular: Celular): VersaoCelular[] {
+    const jaExiste = versoes.some(
+      versao =>
+        versao.armazenamento === armazenamento && versao.ram === ram
+    );
 
-      // Copia as versões cadastradas no JSON.
-      const versoes = (celular.versoes ?? []).map(versao => ({
-        armazenamento: versao.armazenamento.trim(),
-        ram: versao.ram.trim()
-      }));
+    if (!jaExiste) {
+      versoes.unshift({ armazenamento, ram });
+    }
 
-      // Obtém a configuração inicial de specs.
-      const armazenamento = celular.specs?.armazenamento?.trim() ?? '';
-      const ram = celular.specs?.ram?.trim() ?? '';
-
-      // Não adiciona configurações incompletas.
-      if (
-        !armazenamento ||
-        !ram ||
-        armazenamento === 'Não informado pela API' ||
-        ram === 'Não informado pela API'
-      ) {
-        return versoes;
-      }
-
-      // Verifica se a configuração inicial já está cadastrada.
-      const jaExiste = versoes.some(versao =>
-        versao.armazenamento === armazenamento &&
-        versao.ram === ram
-      );
-
-      // Adiciona a configuração inicial somente se estiver faltando.
-      if (!jaExiste) {
-
-        versoes.unshift({
-          armazenamento,
-          ram
-        });
-
-      }
-
-      return versoes;
-
+    return versoes;
   }
 
   // --------------------------------------------------
@@ -460,35 +296,11 @@ export class Home implements OnInit, OnDestroy {
     );
   }
 
-  // A ordem não importa: a comparação é identificada pelo conjunto de IDs.
   private obterAssinaturaComparacao(): string {
     return this.listaComparacao
       .map(celular => celular.id)
       .sort((a, b) => a - b)
       .join('|');
-  }
-
-  /*
-   * Compatibilidade temporária com o HTML antigo.
-   * Não há seleção de filtros na comparação atual.
-   */
-  get quantidadeFiltrosSelecionados(): number {
-    return 0;
-  }
-
-  get possuiFiltrosSelecionados(): boolean {
-    return true;
-  }
-
-  get precosDaComparacaoValidos(): boolean {
-    return true;
-  }
-
-  get informacoesSelecionadasIncompletas(): {
-    celular: string;
-    informacoes: string[];
-  }[] {
-    return [];
   }
 
   // --------------------------------------------------
@@ -546,9 +358,7 @@ export class Home implements OnInit, OnDestroy {
       const resposta = await fetch('/data/celulares.json');
 
       if (!resposta.ok) {
-        throw new Error(
-          'Não foi possível carregar o catálogo de celulares.'
-        );
+        throw new Error('Não foi possível carregar o catálogo de celulares.');
       }
 
       const celulares: Celular[] = await resposta.json();
@@ -556,13 +366,8 @@ export class Home implements OnInit, OnDestroy {
       this.listaCelulares = celulares.map(celular =>
         this.prepararCelular(celular)
       );
-
     } catch (erro) {
-      console.error(
-        'Erro ao carregar a lista de celulares:',
-        erro
-      );
-
+      console.error('Erro ao carregar a lista de celulares:', erro);
       this.listaCelulares = [];
     }
   }
@@ -570,23 +375,15 @@ export class Home implements OnInit, OnDestroy {
   private prepararCelular(celular: Celular): Celular {
     const preparado: Celular = {
       ...celular,
-
-      origem: celular.origem ?? 'local',
-
-      precoLoja: this.normalizarPreco(
-        celular.precoLoja
-      ),
-
       versoes: this.incluirVersaoInicial(celular),
       detalhesTecnicos: celular.detalhesTecnicos ?? {},
-
       specs: {
         armazenamento: celular.specs?.armazenamento ?? '',
         ram: celular.specs?.ram ?? '',
         bateria: celular.specs?.bateria ?? '',
         processador: celular.specs?.processador ?? '',
         gpu: celular.specs?.gpu ?? '',
-        qualidadeImagem: celular.specs?.qualidadeImagem ?? '',
+        tela: celular.specs?.tela ?? '',
         camera: celular.specs?.camera ?? '',
         imagem: celular.specs?.imagem
       }
@@ -596,7 +393,7 @@ export class Home implements OnInit, OnDestroy {
       'ram',
       'armazenamento',
       'gpu',
-      'qualidadeImagem',
+      'tela',
       'bateria',
       'processador',
       'camera'
@@ -608,165 +405,36 @@ export class Home implements OnInit, OnDestroy {
     >;
 
     for (const campo of campos) {
-      const origemAnterior =
-        celular.origemEspecificacoes?.[campo];
-
-    // Preserva origens já identificadas, como correções do usuário.
-    if (
-      origemAnterior &&
-      origemAnterior !== 'indisponivel'
-    ) {
-      origens[campo] = origemAnterior;
-      continue;
-    }
-
-    // Verifica tanto o resumo quanto os detalhes técnicos.
-    if (
-      !this.temInformacao(preparado.specs[campo]) &&
-      !this.possuiDetalhesTecnicos(preparado, campo)
-    ) {
-      origens[campo] = 'indisponivel';
-      continue;
-    }
-
       origens[campo] =
-        preparado.origem === 'api'
-          ? 'mobileapi'
-          : 'catalogo';
+        celular.origemEspecificacoes?.[campo] ?? 'catalogo';
     }
 
     preparado.origemEspecificacoes = origens;
 
-    this.atualizarIndicadoresInformacao(preparado);
-
     return preparado;
   }
 
-  // --------------------------------------------------
-  // VERIFICAÇÃO DE INFORMAÇÕES
-  // --------------------------------------------------
-
-  private temInformacao(valor?: string | null): boolean {
-    if (typeof valor !== 'string') {
-      return false;
-    }
-
-    const texto = valor.trim().toLowerCase();
-
-    if (!texto) {
-      return false;
-    }
-
-    const valoresAusentes = [
-      'não informado',
-      'nao informado',
-      'não disponível',
-      'nao disponivel',
-      'indisponível',
-      'indisponivel',
-      'desconhecido',
-      'sem informação',
-      'sem informacao',
-      'n/a',
-      'null',
-      'undefined',
-      '-'
-    ];
-
-    return !valoresAusentes.some(
-      ausente =>
-        texto === ausente ||
-        texto.startsWith(`${ausente} pela api`)
-    );
-  }
-
-  // Verifica se uma lista possui pelo menos um valor informado.
-  private detalhesPossuemValor(
-    detalhes?: DetalheTecnico[]
-  ): boolean {
-
-    return (detalhes ?? []).some(detalhe =>
-      this.temInformacao(detalhe.valor)
-    );
-
-  }
-
-
-  // Verifica se o componente possui informações técnicas cadastradas.
-  private possuiDetalhesTecnicos(
-    celular: Celular,
-    campo: CampoEspecificacao
-  ): boolean {
-
-    switch (campo) {
-
-      case 'qualidadeImagem':
-
-        return this.detalhesPossuemValor(
-          celular.detalhesTecnicos?.qualidadeImagem
-        );
-
-      case 'processador':
-
-        return this.detalhesPossuemValor(
-          celular.detalhesTecnicos?.processador
-        );
-
-      case 'bateria':
-
-        return this.detalhesPossuemValor(
-          celular.detalhesTecnicos?.bateria
-        );
-      
-        case 'camera':
-
-          return this.detalhesPossuemValor(
-            celular.detalhesTecnicos?.camera
-          );
-
-      default:
-
-        return false;
-
-    }
-
-  }
-
   montarLinksLojas(celular: Celular): LinkLojaPesquisa[] {
-    // Obtém as informações do aparelho.
     const nome = celular.nome?.trim() ?? '';
+    const armazenamento = celular.specs?.armazenamento?.trim() ?? '';
+    const ramOriginal = celular.specs?.ram?.trim() ?? '';
 
-    const armazenamento =
-      celular.specs?.armazenamento?.trim() ?? '';
-
-    const ramOriginal =
-      celular.specs?.ram?.trim() ?? '';
-
-    // Evita repetir a palavra RAM caso já esteja presente.
     const ram = ramOriginal
       ? /\bram\b/i.test(ramOriginal)
         ? ramOriginal
         : `${ramOriginal} RAM`
       : '';
 
-    // Monta a pesquisa utilizando os dados disponíveis.
-    const termoPesquisa = [
-      nome,
-      armazenamento,
-      ram
-    ]
+    const termoPesquisa = [nome, armazenamento, ram]
       .filter(valor => valor.length > 0)
       .join(' ')
       .trim();
 
-    // Não gera links se não houver informações.
     if (!termoPesquisa) {
       return [];
     }
 
-    // Prepara o termo para cada plataforma.
-    const pesquisaCodificada =
-      encodeURIComponent(termoPesquisa);
+    const pesquisaCodificada = encodeURIComponent(termoPesquisa);
 
     const pesquisaSlug = termoPesquisa
       .normalize('NFD')
@@ -775,7 +443,6 @@ export class Home implements OnInit, OnDestroy {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
 
-    // Retorna os links das lojas.
     return [
       {
         nome: 'Mercado Livre',
@@ -796,176 +463,8 @@ export class Home implements OnInit, OnDestroy {
     ];
   }
 
-  /*
-   * Uma informação pode existir sem ser suficiente para uma
-   * avaliação completa. Estes métodos identificam alguns casos
-   * conhecidos sem atribuir qualidade ou nota ao aparelho.
-   */
-
-  private cameraTemApenasMegapixels(valor: string): boolean {
-    const texto = valor.trim();
-
-    if (!texto) {
-      return false;
-    }
-
-    const possuiMegapixels = /\b\d+(?:[.,]\d+)?\s*MP\b/i.test(texto);
-
-    if (!possuiMegapixels) {
-      return false;
-    }
-
-    const termosAdicionais = [
-      'OIS',
-      'EIS',
-      'estabilização',
-      'estabilizacao',
-      'abertura',
-      'sensor',
-      'ultrawide',
-      'ultra-wide',
-      'telefoto',
-      'macro',
-      'zoom',
-      'HDR',
-      'vídeo',
-      'video'
-    ];
-
-    const possuiInformacaoAdicional = termosAdicionais.some(
-      termo => texto.toLowerCase().includes(termo.toLowerCase())
-    );
-
-    return !possuiInformacaoAdicional;
-  }
-
-  private telaPossuiInformacaoParcial(valor: string): boolean {
-    const texto = valor.trim();
-
-    if (!texto) {
-      return false;
-    }
-
-    const possuiPainel =
-      /\b(amoled|oled|p-oled|ips|lcd|tft)\b/i.test(texto);
-
-    const possuiResolucao =
-      /\b(hd\+|hd|full\s*hd\+?|fhd\+?|qhd\+?|2k|4k|\d{3,4}\s*[x×]\s*\d{3,4})\b/i.test(texto);
-
-    const possuiFrequencia =
-      /\b\d{2,3}\s*hz\b/i.test(texto);
-
-    // Informação parcial quando existe dado, mas falta algum
-    // dos três elementos principais para caracterizar a tela.
-    return !(
-      possuiPainel &&
-      possuiResolucao &&
-      possuiFrequencia
-    );
-  }
-
-  private atualizarIndicadoresInformacao(
-    celular: Celular
-  ): void {
-
-    const specs = celular.specs;
-
-    const informacoes: string[] = [];
-
-    // Verifica se existe informação no resumo ou nos detalhes.
-    const possuiInformacao = (
-      campo: CampoEspecificacao,
-      valor: string
-    ): boolean => {
-
-      return (
-        this.temInformacao(valor) ||
-        this.possuiDetalhesTecnicos(celular, campo)
-      );
-
-    };
-
-    if (!possuiInformacao('ram', specs.ram)) {
-      informacoes.push('Memória RAM');
-    }
-
-    if (!possuiInformacao('armazenamento', specs.armazenamento)) {
-      informacoes.push('Armazenamento');
-    }
-
-    if (!possuiInformacao('bateria', specs.bateria)) {
-      informacoes.push('Bateria');
-    }
-
-    if (!possuiInformacao('processador', specs.processador)) {
-      informacoes.push('Processador');
-    }
-
-    if (!possuiInformacao('gpu', specs.gpu)) {
-      informacoes.push('Placa de vídeo');
-    }
-
-    if (!possuiInformacao('qualidadeImagem', specs.qualidadeImagem)) {
-      informacoes.push('Tela');
-    }
-
-    if (!possuiInformacao('camera', specs.camera)) {
-      informacoes.push('Câmeras');
-    }
-
-    celular.informacoesIncompletas = informacoes;
-
-    celular.processadorSemDados =
-      !possuiInformacao('processador', specs.processador);
-
-    celular.gpuSemDados =
-      !this.temInformacao(specs.gpu);
-
-    celular.cameraSemDados =
-      !possuiInformacao('camera', specs.camera);
-
-    celular.qualidadeImagemSemDados =
-      !possuiInformacao('qualidadeImagem', specs.qualidadeImagem);
-
-    // Se já existem detalhes das câmeras, não utiliza a
-    // antiga verificação baseada somente em megapixels.
-    celular.cameraParcial =
-      !this.possuiDetalhesTecnicos(celular, 'camera') &&
-      this.temInformacao(specs.camera) &&
-      this.cameraTemApenasMegapixels(specs.camera);
-
-    // Se já existem detalhes da tela, não utiliza a
-    // antiga verificação baseada somente no resumo da tela.
-    celular.qualidadeImagemParcial =
-      !this.possuiDetalhesTecnicos(celular, 'qualidadeImagem') &&
-      this.temInformacao(specs.qualidadeImagem) &&
-      this.telaPossuiInformacaoParcial(specs.qualidadeImagem);
-
-    celular.processadorParcial = false;
-    celular.gpuParcial = false;
-
-  }
-
-  private precoValido(
-    valor: number | null | undefined
-  ): boolean {
-    return (
-      typeof valor === 'number' &&
-      Number.isFinite(valor) &&
-      valor > 0
-    );
-  }
-
-  private normalizarPreco(
-    valor: number | null | undefined
-  ): number | null {
-    return this.precoValido(valor)
-      ? valor!
-      : null;
-  }
-
   // --------------------------------------------------
-  // BUSCA DE CELULARES
+  // BUSCA E ADIÇÃO DE CELULARES DO CATÁLOGO
   // --------------------------------------------------
 
   aoAlterarBusca(): void {
@@ -978,410 +477,100 @@ export class Home implements OnInit, OnDestroy {
       this.celularSelecionado = null;
     }
 
-    this.resultadosApi = [];
-    this.erroBuscaApi = '';
-    this.mensagemBuscaApi = '';
-    this.buscaApiRealizada = false;
+    this.mensagemBusca = '';
   }
 
-  buscarNaApi(): void {
-    const nome = this.termoBusca.trim();
+  get sugestoesBusca(): Celular[] {
+    if (!this.termoBusca.trim()) {
+      return [];
+    }
 
-    if (nome.length < 2) {
-      this.erroBuscaApi =
-        'Digite pelo menos 2 caracteres para pesquisar.';
+    const termo = this.termoBusca.toLowerCase();
+
+    return this.listaCelulares.filter(celular =>
+      celular.nome.toLowerCase().includes(termo)
+    );
+  }
+
+  selecionarSugestao(celular: Celular): void {
+    this.termoBusca = celular.nome;
+
+    this.celularSelecionado = this.prepararCelular(
+      structuredClone(celular)
+    );
+
+    this.mensagemBusca =
+      'Celular selecionado. Clique em Adicionar para incluí-lo na comparação.';
+  }
+
+  adicionarAComparacao(): void {
+    if (!this.celularSelecionado) {
+      alert('Por favor, selecione um celular da lista de sugestões.');
       return;
     }
 
-    this.celularSelecionado = null;
-    this.resultadosApi = [];
-    this.erroBuscaApi = '';
-    this.mensagemBuscaApi = '';
-    this.buscaApiRealizada = false;
-    this.buscandoApi = true;
-
-    this.celularesApi.buscarPorNome(nome).subscribe({
-      next: resposta => {
-        const encontrados = resposta.devices.filter(
-          dispositivo =>
-            !dispositivo.device_type ||
-            dispositivo.device_type.toLowerCase() === 'phone'
-        );
-
-        this.resultadosApi = encontrados.filter(dispositivo => {
-          const nomeApi = this.normalizarNome(
-            this.nomeCompletoApi(dispositivo)
-          );
-
-          return !this.listaCelulares.some(
-            celular =>
-              this.normalizarNome(celular.nome) === nomeApi
-          );
-        });
-
-        this.buscandoApi = false;
-        this.buscaApiRealizada = true;
-
-        if (encontrados.length === 0) {
-          this.mensagemBuscaApi =
-            'Nenhum celular encontrado para essa pesquisa.';
-
-        } else if (this.resultadosApi.length === 0) {
-          this.mensagemBuscaApi =
-            'Os modelos encontrados já estão no catálogo local.';
-        }
-      },
-
-      error: erro => {
-        console.error(
-          'Erro ao pesquisar celulares na API:',
-          erro
-        );
-
-        this.resultadosApi = [];
-        this.mensagemBuscaApi = '';
-        this.buscandoApi = false;
-        this.buscaApiRealizada = true;
-
-        this.erroBuscaApi =
-          erro.error?.error ||
-          'Não foi possível pesquisar os celulares.';
-
-        const correspondencia = this.erroBuscaApi.match(
-          /Aguarde\s+(\d+(?:[.,]\d+)?)\s+segundos?/i
-        );
-
-        if (correspondencia) {
-          this.iniciarContagemRegressiva(
-            Math.ceil(
-              Number(
-                correspondencia[1].replace(',', '.')
-              )
-            )
-          );
-        }
-      }
-    });
-  }
-
-  iniciarContagemRegressiva(segundos: number): void {
-    this.tempoEsperaApi = Math.max(0, segundos);
-
-    const contar = () => {
-      setTimeout(() => {
-        if (this.tempoEsperaApi > 0) {
-          this.tempoEsperaApi--;
-        }
-
-        if (this.tempoEsperaApi > 0) {
-          contar();
-        }
-      }, 1000);
-    };
-
-    if (this.tempoEsperaApi > 0) {
-      contar();
-    }
-  }
-
-  nomeCompletoApi(dispositivo: DispositivoApi): string {
-    const marca = dispositivo.manufacturer_name?.trim() || '';
-    const nome = dispositivo.name.trim();
-
-    if (!marca) {
-      return nome;
-    }
-
-    if (
-      this.normalizarNome(nome).startsWith(
-        this.normalizarNome(marca)
-      )
-    ) {
-      return nome;
-    }
-
-    return `${marca} ${nome}`;
-  }
-
-  private normalizarNome(nome: string): string {
-    return nome
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]/gi, '')
-      .toLowerCase();
-  }
-
-  // --------------------------------------------------
-  // SELEÇÃO DE RESULTADOS DA API
-  // --------------------------------------------------
-
-  selecionarResultadoApi(
-    dispositivo: DispositivoApi
-  ): void {
     if (this.listaComparacao.length >= 3) {
-      alert(
-        'Você já atingiu o limite de 3 celulares para comparar.'
-      );
+      alert('Você já atingiu o limite de 3 celulares para comparar.');
       return;
     }
 
-    const idLocal = 1_000_000 + dispositivo.id;
+    const jaExiste = this.listaComparacao.some(
+      celular => celular.id === this.celularSelecionado?.id
+    );
 
-    if (
-      this.listaComparacao.some(
-        celular => celular.id === idLocal
-      )
-    ) {
-      alert(
-        'Este celular já está na sua lista de comparação.'
-      );
+    if (jaExiste) {
+      alert('Este celular já está na sua lista de comparação.');
       return;
     }
 
-    this.buscandoDetalhesApi = true;
-    this.erroBuscaApi = '';
-    this.mensagemBuscaApi = '';
+    const novoCelular = this.prepararCelular(
+      structuredClone(this.celularSelecionado)
+    );
 
-    this.celularesApi.buscarDetalhes(dispositivo.id).subscribe({
-      next: detalhes => {
-        const celular = this.converterDispositivoApi(detalhes);
+    this.listaComparacao.push(novoCelular);
+    this.invalidarResultadoFacilito();
 
-        this.celularSelecionado = celular;
-        this.termoBusca = celular.nome;
-        this.resultadosApi = [];
+    this.termoBusca = '';
+    this.celularSelecionado = null;
+    this.mensagemBusca = '';
+  }
 
-        this.mensagemBuscaApi =
-          'Celular selecionado. Clique em Adicionar para incluí-lo na comparação.';
+  removerDaComparacao(index: number): void {
+    if (index < 0 || index >= this.listaComparacao.length) {
+      return;
+    }
 
-        this.buscandoDetalhesApi = false;
-      },
+    this.listaComparacao.splice(index, 1);
+    this.invalidarResultadoFacilito();
+  }
 
-      error: erro => {
-        console.error(
-          'Erro ao buscar detalhes do celular:',
-          erro
-        );
+  irParaCelular(index: number): void {
+    if (!this.listaComparacao[index]) {
+      alert(`O slot ${index + 1} ainda está vazio! Adicione um celular primeiro.`);
+      return;
+    }
 
-        this.erroBuscaApi =
-          erro.error?.error ||
-          'Não foi possível carregar os detalhes desse celular.';
+    const elemento = document.getElementById(`card-celular-${index}`);
 
-        this.buscandoDetalhesApi = false;
-      }
+    elemento?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: 'start'
     });
-  }
-
-  private converterDispositivoApi(
-    d: DispositivoDetalhado
-  ): Celular {
-    const capacidadeRam = this.obterRamGb(d);
-
-    const capacidadeArmazenamento =
-      this.obterArmazenamentoGb(d);
-
-    const chipsetOriginal = d.platform?.chipset || '';
-    const hardwareOriginal = d.hardware || '';
-
-    const processador =
-      chipsetOriginal
-        .split(/Processor clock:|Number of cores:|GPU:/i)[0]
-        .trim() ||
-
-      hardwareOriginal
-        .replace(
-          /^(?:\s*\d+(?:[.,]\d+)?\s*(?:GB|MB|TB)\s*)+RAM\s*,?\s*/i,
-          ''
-        )
-        .trim() ||
-
-      'Não informado pela API';
-
-    const gpu =
-      d.platform?.gpu?.trim() ||
-      chipsetOriginal.match(/GPU:\s*(.+)$/i)?.[1]?.trim() ||
-      'Não informado pela API';
-
-    const tela = [
-      d.display?.type,
-      d.display?.size,
-      d.display?.resolution
-    ]
-      .filter(
-        (valor): valor is string => Boolean(valor?.trim())
-      )
-      .join(' — ') ||
-
-      d.screen_resolution ||
-      'Não informado pela API';
-
-    const bateriaOriginal =
-      d.battery?.type || d.battery_capacity || '';
-
-    const bateria =
-      bateriaOriginal.match(/[\d.,]+\s*mAh/i)?.[0] ||
-      bateriaOriginal ||
-      'Não informado pela API';
-
-    const cameras = [
-      d.main_camera?.modules
-        ? `Traseira: ${d.main_camera.modules}`
-        : '',
-
-      d.selfie_camera?.modules
-        ? `Frontal: ${d.selfie_camera.modules}`
-        : ''
-    ]
-      .filter(Boolean)
-      .join(' | ') ||
-
-      'Não informado pela API';
-
-    const celular: Celular = {
-      id: 1_000_000 + d.id,
-      nome: this.nomeCompletoApi(d),
-      precoLoja: null,
-      origem: 'api',
-
-      imagem:
-        d.image_url || '/img/projeto/celulares.jpg',
-
-      specs: {
-        armazenamento: capacidadeArmazenamento !== null
-          ? `${capacidadeArmazenamento}GB`
-          : 'Não informado pela API',
-
-        ram: capacidadeRam !== null
-          ? `${capacidadeRam}GB`
-          : 'Não informado pela API',
-
-        bateria,
-        processador,
-        gpu,
-        qualidadeImagem: tela,
-        camera: cameras
-      }
-    };
-
-    return this.prepararCelular(celular);
-  }
-
-  private obterRamGb(
-    d: DispositivoDetalhado
-  ): number | null {
-    const memoria = d.memory?.internal || '';
-
-    const textoRam =
-      memoria.match(/RAM\s*:\s*(.+)$/i)?.[1] ||
-
-      memoria.match(
-        /(\d+(?:[.,]\d+)?\s*(?:GB|MB|TB))\s*RAM/i
-      )?.[1] ||
-
-      d.hardware?.match(
-        /((?:\d+(?:[.,]\d+)?\s*(?:GB|MB|TB)\s*)+)RAM/i
-      )?.[1] ||
-
-      '';
-
-    const capacidades =
-      this.lerCapacidadesGb(textoRam);
-
-    return capacidades.length
-      ? Math.min(...capacidades)
-      : null;
-  }
-
-  private obterArmazenamentoGb(
-    d: DispositivoDetalhado
-  ): number | null {
-    const opcoes =
-      this.lerCapacidadesGb(d.storage || '');
-
-    if (opcoes.length) {
-      return Math.min(...opcoes);
-    }
-
-    const memoria = d.memory?.internal || '';
-    const antesDaRam = memoria.split(/\bRAM\b/i)[0];
-
-    const capacidades =
-      this.lerCapacidadesGb(antesDaRam);
-
-    if (
-      capacidades.length > 1 &&
-      /\bRAM\b/i.test(memoria) &&
-      !/RAM\s*:/i.test(memoria)
-    ) {
-      const valoresOriginais =
-        this.lerCapacidadesGbNaOrdem(antesDaRam);
-
-      valoresOriginais.pop();
-
-      return valoresOriginais.length
-        ? Math.min(...valoresOriginais)
-        : null;
-    }
-
-    return capacidades.length
-      ? Math.min(...capacidades)
-      : null;
-  }
-
-  private lerCapacidadesGb(texto: string): number[] {
-    return [
-      ...new Set(
-        this.lerCapacidadesGbNaOrdem(texto)
-      )
-    ].sort((a, b) => a - b);
-  }
-
-  private lerCapacidadesGbNaOrdem(
-    texto: string
-  ): number[] {
-    const capacidades: number[] = [];
-
-    const regex = /(\d+(?:[.,]\d+)?)\s*(TB|GB|MB)/gi;
-
-    for (const resultado of texto.matchAll(regex)) {
-      let valor = Number(
-        resultado[1].replace(',', '.')
-      );
-
-      const unidade = resultado[2].toUpperCase();
-
-      if (unidade === 'TB') {
-        valor *= 1024;
-      }
-
-      if (unidade === 'MB') {
-        valor /= 1024;
-      }
-
-      if (Number.isFinite(valor) && valor > 0) {
-        capacidades.push(
-          Number(valor.toFixed(2))
-        );
-      }
-    }
-
-    return capacidades;
   }
 
   // --------------------------------------------------
   // INFORMAÇÕES DA CLASSIFICAÇÃO
   // --------------------------------------------------
 
-  obterPosicaoFacilito(
-    celularId: number
-  ): number | null {
+  obterPosicaoFacilito(celularId: number): number | null {
     if (this.resultadoFacilito?.status !== 'concluida') {
       return null;
     }
 
-    const resultado =
-      this.resultadoFacilito.classificacao.find(
-        item => item.celularId === celularId
-      );
+    const resultado = this.resultadoFacilito.classificacao.find(
+      item => item.celularId === celularId
+    );
 
     return resultado?.posicao ?? null;
   }
@@ -1391,8 +580,7 @@ export class Home implements OnInit, OnDestroy {
       return false;
     }
 
-    const posicao =
-      this.obterPosicaoFacilito(celularId);
+    const posicao = this.obterPosicaoFacilito(celularId);
 
     if (posicao === null) {
       return false;
@@ -1405,9 +593,7 @@ export class Home implements OnInit, OnDestroy {
     );
   }
 
-  obterJustificativaFacilito(
-    celularId: number
-  ): string {
+  obterJustificativaFacilito(celularId: number): string {
     if (this.resultadoFacilito?.status !== 'concluida') {
       return '';
     }
@@ -1428,7 +614,7 @@ export class Home implements OnInit, OnDestroy {
   }
 
   // --------------------------------------------------
-  // EDIÇÃO DE INFORMAÇÕES
+  // EDIÇÃO DE VERSÃO / ESPECIFICAÇÕES
   // --------------------------------------------------
 
   atualizarSpec(
@@ -1444,7 +630,7 @@ export class Home implements OnInit, OnDestroy {
       'ram',
       'armazenamento',
       'gpu',
-      'qualidadeImagem',
+      'tela',
       'bateria',
       'processador',
       'camera'
@@ -1456,255 +642,68 @@ export class Home implements OnInit, OnDestroy {
         OrigemEspecificacaoFacilito
       >;
 
-      celular.origemEspecificacoes[
-        chave as CampoEspecificacao
-      ] = 'usuario';
+      celular.origemEspecificacoes[chave as CampoEspecificacao] = 'usuario';
     }
-
-    this.atualizarIndicadoresInformacao(celular);
-  }
-
-  /*
-   * Compatibilidade temporária com o HTML anterior.
-   * O preço não participa do pedido enviado ao Facilito.
-   */
-  atualizarPrecoLoja(
-    celular: Celular,
-    valor: number | null
-  ): void {
-    celular.precoLoja = this.normalizarPreco(valor);
-  }
-
-  // --------------------------------------------------
-  // SUGESTÕES E ADIÇÃO DE CELULARES
-  // --------------------------------------------------
-
-  get sugestoesBusca(): Celular[] {
-    if (!this.termoBusca.trim()) {
-      return [];
-    }
-
-    const termo = this.termoBusca.toLowerCase();
-
-    return this.listaCelulares.filter(celular =>
-      celular.nome.toLowerCase().includes(termo)
-    );
-  }
-
-  selecionarSugestao(celular: Celular): void {
-    this.termoBusca = celular.nome;
-
-    this.celularSelecionado =
-      this.prepararCelular(
-        structuredClone(celular)
-      );
-
-    this.resultadosApi = [];
-    this.erroBuscaApi = '';
-
-    this.mensagemBuscaApi =
-      'Celular selecionado. Clique em Adicionar para incluí-lo na comparação.';
-
-    this.buscaApiRealizada = false;
-  }
-
-  adicionarAComparacao(): void {
-    if (!this.celularSelecionado) {
-      alert(
-        'Por favor, selecione um celular da lista de sugestões.'
-      );
-      return;
-    }
-
-    if (this.listaComparacao.length >= 3) {
-      alert(
-        'Você já atingiu o limite de 3 celulares para comparar.'
-      );
-      return;
-    }
-
-    const jaExiste = this.listaComparacao.some(
-      celular =>
-        celular.id === this.celularSelecionado?.id
-    );
-
-    if (jaExiste) {
-      alert(
-        'Este celular já está na sua lista de comparação.'
-      );
-      return;
-    }
-
-    const novoCelular = this.prepararCelular(
-      structuredClone(this.celularSelecionado)
-    );
-
-    this.listaComparacao.push(novoCelular);
-
-    this.invalidarResultadoFacilito();
-
-    this.termoBusca = '';
-    this.celularSelecionado = null;
-    this.mensagemBuscaApi = '';
-    this.erroBuscaApi = '';
-    this.resultadosApi = [];
-    this.buscaApiRealizada = false;
-  }
-
-  removerDaComparacao(index: number): void {
-    if (
-      index < 0 ||
-      index >= this.listaComparacao.length
-    ) {
-      return;
-    }
-
-    this.listaComparacao.splice(index, 1);
-
-    this.invalidarResultadoFacilito();
-
-    this.listaComparacao.forEach(celular =>
-      this.atualizarIndicadoresInformacao(celular)
-    );
-  }
-
-  irParaCelular(index: number): void {
-    if (!this.listaComparacao[index]) {
-      alert(
-        `O slot ${index + 1} ainda está vazio! Adicione um celular primeiro.`
-      );
-      return;
-    }
-
-    const elemento = document.getElementById(
-      `card-celular-${index}`
-    );
-
-    elemento?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-      inline: 'start'
-    });
-  }
-
-  // --------------------------------------------------
-  // COMPATIBILIDADE COM O HTML ANTERIOR
-  // --------------------------------------------------
-
-  toggleFiltro(_key: string): void {
-    // A comparação atual não utiliza filtros.
-  }
-
-  filtroAtivo(_key: string): boolean {
-    return false;
-  }
-
-  private obterCampoDoFiltro(
-    _filtro: string
-  ): CampoEspecificacao | null {
-    return null;
-  }
-
-  private obterNomeDoFiltro(filtro: string): string {
-    return filtro;
   }
 
   // --------------------------------------------------
   // MONTAGEM DO PEDIDO PARA O FACILITO.AI
   // --------------------------------------------------
 
-  // --------------------------------------------------
-// DETALHES TÉCNICOS ENVIADOS AO FACILITO
-// --------------------------------------------------
+  private montarTextoDetalhesFacilito(
+    celular: Celular,
+    campo: CampoEspecificacao
+  ): string {
+    switch (campo) {
+      case 'tela':
+        return (celular.detalhesTecnicos?.tela ?? [])
+          .map(detalhe => `${detalhe.rotulo}: ${detalhe.valor}`)
+          .join('; ');
 
-private montarTextoDetalhesFacilito(
-  celular: Celular,
-  campo: CampoEspecificacao
-): string {
+      case 'processador':
+        return (celular.detalhesTecnicos?.processador ?? [])
+          .map(detalhe => `${detalhe.rotulo}: ${detalhe.valor}`)
+          .join('; ');
 
-  switch (campo) {
+      case 'bateria':
+        return (celular.detalhesTecnicos?.bateria ?? [])
+          .map(detalhe => `${detalhe.rotulo}: ${detalhe.valor}`)
+          .join('; ');
 
-    case 'qualidadeImagem':
+      case 'camera':
+        return (celular.detalhesTecnicos?.camera ?? [])
+          .map(detalhe => `${detalhe.rotulo}: ${detalhe.valor}`)
+          .join('; ');
 
-      return (celular.detalhesTecnicos?.qualidadeImagem ?? [])
-        .map(detalhe =>
-          `${detalhe.rotulo}: ${detalhe.valor}`
-        )
-        .join('; ');
-
-
-    case 'processador':
-
-      return (celular.detalhesTecnicos?.processador ?? [])
-        .map(detalhe =>
-          `${detalhe.rotulo}: ${detalhe.valor}`
-        )
-        .join('; ');
-
-
-    case 'bateria':
-
-      return (celular.detalhesTecnicos?.bateria ?? [])
-        .map(detalhe =>
-          `${detalhe.rotulo}: ${detalhe.valor}`
-        )
-        .join('; ');
-
-
-    case 'camera':
-
-      return (celular.detalhesTecnicos?.camera ?? [])
-        .map(detalhe =>
-          `${detalhe.rotulo}: ${detalhe.valor}`
-        )
-        .join('; ');
-
-
-    default:
-
-      return '';
-
+      default:
+        return '';
+    }
   }
 
-}
-
-
-  // Junta o valor resumido com os detalhes técnicos.
   private montarValorCompletoFacilito(
     celular: Celular,
     campo: CampoEspecificacao,
     valorOriginal: string
   ): string {
-
-    const detalhes = this.montarTextoDetalhesFacilito(
-      celular,
-      campo
-    );
+    const detalhes = this.montarTextoDetalhesFacilito(celular, campo);
 
     if (!detalhes) {
       return valorOriginal;
     }
 
-    const partes = [
-      valorOriginal.trim(),
-      `Detalhes técnicos: ${detalhes}`
-    ];
-
-    return partes
+    return [valorOriginal.trim(), `Detalhes técnicos: ${detalhes}`]
       .filter(parte => parte.length > 0)
       .join('. ');
-
   }
 
   private montarEspecificacoesFacilito(
     celular: Celular
   ): Record<CampoEspecificacao, DadoEspecificacaoFacilito> {
-
     const campos: CampoEspecificacao[] = [
       'ram',
       'armazenamento',
       'gpu',
-      'qualidadeImagem',
+      'tela',
       'bateria',
       'processador',
       'camera'
@@ -1716,53 +715,27 @@ private montarTextoDetalhesFacilito(
     >;
 
     for (const campo of campos) {
-
-      // Valor resumido já existente no celular.
       const valorOriginal = celular.specs[campo] ?? '';
-
-      // Acrescenta as informações detalhadas, quando disponíveis.
       const valor = this.montarValorCompletoFacilito(
         celular,
         campo,
         valorOriginal
       );
 
-      const origemRegistrada =
-        celular.origemEspecificacoes?.[campo];
-
-      // Preserva a origem anterior, exceto quando estava marcada
-      // como indisponível, mas agora existem detalhes cadastrados.
-      const fonte: OrigemEspecificacaoFacilito =
-        origemRegistrada &&
-        origemRegistrada !== 'indisponivel'
-
-          ? origemRegistrada
-
-          : !this.temInformacao(valor)
-
-            ? 'indisponivel'
-
-            : celular.origem === 'api'
-              ? 'mobileapi'
-              : 'catalogo';
-
       especificacoes[campo] = {
         valor,
-        fonte
+        fonte: celular.origemEspecificacoes?.[campo] ?? 'catalogo'
       };
-
     }
 
     return especificacoes;
-
   }
 
   private montarPedidoFacilito(): PedidoFacilito {
     return {
       celulares: this.listaComparacao.map(celular => ({
         id: celular.id,
-        especificacoes:
-          this.montarEspecificacoesFacilito(celular)
+        especificacoes: this.montarEspecificacoesFacilito(celular)
       }))
     };
   }
@@ -1777,14 +750,12 @@ private montarTextoDetalhesFacilito(
     }
 
     if (this.listaComparacao.length < 2) {
-      this.erroFacilito =
-        'Adicione pelo menos dois celulares para comparar.';
+      this.erroFacilito = 'Adicione pelo menos dois celulares para comparar.';
       return;
     }
 
     if (this.listaComparacao.length > 3) {
-      this.erroFacilito =
-        'Você pode comparar no máximo três celulares por vez.';
+      this.erroFacilito = 'Você pode comparar no máximo três celulares por vez.';
       return;
     }
 
@@ -1798,8 +769,7 @@ private montarTextoDetalhesFacilito(
 
     this.invalidarResultadoFacilito();
 
-    const versaoSolicitacao =
-      this.versaoComparacao;
+    const versaoSolicitacao = this.versaoComparacao;
 
     this.facilitoCarregando = true;
     this.erroFacilito = '';
@@ -1812,107 +782,63 @@ private montarTextoDetalhesFacilito(
         this.facilitoService.comparar(pedido)
       );
 
-      // Ignora respostas de comparações que já foram alteradas.
-      if (
-        versaoSolicitacao !== this.versaoComparacao
-      ) {
+      if (versaoSolicitacao !== this.versaoComparacao) {
         return;
       }
 
       if (
         !resultado ||
+        resultado.status !== 'concluida' ||
         typeof resultado.resumo !== 'string' ||
         !Array.isArray(resultado.classificacao) ||
         !Array.isArray(resultado.observacoes) ||
         !Array.isArray(resultado.fontes)
       ) {
-        throw new Error(
-          'O resultado recebido não possui o formato esperado.'
-        );
+        throw new Error('O resultado recebido não possui o formato esperado.');
       }
 
-      // Mesmo uma resposta inconclusiva conta como análise realizada.
-      // Para tentar novamente, será necessário alterar os celulares escolhidos.
-      if (resultado.status === 'inconclusiva') {
-        this.assinaturaUltimaComparacao = assinaturaSolicitacao;
-        this.resultadoFacilito = resultado;
-        return;
-      }
-
-      if (resultado.status !== 'concluida') {
-        throw new Error(
-          'Não foi possível confirmar a conclusão da avaliação.'
-        );
-      }
-
-      const idsSelecionados =
-        this.listaComparacao.map(
-          celular => celular.id
-        );
-
-      const classificacao =
-        resultado.classificacao;
-
-      const idsRecebidos = classificacao.map(
-        item => item.celularId
-      );
+      const idsSelecionados = this.listaComparacao.map(celular => celular.id);
+      const classificacao = resultado.classificacao;
+      const idsRecebidos = classificacao.map(item => item.celularId);
 
       const idsUnicos =
-        new Set(idsRecebidos).size ===
-        idsRecebidos.length;
+        new Set(idsRecebidos).size === idsRecebidos.length;
 
       const todosOsAparelhosIncluidos =
         idsSelecionados.length === classificacao.length &&
-        idsSelecionados.every(
-          id => idsRecebidos.includes(id)
-        );
+        idsSelecionados.every(id => idsRecebidos.includes(id));
 
-      // Posições iguais são permitidas para empates.
-      const posicoesValidas =
-        classificacao.every(item =>
+      const posicoesValidas = classificacao.every(
+        item =>
           idsSelecionados.includes(item.celularId) &&
           Number.isInteger(item.posicao) &&
           item.posicao >= 1 &&
           item.posicao <= this.listaComparacao.length &&
           typeof item.justificativa === 'string' &&
           item.justificativa.trim().length > 0
-        );
+      );
 
-      if (
-        !idsUnicos ||
-        !todosOsAparelhosIncluidos ||
-        !posicoesValidas
-      ) {
-        throw new Error(
-          'Não foi possível validar a classificação recebida.'
-        );
+      if (!idsUnicos || !todosOsAparelhosIncluidos || !posicoesValidas) {
+        throw new Error('Não foi possível validar a classificação recebida.');
       }
 
       this.resultadoFacilito = resultado;
       this.assinaturaUltimaComparacao = assinaturaSolicitacao;
-
     } catch (erro: unknown) {
-      if (
-        versaoSolicitacao !== this.versaoComparacao
-      ) {
+      if (versaoSolicitacao !== this.versaoComparacao) {
         return;
       }
 
       const erroHttp = erro as {
-        error?: {
-          error?: unknown;
-          message?: unknown;
-        };
+        error?: { error?: unknown; message?: unknown };
         message?: unknown;
       };
 
       const mensagemServidor =
         typeof erroHttp.error?.error === 'string'
           ? erroHttp.error.error
-
           : typeof erroHttp.error?.message === 'string'
             ? erroHttp.error.message
-
             : typeof erroHttp.message === 'string'
               ? erroHttp.message
               : '';
@@ -1920,7 +846,6 @@ private montarTextoDetalhesFacilito(
       this.erroFacilito =
         mensagemServidor ||
         'Não consegui concluir a comparação. Tente novamente.';
-
     } finally {
       if (versaoSolicitacao === this.versaoComparacao) {
         this.facilitoCarregando = false;
@@ -1935,16 +860,12 @@ private montarTextoDetalhesFacilito(
 
   salvarComparacao(): void {
     if (!this.quantidadeCelularesValida) {
-      alert(
-        'Adicione dois ou três celulares antes de salvar.'
-      );
+      alert('Adicione dois ou três celulares antes de salvar.');
       return;
     }
 
     if (this.resultadoFacilito?.status !== 'concluida') {
-      alert(
-        'Faça uma comparação concluída com o Facilito.AI antes de salvar.'
-      );
+      alert('Faça uma comparação concluída com o Facilito.AI antes de salvar.');
       return;
     }
 
@@ -1961,66 +882,36 @@ private montarTextoDetalhesFacilito(
     }
 
     const chave = `salvos_${usuario.id}`;
-
     let salvosAnteriores: any[] = [];
 
     try {
-      const dadosSalvos =
-        localStorage.getItem(chave);
-
-      salvosAnteriores = dadosSalvos
-        ? JSON.parse(dadosSalvos)
-        : [];
+      const dadosSalvos = localStorage.getItem(chave);
+      salvosAnteriores = dadosSalvos ? JSON.parse(dadosSalvos) : [];
 
       if (!Array.isArray(salvosAnteriores)) {
         salvosAnteriores = [];
       }
-
     } catch (erro) {
-      console.error(
-        'Erro ao ler as comparações salvas:',
-        erro
-      );
-
-      alert(
-        'Não foi possível acessar suas comparações salvas.'
-      );
-
+      console.error('Erro ao ler as comparações salvas:', erro);
+      alert('Não foi possível acessar suas comparações salvas.');
       return;
     }
 
     const novaComparacao = {
       id: Date.now(),
       data: new Date().toISOString(),
-
-      celulares: structuredClone(
-        this.listaComparacao
-      ),
-
-      resultadoFacilito: structuredClone(
-        this.resultadoFacilito
-      )
+      celulares: structuredClone(this.listaComparacao),
+      resultadoFacilito: structuredClone(this.resultadoFacilito)
     };
 
     salvosAnteriores.push(novaComparacao);
 
     try {
-      localStorage.setItem(
-        chave,
-        JSON.stringify(salvosAnteriores)
-      );
-
+      localStorage.setItem(chave, JSON.stringify(salvosAnteriores));
       alert('Comparação salva com sucesso!');
-
     } catch (erro) {
-      console.error(
-        'Erro ao salvar a comparação:',
-        erro
-      );
-
-      alert(
-        'Não foi possível salvar a comparação. Tente novamente.'
-      );
+      console.error('Erro ao salvar a comparação:', erro);
+      alert('Não foi possível salvar a comparação. Tente novamente.');
     }
   }
 
@@ -2037,11 +928,9 @@ private montarTextoDetalhesFacilito(
       return;
     }
 
-    this.termoExibido =
-      this.dicionarioTermos[termoKey];
+    this.termoExibido = this.dicionarioTermos[termoKey];
 
-    const elemento =
-      document.getElementById('infoFacil');
+    const elemento = document.getElementById('infoFacil');
 
     elemento?.scrollIntoView({
       behavior: 'smooth',

@@ -1,4 +1,3 @@
-
 <div class="home-container">
   <header class="header-home">
     <div class="header-left">
@@ -12,12 +11,12 @@
     </div>
 
     <div class="header-actions">
-      <a href="/salvos" class="btn-salvos-header">
+      <a routerLink="/salvos" class="btn-salvos-header">
         Salvos
       </a>
 
       <div class="user-avatar" title="Perfil do Usuário">
-        <a href="/perfil">
+        <a routerLink="/perfil">
           <img src="/img/projeto/pessoa.svg" alt="Perfil do usuário">
         </a>
       </div>
@@ -41,7 +40,7 @@
     <section class="section-block">
       <div class="search-container">
 
-        <h2 style="text-align: center; margin: 20px 0px;">Digite o celular abaixo!</h2>
+        <h2 class="titulo-busca">Digite o celular abaixo!</h2>
 
         <div class="search-bar">
           <input
@@ -71,87 +70,13 @@
           }
         </div>
 
-        @if (
-          termoBusca.trim().length >= 2 &&
-          !celularSelecionado &&
-          (!buscaApiRealizada || erroBuscaApi)
-        ) {
-          <div class="acoes-busca-api">
-            <p>Não encontrou o celular que procura?</p>
-            <small>Vamos procurar mais modelos para você.</small>
-
-            <button
-              type="button"
-              class="btn-buscar-api"
-              (click)="buscarNaApi()"
-              [disabled]="buscandoApi || buscandoDetalhesApi || tempoEsperaApi > 0">
-
-              @if (buscandoApi) {
-                Procurando...
-              } @else if (tempoEsperaApi > 0) {
-                Tente novamente em {{ tempoEsperaApi }}s
-              } @else {
-                Buscar mais modelos
-              }
-            </button>
-          </div>
-        }
-
-        @if (buscandoDetalhesApi) {
-          <p class="status-busca-api">
-            Carregando as especificações do celular...
-          </p>
-        }
-
-        @if (erroBuscaApi) {
-          <p class="erro-busca-api">{{ erroBuscaApi }}</p>
-        }
-
-        @if (mensagemBuscaApi) {
+        @if (mensagemBusca) {
           <div
             class="aviso-resultado-busca"
             role="status"
             aria-live="polite">
-
-            <strong>
-              @if (mensagemBuscaApi.includes('Nenhum celular encontrado')) {
-                Celular não encontrado
-              } @else if (mensagemBuscaApi.includes('já estão no catálogo local')) {
-                Modelos já disponíveis
-              } @else {
-                Busca concluída
-              }
-            </strong>
-
-            <p>{{ mensagemBuscaApi }}</p>
-          </div>
-        }
-
-        @if (resultadosApi.length > 0) {
-          <div class="lista-resultados-api">
-            @for (dispositivo of resultadosApi; track dispositivo.id) {
-              <button
-                type="button"
-                class="resultado-api"
-                (click)="selecionarResultadoApi(dispositivo)"
-                [disabled]="buscandoDetalhesApi">
-
-                <img
-                  [src]="dispositivo.image_url || '/img/projeto/celulares.jpg'"
-                  [alt]="nomeCompletoApi(dispositivo)">
-
-                <span class="resultado-api-texto">
-                  <strong>{{ nomeCompletoApi(dispositivo) }}</strong>
-
-                  <small>
-                    {{ dispositivo.match_certainty
-                      ? 'Correspondência: ' + dispositivo.match_certainty
-                      : 'Selecionar aparelho'
-                    }}
-                  </small>
-                </span>
-              </button>
-            }
+            <strong>Celular selecionado</strong>
+            <p>{{ mensagemBusca }}</p>
           </div>
         }
       </div>
@@ -162,7 +87,7 @@
           <h3>Comparando {{ listaComparacao.length }} celular(es)</h3>
 
           <small class="dica-toque desktop-only">
-            💡 Toque no nome do componente para entender em linguagem simples.
+            💡 Toque no ícone ℹ️ ao lado do componente para entender em linguagem simples.
           </small>
         </div>
 
@@ -216,9 +141,8 @@
 
             @let detalhesProcessador = celular.detalhesTecnicos?.processador ?? [];
             @let detalhesBateria = celular.detalhesTecnicos?.bateria ?? [];
-            @let detalhesQualidadeImagem = celular.detalhesTecnicos?.qualidadeImagem ?? [];
+            @let detalhesTela = celular.detalhesTecnicos?.tela ?? [];
             @let detalhesCamera = celular.detalhesTecnicos?.camera ?? [];
-
 
             @if (resultadoFacilito?.status === 'concluida') {
               @if (celularEstaEmpatado(celular.id)) {
@@ -250,32 +174,12 @@
             </div>
 
             <div class="info">
-              
+
               <!-- ARMAZENAMENTO -->
               <div class="todas-infos">
-
-                @if (
-                  !celular.specs.armazenamento.trim() ||
-                  celular.specs.armazenamento === 'Não informado pela API'
-                ) {
-
-                  <div class="qualidade-imagem-status">
-
-                    <strong>Armazenamento</strong>
-
-                    <span class="qualidade-imagem-aviso" role="status">
-                      <span class="icone-info" aria-hidden="true">ⓘ</span>
-                      Informação incompleta
-                    </span>
-
-                  </div>
-
-                } @else if (celular.versoes?.length) {
-
+                @if (celular.versoes?.length) {
                   <div class="seletor-especificacao">
-
                     <div class="cabecalho-seletor-especificacao">
-
                       <label [for]="'armazenamento-' + celular.id">
                         Armazenamento
                       </label>
@@ -287,7 +191,6 @@
                         (click)="abrirDicionario('armazenamento')">
                         ℹ️
                       </button>
-
                     </div>
 
                     <select
@@ -296,63 +199,29 @@
                       [ngModel]="celular.specs.armazenamento"
                       (ngModelChange)="selecionarArmazenamento(celular, $event)"
                       [ngModelOptions]="{ standalone: true }">
-
-                      @for (
-                        opcao of opcoesArmazenamento(celular);
-                        track opcao
-                      ) {
-
+                      @for (opcao of opcoesArmazenamento(celular); track opcao) {
                         <option [value]="opcao">
                           {{ opcao }}
                         </option>
-
                       }
-
                     </select>
-
                   </div>
-
                 } @else {
-
                   <app-alterar-info
                     label="Armazenamento"
                     [valor]="celular.specs.armazenamento"
-                    [editavel]="true"
-                    tipoInput="numero"
-                    (valorChange)="atualizarSpec(celular, 'armazenamento', $event)"
+                    [editavel]="false"
+                    tipoInput="texto"
                     (infoClick)="abrirDicionario('armazenamento')">
                   </app-alterar-info>
-
                 }
-
               </div>
-
 
               <!-- MEMÓRIA RAM -->
               <div class="todas-infos">
-
-                @if (
-                  !celular.specs.ram.trim() ||
-                  celular.specs.ram === 'Não informado pela API'
-                ) {
-
-                  <div class="qualidade-imagem-status">
-
-                    <strong>Memória RAM</strong>
-
-                    <span class="qualidade-imagem-aviso" role="status">
-                      <span class="icone-info" aria-hidden="true">ⓘ</span>
-                      Informação incompleta
-                    </span>
-
-                  </div>
-
-                } @else if (celular.versoes?.length) {
-
+                @if (celular.versoes?.length) {
                   <div class="seletor-especificacao">
-
                     <div class="cabecalho-seletor-especificacao">
-
                       <label [for]="'ram-' + celular.id">
                         Memória RAM
                       </label>
@@ -364,7 +233,6 @@
                         (click)="abrirDicionario('ram')">
                         ℹ️
                       </button>
-
                     </div>
 
                     <select
@@ -373,46 +241,29 @@
                       [ngModel]="celular.specs.ram"
                       (ngModelChange)="selecionarRam(celular, $event)"
                       [ngModelOptions]="{ standalone: true }">
-
-                      @for (
-                        opcao of opcoesRam(celular);
-                        track opcao
-                      ) {
-
+                      @for (opcao of opcoesRam(celular); track opcao) {
                         <option [value]="opcao">
                           {{ opcao }}
                         </option>
-
                       }
-
                     </select>
-
                   </div>
-
                 } @else {
-
                   <app-alterar-info
                     label="Memória RAM"
                     [valor]="celular.specs.ram"
-                    [editavel]="true"
-                    tipoInput="numero"
-                    (valorChange)="atualizarSpec(celular, 'ram', $event)"
+                    [editavel]="false"
+                    tipoInput="texto"
                     (infoClick)="abrirDicionario('ram')">
                   </app-alterar-info>
-
                 }
-
               </div>
 
               <!-- PROCESSADOR -->
               <div class="todas-infos">
-
                 @if (detalhesProcessador.length) {
-
                   <section class="grupo-detalhes-tecnicos">
-
                     <div class="cabecalho-detalhes-tecnicos">
-
                       <strong>Processador</strong>
 
                       <button
@@ -422,58 +273,18 @@
                         (click)="abrirDicionario('processador')">
                         ℹ️
                       </button>
-
                     </div>
 
                     <div class="lista-detalhes-tecnicos">
-
-                      @for (
-                        detalhe of detalhesProcessador;
-                        track detalhe.rotulo
-                      ) {
-
+                      @for (detalhe of detalhesProcessador; track detalhe.rotulo) {
                         <div class="linha-detalhe-tecnico">
-
                           <span>{{ detalhe.rotulo }}</span>
-
                           <strong>{{ detalhe.valor }}</strong>
-
                         </div>
-
                       }
-
                     </div>
-
                   </section>
-
-                } @else if (celular.processadorSemDados) {
-
-                  <div class="qualidade-imagem-status">
-
-                    <strong>Processador</strong>
-
-                    <span class="qualidade-imagem-aviso" role="status">
-                      <span class="icone-info" aria-hidden="true">ⓘ</span>
-                      Dados insuficientes
-                    </span>
-
-                  </div>
-
-                } @else if (celular.processadorParcial) {
-
-                  <div class="qualidade-imagem-status">
-
-                    <strong>Processador</strong>
-
-                    <span class="qualidade-imagem-aviso" role="status">
-                      <span class="icone-info" aria-hidden="true">ⓘ</span>
-                      Informação incompleta
-                    </span>
-
-                  </div>
-
                 } @else {
-
                   <app-alterar-info
                     label="Processador"
                     [valor]="celular.specs.processador"
@@ -481,19 +292,13 @@
                     tipoInput="texto"
                     (infoClick)="abrirDicionario('processador')">
                   </app-alterar-info>
-
                 }
-
               </div>
 
-              
               <!-- GPU -->
               <div class="todas-infos">
-
                 <section class="grupo-detalhes-tecnicos">
-
                   <div class="cabecalho-detalhes-tecnicos">
-
                     <strong>Placa de vídeo (GPU)</strong>
 
                     <button
@@ -503,44 +308,22 @@
                       (click)="abrirDicionario('gpu')">
                       ℹ️
                     </button>
-
                   </div>
 
                   <div class="lista-detalhes-tecnicos">
-
-                    @if (celular.gpuSemDados || !celular.specs.gpu.trim()) {
-
-                      <div class="linha-detalhe-tecnico">
-                        <span>Informação</span>
-                        <strong>Dados insuficientes</strong>
-                      </div>
-
-                    } @else {
-
-                      <div class="linha-detalhe-tecnico">
-                        <span>Modelo</span>
-                        <strong>{{ celular.specs.gpu }}</strong>
-                      </div>
-
-                    }
-
+                    <div class="linha-detalhe-tecnico">
+                      <span>Modelo</span>
+                      <strong>{{ celular.specs.gpu }}</strong>
+                    </div>
                   </div>
-
                 </section>
-
               </div>
-
-
 
               <!-- BATERIA -->
               <div class="todas-infos">
-
                 @if (detalhesBateria.length) {
-
                   <section class="grupo-detalhes-tecnicos">
-
                     <div class="cabecalho-detalhes-tecnicos">
-
                       <strong>Bateria</strong>
 
                       <button
@@ -550,48 +333,18 @@
                         (click)="abrirDicionario('bateria')">
                         ℹ️
                       </button>
-
                     </div>
 
                     <div class="lista-detalhes-tecnicos">
-
-                      @for (
-                        detalhe of detalhesBateria;
-                        track detalhe.rotulo
-                      ) {
-
+                      @for (detalhe of detalhesBateria; track detalhe.rotulo) {
                         <div class="linha-detalhe-tecnico">
-
                           <span>{{ detalhe.rotulo }}</span>
-
                           <strong>{{ detalhe.valor }}</strong>
-
                         </div>
-
                       }
-
                     </div>
-
                   </section>
-
-                } @else if (
-                  !celular.specs.bateria.trim() ||
-                  celular.specs.bateria === 'Não informado pela API'
-                ) {
-
-                  <div class="qualidade-imagem-status">
-
-                    <strong>Bateria</strong>
-
-                    <span class="qualidade-imagem-aviso" role="status">
-                      <span class="icone-info" aria-hidden="true">ⓘ</span>
-                      Informação incompleta
-                    </span>
-
-                  </div>
-
                 } @else {
-
                   <app-alterar-info
                     label="Bateria"
                     [valor]="celular.specs.bateria"
@@ -599,92 +352,47 @@
                     tipoInput="texto"
                     (infoClick)="abrirDicionario('bateria')">
                   </app-alterar-info>
-
                 }
+              </div>
 
-            </div>
+              <!-- TELA -->
+              <div class="todas-infos">
+                <section class="grupo-detalhes-tecnicos">
+                  <div class="cabecalho-detalhes-tecnicos">
+                    <strong>Tela</strong>
 
-            <!-- TELA -->
-            <div class="todas-infos">
+                    <button
+                      type="button"
+                      class="botao-info-especificacao"
+                      aria-label="Entenda a tela"
+                      (click)="abrirDicionario('tela')">
+                      ℹ️
+                    </button>
+                  </div>
 
-              <section class="grupo-detalhes-tecnicos">
-
-                <div class="cabecalho-detalhes-tecnicos">
-
-                  <strong>Tela</strong>
-
-                  <button
-                    type="button"
-                    class="botao-info-especificacao"
-                    aria-label="Entenda a tela"
-                    (click)="abrirDicionario('qualidadeImagem')">
-                    ℹ️
-                  </button>
-
-                </div>
-
-                <div class="lista-detalhes-tecnicos">
-
-                  @if (detalhesQualidadeImagem.length) {
-
-                    @for (
-                      detalhe of detalhesQualidadeImagem;
-                      track detalhe.rotulo
-                    ) {
-
+                  <div class="lista-detalhes-tecnicos">
+                    @if (detalhesTela.length) {
+                      @for (detalhe of detalhesTela; track detalhe.rotulo) {
+                        <div class="linha-detalhe-tecnico">
+                          <span>{{ detalhe.rotulo }}</span>
+                          <strong>{{ detalhe.valor }}</strong>
+                        </div>
+                      }
+                    } @else {
                       <div class="linha-detalhe-tecnico">
-
-                        <span>{{ detalhe.rotulo }}</span>
-
-                        <strong>{{ detalhe.valor }}</strong>
-
+                        <span>Resumo</span>
+                        <strong>{{ celular.specs.tela }}</strong>
                       </div>
-
                     }
+                  </div>
+                </section>
+              </div>
 
-                  } @else if (
-                    celular.qualidadeImagemSemDados ||
-                    !celular.specs.qualidadeImagem.trim()
-                  ) {
-
-                    <div class="linha-detalhe-tecnico">
-                      <span>Informação</span>
-                      <strong>Dados insuficientes</strong>
-                    </div>
-
-                  } @else if (celular.qualidadeImagemParcial) {
-
-                    <div class="linha-detalhe-tecnico">
-                      <span>Informação</span>
-                      <strong>Informação incompleta</strong>
-                    </div>
-
-                  } @else {
-
-                    <div class="linha-detalhe-tecnico">
-                      <span>Resumo</span>
-                      <strong>{{ celular.specs.qualidadeImagem }}</strong>
-                    </div>
-
-                  }
-
-                </div>
-
-              </section>
-
-            </div>
-
-
-            
               <!-- CÂMERAS -->
               <div class="todas-infos">
-
                 @if (detalhesCamera.length) {
-
                   <section class="grupo-detalhes-tecnicos">
-
                     <div class="cabecalho-detalhes-tecnicos">
-
                       <strong>Câmeras</strong>
 
                       <button
@@ -694,62 +402,18 @@
                         (click)="abrirDicionario('camera')">
                         ℹ️
                       </button>
-
                     </div>
 
                     <div class="lista-detalhes-tecnicos">
-
-                      @for (
-                        detalhe of detalhesCamera;
-                        track detalhe.rotulo
-                      ) {
-
+                      @for (detalhe of detalhesCamera; track detalhe.rotulo) {
                         <div class="linha-detalhe-tecnico">
-
                           <span>{{ detalhe.rotulo }}</span>
-
                           <strong>{{ detalhe.valor }}</strong>
-
                         </div>
-
                       }
-
                     </div>
-
                   </section>
-
-                } @else if (
-                  celular.cameraSemDados ||
-                  !celular.specs.camera.trim() ||
-                  celular.specs.camera === 'Não informado pela API'
-                ) {
-
-                  <div class="qualidade-imagem-status">
-
-                    <strong>Câmeras</strong>
-
-                    <span class="qualidade-imagem-aviso" role="status">
-                      <span class="icone-info" aria-hidden="true">ⓘ</span>
-                      Dados Insuficientes
-                    </span>
-
-                  </div>
-
-                } @else if (celular.cameraParcial) {
-
-                  <div class="qualidade-imagem-status">
-
-                    <strong>Câmeras</strong>
-
-                    <span class="qualidade-imagem-aviso" role="status">
-                      <span class="icone-info" aria-hidden="true">ⓘ</span>
-                      Dados Insuficientes
-                    </span>
-
-                  </div>
-
                 } @else {
-
                   <app-alterar-info
                     label="Câmeras"
                     [valor]="celular.specs.camera"
@@ -757,14 +421,11 @@
                     tipoInput="texto"
                     (infoClick)="abrirDicionario('camera')">
                   </app-alterar-info>
-
                 }
-
               </div>
 
-              <!-- Seção de compras do celular atual -->
+              <!-- Seção de compras -->
               <section class="secao-compras">
-
                 <div class="cabecalho-compras">
                   <h3>Onde comprar?</h3>
 
@@ -777,21 +438,16 @@
                 </div>
 
                 <div class="lista-lojas">
-
-                  <a
-                    *ngFor="let loja of montarLinksLojas(celular)"
-                    [href]="loja.url"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="link-loja"
-                  >
-                    <span>{{ loja.nome }}</span>
-
-                    <span class="icone-link" aria-hidden="true">
-                      ↗
-                    </span>
-                  </a>
-
+                  @for (loja of montarLinksLojas(celular); track loja.nome) {
+                    <a
+                      [href]="loja.url"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="link-loja">
+                      <span>{{ loja.nome }}</span>
+                      <span class="icone-link" aria-hidden="true">↗</span>
+                    </a>
+                  }
                 </div>
 
                 <small class="aviso-compras">
@@ -799,7 +455,6 @@
                   Os preços e a disponibilidade são definidos
                   pelas próprias plataformas.
                 </small>
-
               </section>
 
             </div>
@@ -856,8 +511,7 @@
             ? '/img/projeto/facilito-animado.svg'
             : '/img/projeto/facilito.svg'"
           [alt]="facilitoCarregando ? 'Facilito falando' : 'Facilito Mascote'"
-          class="facilito-mascote"
-        >
+          class="facilito-mascote">
 
         @if (facilitoCarregando) {
           <p class="facilito-fala" aria-live="polite">
@@ -869,8 +523,7 @@
 
         <p>
           Vou analisar as características dos celulares que você escolheu
-          e explicar qual apresenta o melhor conjunto de informações
-          e características.
+          e explicar qual apresenta o melhor conjunto de características.
         </p>
 
         <button
@@ -878,7 +531,6 @@
           class="btn-analisar-facilito"
           (click)="analisarComFacilito()"
           [disabled]="!podeSolicitarComparacaoFacilito">
-
           @if (facilitoCarregando) {
             Analisando...
           } @else {
@@ -929,45 +581,38 @@
         @if (resultadoFacilito; as resultado) {
           <h3>Resultado da comparação</h3>
 
-          @if (resultado.status === 'inconclusiva') {
-            <div class="resultado-inconclusivo">
-              <h4>Não consegui chegar a uma conclusão.</h4>
-              <p>{{ resultado.resumo }}</p>
-            </div>
-          } @else {
-            <p class="resumo-facilito">
-              {{ resultado.resumo }}
-            </p>
+          <p class="resumo-facilito">
+            {{ resultado.resumo }}
+          </p>
 
-            @for (posicao of resultado.classificacao; track posicao.celularId) {
-              <article class="resultado-celular">
-                <span class="posicao-celular">
-                  {{ posicao.posicao }}º lugar
+          @for (posicao of resultado.classificacao; track posicao.celularId) {
+            <article class="resultado-celular">
+              <span class="posicao-celular">
+                {{ posicao.posicao }}º lugar
+              </span>
+
+              <h4>
+                {{ obterNomeCelular(posicao.celularId) }}
+              </h4>
+
+              <p>{{ posicao.justificativa }}</p>
+
+              @if (celularEstaEmpatado(posicao.celularId)) {
+                <span class="aviso-empate">
+                  🤝 Empate nesta posição
                 </span>
+              }
+            </article>
+          }
 
-                <h4>
-                  {{ obterNomeCelular(posicao.celularId) }}
-                </h4>
+          @if (resultado.observacoes.length > 0) {
+            <div class="observacoes-facilito">
+              <h4>Uma observação importante</h4>
 
-                <p>{{ posicao.justificativa }}</p>
-
-                @if (celularEstaEmpatado(posicao.celularId)) {
-                  <span class="aviso-empate">
-                    🤝 Empate nesta posição
-                  </span>
-                }
-              </article>
-            }
-
-            @if (resultado.observacoes.length > 0) {
-              <div class="observacoes-facilito">
-                <h4>Uma observação importante</h4>
-
-                @for (observacao of resultado.observacoes; track $index) {
-                  <p>{{ observacao }}</p>
-                }
-              </div>
-            }
+              @for (observacao of resultado.observacoes; track $index) {
+                <p>{{ observacao }}</p>
+              }
+            </div>
           }
         }
       </div>

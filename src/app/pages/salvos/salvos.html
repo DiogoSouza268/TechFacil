@@ -106,24 +106,6 @@
                 </p>
 
               </section>
-
-              @if (item.resultadoFacilito.status === 'inconclusiva') {
-                <div class="bloco-empate">
-                  <div class="vencedor-header">
-                    <span class="trofeu">&#9432;</span>
-
-                    <div>
-                      <h4>Comparação inconclusiva</h4>
-                    </div>
-                  </div>
-
-                  <p class="motivos">
-                    Não foi possível determinar uma recomendação com as
-                    informações disponíveis.
-                  </p>
-                </div>
-              }
-
               @if (
                 item.resultadoFacilito.observacoes &&
                 item.resultadoFacilito.observacoes.length > 0

@@ -1,22 +1,18 @@
-
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export type EspecificacaoFacilito =
   | 'ram'
   | 'armazenamento'
   | 'gpu'
-  | 'qualidadeImagem'
+  | 'tela'
   | 'bateria'
   | 'processador'
   | 'camera';
 
-export type OrigemEspecificacaoFacilito =
-  | 'catalogo'
-  | 'mobileapi'
-  | 'usuario'
-  | 'indisponivel';
+export type OrigemEspecificacaoFacilito = 'catalogo' | 'usuario';
 
 export interface DadoEspecificacaoFacilito {
   valor: string;
@@ -47,7 +43,7 @@ export interface FonteFacilito {
 }
 
 export interface ResultadoFacilito {
-  status: 'concluida' | 'inconclusiva';
+  status: 'concluida';
   resumo: string;
   classificacao: PosicaoFacilito[];
   observacoes: string[];
@@ -57,16 +53,9 @@ export interface ResultadoFacilito {
 @Injectable({ providedIn: 'root' })
 export class FacilitoService {
   private readonly http = inject(HttpClient);
+  private readonly url = `${environment.apiUrl}/facilito/comparar`;
 
-  private readonly url =
-    'http://localhost:3000/api/facilito/comparar';
-
-  comparar(
-    pedido: PedidoFacilito
-  ): Observable<ResultadoFacilito> {
-    return this.http.post<ResultadoFacilito>(
-      this.url,
-      pedido
-    );
+  comparar(pedido: PedidoFacilito): Observable<ResultadoFacilito> {
+    return this.http.post<ResultadoFacilito>(this.url, pedido);
   }
 }

@@ -355,7 +355,12 @@ main.main-content {
   background-color: #fafdfb;
 }
 
-.badge-campeao {
+.titulo-busca {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.badge-vencedor {
   background-color: #00875a;
   color: #ffffff;
   font-size: 0.75rem;
