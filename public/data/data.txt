@@ -10,31 +10,33 @@ FROM jsonb_array_elements(
   $json$
   [
     {
-      "nome": "Samsung Galaxy A57",
-      "imagem": "https://images.samsung.com/is/image/samsung/p6pim/br/sm-a576bzaezto/gallery/br-galaxy-a57-5g-sm-a576-sm-a576bzaezto-551768727?$1164_776_PNG$",
+      "nome": "Samsung Galaxy S26 FE",
+      "imagem": "https://fdn2.gsmarena.com/vv/bigpic/samsung-samsung-galaxy-s26-fe.jpg",
       "detalhesTecnicos": {
         "tela": [
           { "rotulo": "Tamanho", "valor": "6,7 polegadas" },
-          { "rotulo": "Tipo e fluidez", "valor": "Super AMOLED Plus | 120 Hz" },
+          { "rotulo": "Tipo e fluidez", "valor": "Dynamic AMOLED 2X | 120 Hz" },
           { "rotulo": "Resolução e brilho", "valor": "1080 x 2340 pixels | Até 1900 nits" },
-          { "rotulo": "Proteção e recursos", "valor": "Gorilla Glass Victus Plus| HDR10+" }
+          { "rotulo": "Proteção e recursos", "valor": "HDR10+ | Gorilla Glass Victus Plus" }
         ],
         "camera": [
-          { "rotulo": "Wide", "valor": "50 MP | f/1.8 | 1/1.56 | PDAF | OIS" },
-          { "rotulo": "Ultrawide", "valor": "12 MP | f/2.2 | 1/3.06" },
-          { "rotulo": "Macro", "valor": "5 MP | f/2.4" },
+          { "rotulo": "Wide", "valor": "50 MP | f/1.8 | 1/1.56 | dual pixel PDAF | OIS" },
+          { "rotulo": "Telephoto", "valor": "8 MP | f/2.4 | 1/4.4 | PDAF | OIS |3x optical zoom" },
+          { "rotulo": "Ultrawide", "valor": "12 MP | f/2.2 |  1/3.2" },
+          { "rotulo": "Aspectos", "valor": "LED flash | HDR | panorama | Best Face" },
           { "rotulo": "Selfie", "valor": "12 MP | f/2.2 | 1/3.2" },
-          { "rotulo": "Gravação de vídeo", "valor": "4K 30fps" }
-        ],
+          { "rotulo": "Gravação de vídeo", "valor": "8K UHD 30fps | 4K 60fps" }
+        ], 
         "bateria": [
           { "rotulo": "Tipo", "valor": "LiPo" },
-          { "rotulo": "Capacidade", "valor": "5000 mAh" },
-          { "rotulo": "Carregamento com fio", "valor": "45W" }
+          { "rotulo": "Capacidade", "valor": "4900 mAh" },
+          { "rotulo": "Carregamento com fio", "valor": "45W" },
+          { "rotulo": "Carregamento sem fio", "valor": "15W" }
         ],
         "processador": [
-          { "rotulo": "Chipset", "valor": "Samsung Exynos 1680 (4 nm)" },
-          { "rotulo": "CPU", "valor": "Octa-core (1x2.9 GHz Cortex-720 & 4x2.6 GHz Cortex-720 & 3x1.95 GHz Cortex-520)" },
-          { "rotulo": "GPU", "valor": "Xclipse 550" }
+          { "rotulo": "Chipset", "valor": "Exynos 2500 (3 nm)" },
+          { "rotulo": "CPU", "valor": "1x 3.3 GHz Cortex-X5 + 2x 2.74 GHz Cortex-A725 + 5x 2.36 GHz Cortex-A720 + 2x 1.8 GHz Cortex-A520" },
+          { "rotulo": "GPU", "valor": "Xclipse 950" }
         ]
       },
       "versoes": [
