@@ -46,13 +46,6 @@ app.get('/health', (_req, res) => {
   });
 });
 
-function buscarRotulo(lista = [], rotulo) {
-  const item = lista.find(
-    i => i.rotulo?.toLowerCase() === rotulo.toLowerCase()
-  );
-  return item ? item.valor : '';
-}
-
 function buscarRotulo(lista = [], ...rotulos) {
   const alvos = rotulos.map(r => r.toLowerCase());
   const item = lista.find(i => alvos.includes(i.rotulo?.toLowerCase()));

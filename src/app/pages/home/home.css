@@ -269,9 +269,52 @@ main.main-content {
   color: #0f172a;
 }
 
+#infoFacil {
+  scroll-margin-top: 90px;
+  scroll-margin-bottom: 100px;
+  animation: destacar-dicionario 0.35s ease-out;
+}
+
+@keyframes destacar-dicionario {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .dica-toque {
-  color: #64748b;
-  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin: 10px 0 0;
+  padding: 10px 14px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 10px;
+  color: #065f46;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  box-sizing: border-box;
+}
+
+.icone-dica {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .dica-toque {
+    font-size: 0.8rem;
+    padding: 9px 12px;
+    text-align: left;
+  }
 }
 
 .indicadores-container {
@@ -649,28 +692,6 @@ main.main-content {
   cursor: pointer;
 }
 
-.dicionario-placeholder {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #64748b;
-  font-size: 0.82rem;
-}
-
-
-#salvarCompa {
-  width: 100%;
-  padding: 12px;
-  background-color: #ffffff;
-  color: #00875a;
-  border: none;
-  border-radius: 10px;
-  font-weight: 800;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
 #salvarCompa:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -1005,13 +1026,6 @@ main.main-content {
   line-height: 1.6;
 }
 
-.resumo-facilito {
-  margin: 0 0 18px;
-  color: #334155;
-  font-size: 0.95rem;
-  line-height: 1.7;
-}
-
 /* CADA CELULAR CLASSIFICADO */
 
 .resultado-celular {
@@ -1022,6 +1036,10 @@ main.main-content {
   border: 1px solid #dbe7e1;
   border-left: 4px solid #059669;
   border-radius: 12px;
+}
+
+.resultado-celular:last-of-type {
+  margin-bottom: 0;
 }
 
 .posicao-celular {

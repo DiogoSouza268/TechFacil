@@ -70,6 +70,10 @@
           }
         </div>
 
+        <p class="dica-toque">
+          Toque no ícone <img src="/img/projeto/help.svg" alt="help-icon"> ao lado do componente para entender em linguagem simples!
+        </p>
+
         @if (mensagemBusca) {
           <div
             class="aviso-resultado-busca"
@@ -86,9 +90,6 @@
         <div class="status-info">
           <h3>Comparando {{ listaComparacao.length }} celular(es)</h3>
 
-          <small class="dica-toque desktop-only">
-            💡 Toque no ícone ℹ️ ao lado do componente para entender em linguagem simples.
-          </small>
         </div>
 
         <div class="indicadores-container">
@@ -162,7 +163,7 @@
               (click)="removerDaComparacao(i)"
               title="Remover da comparação"
               aria-label="Remover celular da comparação">
-              ✕
+              <img src="/img/projeto/delete.svg" alt="delete-icon">
             </button>
 
             <div class="celular-img">
@@ -189,7 +190,7 @@
                         class="botao-info-especificacao"
                         aria-label="Entenda o armazenamento"
                         (click)="abrirDicionario('armazenamento')">
-                        ℹ️
+                        <img src="/img/projeto/help.svg" alt="help-icon">
                       </button>
                     </div>
 
@@ -231,7 +232,7 @@
                         class="botao-info-especificacao"
                         aria-label="Entenda a memória RAM"
                         (click)="abrirDicionario('ram')">
-                        ℹ️
+                        <img src="/img/projeto/help.svg" alt="help-icon">
                       </button>
                     </div>
 
@@ -271,7 +272,7 @@
                         class="botao-info-especificacao"
                         aria-label="Entenda o processador"
                         (click)="abrirDicionario('processador')">
-                        ℹ️
+                        <img src="/img/projeto/help.svg" alt="help-icon">
                       </button>
                     </div>
 
@@ -306,7 +307,7 @@
                       class="botao-info-especificacao"
                       aria-label="Entenda a GPU"
                       (click)="abrirDicionario('gpu')">
-                      ℹ️
+                      <img src="/img/projeto/help.svg" alt="help-icon">
                     </button>
                   </div>
 
@@ -331,7 +332,7 @@
                         class="botao-info-especificacao"
                         aria-label="Entenda a bateria"
                         (click)="abrirDicionario('bateria')">
-                        ℹ️
+                        <img src="/img/projeto/help.svg" alt="help-icon">
                       </button>
                     </div>
 
@@ -366,7 +367,7 @@
                       class="botao-info-especificacao"
                       aria-label="Entenda a tela"
                       (click)="abrirDicionario('tela')">
-                      ℹ️
+                      <img src="/img/projeto/help.svg" alt="help-icon">
                     </button>
                   </div>
 
@@ -400,7 +401,7 @@
                         class="botao-info-especificacao"
                         aria-label="Entenda as câmeras"
                         (click)="abrirDicionario('camera')">
-                        ℹ️
+                        <img src="/img/projeto/help.svg" alt="help-icon">
                       </button>
                     </div>
 
@@ -464,11 +465,11 @@
     </section>
 
     <!-- DICIONÁRIO -->
-    <section id="infoFacil" class="card-dicionario">
-      @if (termoExibido) {
+    @if (termoExibido) {
+      <section id="infoFacil" class="card-dicionario">
         <div class="dicionario-header">
           <div class="dicionario-title">
-            <span class="info-icon">&#8505;</span>
+            <img src="/img/projeto/help.svg" alt="help-icon">
             <h4>{{ termoExibido.titulo }}</h4>
           </div>
 
@@ -476,7 +477,7 @@
             type="button"
             class="btn-fechar-dic"
             (click)="fecharDicionario()">
-            ✕
+            <img src="/img/projeto/close.svg" alt="close-icon">
           </button>
         </div>
 
@@ -490,16 +491,8 @@
           (click)="fecharDicionario()">
           Entendi!
         </button>
-      } @else {
-        <div class="dicionario-placeholder">
-          <span class="info-icon">&#8505;</span>
-          <p>
-            Toque no ícone ℹ️ ao lado de qualquer especificação
-            para entender em linguagem simples.
-          </p>
-        </div>
-      }
-    </section>
+      </section>
+    }    
 
     <!-- FACILITO.AI -->
     <section id="melhorOpcao" class="secao-facilito">
@@ -581,10 +574,6 @@
         @if (resultadoFacilito; as resultado) {
           <h3>Resultado da comparação</h3>
 
-          <p class="resumo-facilito">
-            {{ resultado.resumo }}
-          </p>
-
           @for (posicao of resultado.classificacao; track posicao.celularId) {
             <article class="resultado-celular">
               <span class="posicao-celular">
@@ -605,7 +594,7 @@
             </article>
           }
 
-          @if (resultado.observacoes.length > 0) {
+          @if (resultado.observacoes.length) {
             <div class="observacoes-facilito">
               <h4>Uma observação importante</h4>
 
@@ -615,6 +604,7 @@
             </div>
           }
         }
+
       </div>
 
       <!-- SALVAR COMPARAÇÃO -->

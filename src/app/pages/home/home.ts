@@ -937,6 +937,16 @@ export class Home implements OnInit, OnDestroy {
       behavior: 'smooth',
       block: 'nearest'
     });
+
+    setTimeout(() => {
+      const elemento = document.getElementById('infoFacil');
+      if (elemento) {
+        elemento.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
+    }, 80);
   }
 
   fecharDicionario(): void {
