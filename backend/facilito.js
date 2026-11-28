@@ -135,40 +135,40 @@ function validarResultado(resultado, referencias, quantidadeCelulares) {
   );
 }
 
-function criarPrompt(celularesParaIA) {
-  return `
-Você é o Facilito do TechFácil. Compare os celulares em português brasileiro usando linguagem bem simples, voltada para pessoas leigas que não entendem termos técnicos.
+function criarPrompt(dados) {
+    return `Você é o Facilito do TechFácil. Compare os celulares em português brasileiro usando linguagem bem simples, voltada para pessoas leigas que não entendem termos técnicos.
 
-DADOS:
-${JSON.stringify(celularesParaIA)}
+    DADOS:
+    ${JSON.stringify(dados)}
 
-REGRAS:
-- Compare RAM, armazenamento, CPU, GPU, tela, bateria e câmeras. Avalie o conjunto, sem notas ou pesos fixos. Ignore preço e marca.
-- Sempre que citar algo técnico, traduza o benefício para o dia a dia (ex.: mais fluidez ao abrir apps, tela mais nítida, mais espaço para fotos).
-- Use apenas as informações fornecidas. Não invente especificações ou benchmarks.
-- Bateria: compare capacidade em mAh e potência de carregamento, sem presumir autonomia exata em horas.
-- Tela: considere painel, resolução e taxa de atualização (Hz).
-- Câmeras: megapixels e quantidade de sensores sozinhos não comprovam qualidade fotográfica.
-- Classifique todos os aparelhos. Permita empates usando posições competitivas (ex.: dois em 1º e o próximo em 3º).
-- Inclua cada referência exatamente uma vez na classificação.
-- Resumo: até 3 linhas. Justificativas: até 2 linhas cada.
-- Seja objetivo e não repita informações.
+    REGRAS:
+    - Compare RAM, armazenamento, CPU, GPU, tela, bateria e câmeras. Avalie o conjunto, sem notas ou pesos fixos. Ignore preço e marca.
+    - Sempre que citar algo técnico, traduza o benefício para o dia a dia (ex.: mais fluidez ao abrir apps, tela mais visível sob o sol, mais espaço para fotos).
+    - Use apenas as informações fornecidas. Não invente especificações ou benchmarks.
+    - Campos com "(editado pelo usuário)" devem ser considerados exatamente como informados.
+    - Bateria: compare capacidade em mAh e velocidade/potência de carregamento (com e sem fio), sem presumir autonomia exata em horas.
+    - Tela: considere painel, resolução, brilho (nits) e taxa de atualização (Hz).
+    - Câmeras: considere estabilização (OIS), zoom óptico e gravação de vídeo; megapixels e quantidade de sensores sozinhos não comprovam qualidade fotográfica.
+    - Classifique todos os aparelhos. Permita empates usando posições competitivas (ex.: dois em 1º e o próximo em 3º).
+    - Na justificativa de cada aparelho, destaque seu principal ponto forte ou fraco e indique brevemente para qual perfil de usuário ele é mais indicado.
+    - Inclua cada referência exatamente uma vez na classificação.
+    - Resumo: até 3 linhas. Justificativas: até 2 linhas cada.
+    - Seja objetivo e não repita informações.
 
-Retorne somente JSON válido, sem Markdown:
-{
-  "status": "concluida",
-  "resumo": "Resumo direto da comparação.",
-  "classificacao": [
+    Retorne somente JSON válido, sem Markdown:
     {
-      "celular": "Celular 1",
-      "posicao": 1,
-      "justificativa": "Justificativa simples."
-    }
-  ],
-  "observacoes": []
-}
-`.trim();
-}
+      "status": "concluida",
+      "resumo": "Resumo direto indicando qual entrega o melhor conjunto geral.",
+      "classificacao": [
+        {
+          "celular": "Celular 1",
+          "posicao": 1,
+          "justificativa": "Justificativa simples com destaque e perfil ideal."
+        }
+      ],
+      "observacoes": []
+    }`;
+  }
 
 export function registrarRotaFacilito(app, { apiKey, modelos }) {
   const limiteFacilito = rateLimit({
@@ -299,12 +299,10 @@ export function registrarRotaFacilito(app, { apiKey, modelos }) {
         for (const [campo, rotulo] of Object.entries(CARACTERISTICAS)) {
           const dado = celular.especificacoes[campo];
 
-          caracteristicas[rotulo] = {
-            v: dado.valor,
-            ...(dado.fonte === 'Informação corrigida pelo usuário'
-              ? { u: true }
-              : {})
-          };
+          caracteristicas[rotulo] =
+            dado.fonte === 'Informação corrigida pelo usuário'
+              ? `${dado.valor} (editado pelo usuário)`
+              : dado.valor;
         }
 
         return {

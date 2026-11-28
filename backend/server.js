@@ -53,36 +53,95 @@ function buscarRotulo(lista = [], rotulo) {
   return item ? item.valor : '';
 }
 
+function buscarRotulo(lista = [], ...rotulos) {
+  const alvos = rotulos.map(r => r.toLowerCase());
+  const item = lista.find(i => alvos.includes(i.rotulo?.toLowerCase()));
+  return item ? item.valor : '';
+}
+
+function resumirCameraTraseira(rotulo = '', valor = '') {
+  const mp = valor.split('|')[0].trim().replace(/(\d)(MP)\b/i, '$1 $2');
+  const extras = [];
+  const tipo = rotulo.toLowerCase();
+
+  if (tipo.includes('ultrawide')) extras.push('ultrawide');
+  else if (tipo.includes('macro')) extras.push('macro');
+  else if (tipo.includes('auxiliary')) extras.push('auxiliar');
+
+  const zoom = valor.match(/(\d+(?:[.,]\d+)?x)\s*(?:optical\s*zoom|zoom\s*óptico)/i);
+  if (zoom) extras.push(`zoom ${zoom[1]}`);
+  if (/\bOIS\b/i.test(valor)) extras.push('OIS');
+
+  return extras.length ? `${mp} (${extras.join(', ')})` : mp;
+}
+
+function resumirCarregamento(valor = '', tipo = 'fio') {
+  if (!valor) return '';
+
+  const partes = valor
+    .split('|')
+    .map(p => p.trim())
+    .filter(p => p && !/\breverse\b/i.test(p));
+
+  if (!partes.length) return '';
+
+  const potencia = partes.find(p => /\d+(?:[.,]\d+)?\s*W\b/i.test(p));
+  const tempo = partes.find(p => /%/.test(p));
+
+  const limpar = txt =>
+    txt
+      .replace(/\s*wireless\b/gi, '')
+      .replace(/\bin\b/gi, 'em')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+  if (potencia) {
+    return `${limpar(potencia)} ${tipo === 'fio' ? 'com fio' : 'sem fio'}`;
+  }
+
+  if (tempo) {
+    return `${limpar(tempo)} (${tipo === 'fio' ? 'com fio' : 'sem fio'})`;
+  }
+
+  return `${limpar(partes[0])} ${tipo === 'fio' ? 'com fio' : 'sem fio'}`;
+}
+
 function montarSpecs(celular) {
   const dt = celular.detalhesTecnicos || {};
   const versaoBase = (celular.versoes && celular.versoes[0]) || {};
-  const specsSalvas = celular.specs || {};
 
   const cameras = dt.camera || [];
+  const ignorarCamera = new Set(['selfie', 'gravação de vídeo', 'aspectos']);
   const traseiras = cameras
-    .filter(c => {
-      const r = c.rotulo?.toLowerCase() || '';
-      return r !== 'selfie' && r !== 'gravação de vídeo';
-    })
-    .map(c => c.valor.split('|')[0].trim())
+    .filter(c => !ignorarCamera.has(c.rotulo?.toLowerCase() || ''))
+    .map(c => resumirCameraTraseira(c.rotulo, c.valor))
+    .filter(Boolean)
     .join(' + ');
 
   const selfie = buscarRotulo(cameras, 'Selfie').split('|')[0].trim();
+  const video = buscarRotulo(cameras, 'Gravação de vídeo').replace(/\s*\|\s*/g, ' / ');
   const resumoCamera = traseiras
-    ? `${traseiras} (traseiras)${selfie ? ` | ${selfie} (frontal)` : ''}`
+    ? `${traseiras} (traseiras)${selfie ? ` | ${selfie} (frontal)` : ''}${video ? ` | Vídeo: ${video}` : ''}`
     : '';
 
   const tamanhoTela = buscarRotulo(dt.tela, 'Tamanho').replace('polegadas', 'pol');
-  const tipoTela = buscarRotulo(dt.tela, 'Tipo e fluidez').replace('|', '/');
+  const tipoTela = buscarRotulo(dt.tela, 'Tipo e fluidez').replace(/\s*\|\s*/g, ' / ');
+  const resolucaoBrilho = buscarRotulo(dt.tela, 'Resolução e brilho').replace(/\s*\|\s*/g, ' | ');
+
+  const resumoBateria = [
+    buscarRotulo(dt.bateria, 'Capacidade'),
+    resumirCarregamento(buscarRotulo(dt.bateria, 'Carregamento com fio', 'Carregamento'), 'fio'),
+    resumirCarregamento(buscarRotulo(dt.bateria, 'Carregamento sem fio'), 'sem-fio')
+  ].filter(Boolean).join(' | ');
 
   return {
-    armazenamento: specsSalvas.armazenamento || versaoBase.armazenamento || '',
-    ram: specsSalvas.ram || versaoBase.ram || '',
-    bateria: specsSalvas.bateria || buscarRotulo(dt.bateria, 'Capacidade'),
-    processador: specsSalvas.processador || buscarRotulo(dt.processador, 'Chipset'),
-    gpu: specsSalvas.gpu || buscarRotulo(dt.processador, 'GPU'),
-    tela: specsSalvas.tela || [tamanhoTela, tipoTela].filter(Boolean).join(' '),
-    camera: specsSalvas.camera || resumoCamera
+    armazenamento: versaoBase.armazenamento || '',
+    ram: versaoBase.ram || '',
+    bateria: resumoBateria,
+    processador: buscarRotulo(dt.processador, 'Chipset'),
+    gpu: buscarRotulo(dt.processador, 'GPU'),
+    tela: [tamanhoTela, tipoTela, resolucaoBrilho].filter(Boolean).join(' | '),
+    camera: resumoCamera
   };
 }
 
